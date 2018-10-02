@@ -4,11 +4,10 @@ using Coroutine.Base;
 
 namespace Coroutine
 {
-
     public class CoroutineManager
     {
 
-        public Coroutine StartCoroutine(IEnumerable<Waitable> co)
+        public Coroutine StartCoroutine(IEnumerable<IWaitable> co)
         {
             var coroutine = new Coroutine(this, co.GetEnumerator());
             return coroutine;

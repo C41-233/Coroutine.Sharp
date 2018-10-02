@@ -25,12 +25,19 @@ namespace Test
             }
         }
 
-        private static IEnumerable<Waitable> MyCoroutine()
+        private static IEnumerable<IWaitable> MyCoroutine()
         {
             while (true)
             {
                 Console.WriteLine($"haha : {DateTime.Now}");
-                yield return WaitFor.Milliseconds(TimerManager, 1000);
+                var promise = new Promise((success, fail) =>
+                {
+                    TimerManager.StartTimerAfter(1000, () => fail(new Exception()));
+                });
+                yield return promise;
+                Console.WriteLine(promise.Exception);
+                yield return WaitFor.Milliseconds(TimerManager, 2000);
+                throw new ArgumentException();
             }
         }
 

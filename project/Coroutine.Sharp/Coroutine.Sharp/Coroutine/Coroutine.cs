@@ -1,48 +1,73 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Coroutine
 {
-    public class Coroutine
+    public class Coroutine : WaitableTask
     {
 
         private readonly CoroutineManager coroutineManager;
-        private IEnumerator<Waitable> enumerator;
-        private Waitable waitable;
+        private IEnumerator<IWaitable> enumerator;
+        private IWaitable waitable;
 
-        internal Coroutine(CoroutineManager coroutineManager, IEnumerator<Waitable> co)
+        internal Coroutine(CoroutineManager coroutineManager, IEnumerator<IWaitable> co)
         {
             this.coroutineManager = coroutineManager;
-            this.enumerator = co;
-            Dispatch();
+            enumerator = co;
+
+            NextStep();
         }
 
-        private void Dispatch()
+        private void NextStep()
         {
-            if (enumerator.MoveNext())
+            bool moveNext;
+            try
+            {
+                moveNext = enumerator.MoveNext();
+            }
+            catch (Exception e)
+            {
+                //coroutine本身抛出异常，当前coroutine失败
+                Fail(e);
+                return;
+            }
+
+            if (moveNext)
             {
                 Dispatch(enumerator.Current);
             }
             else
             {
-                Dispose();
+                Success();
             }
         }
 
-        private void Dispatch(Waitable waitable)
+        private void Dispatch(IWaitable waitable)
         {
             this.waitable = waitable;
-            waitable.BindContext(coroutineManager);
 
+            //等待的事件成功，继续下一步
             waitable.OnSuccess(() =>
             {
                 this.waitable = null;
-                Dispatch();
+                coroutineManager.Enqueue(NextStep);
+            });
+
+            //等待的事件失败，继续下一步，由调用者处理异常，coroutine本身未失败
+            waitable.OnFail(e =>
+            {
+                this.waitable = null;
+                coroutineManager.Enqueue(() =>
+                {
+                    coroutineManager.Enqueue(NextStep);
+                });
             });
         }
 
-        private void Dispose()
+        protected override void OnDispose()
         {
             waitable = null;
+
             enumerator.Dispose();
             enumerator = null;
         }

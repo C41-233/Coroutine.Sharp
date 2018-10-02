@@ -3,38 +3,112 @@ using System.Collections.Generic;
 
 namespace Coroutine
 {
-
-    public abstract class Waitable
+    public abstract class Waitable : IWaitable
     {
 
-        private CoroutineManager coroutineManager;
+        WaitableStatus IWaitable.Status => status;
 
-        internal void BindContext(CoroutineManager coroutineManager)
+        private volatile WaitableStatus status;
+
+        protected Waitable()
         {
-            this.coroutineManager = coroutineManager;
+            status = WaitableStatus.Running;
         }
 
-        private readonly List<Action> successCallbacks = new List<Action>(1);
+        private List<Action> successCallbacks = new List<Action>(1);
 
-        public void OnSuccess(Action callback)
+        void IWaitable.OnSuccess(Action callback)
         {
-            successCallbacks.Add(callback);
-        }
-
-        internal void OnSuccess()
-        {
-            foreach (var callback in successCallbacks)
+            if (callback == null)
             {
-                coroutineManager.Enqueue(callback);
+                return;
+            }
+            switch (status)
+            {
+                case WaitableStatus.Success:
+                    callback();
+                    break;
+                case WaitableStatus.Running:
+                    successCallbacks.Add(callback);
+                    break;
             }
         }
 
-        protected void Fail(Exception e)
+        internal void DoSuccess()
         {
+            if (status != WaitableStatus.Running)
+            {
+                return;
+            }
             
+            status = WaitableStatus.Success;
+            foreach (var callback in successCallbacks)
+            {
+                callback();
+            }
+            Dispose();
         }
 
-        protected abstract void OnAbort();
+        private List<Action<Exception>> failCallbacks = new List<Action<Exception>>(1);
+
+        public Exception Exception { get; private set; }
+
+        protected void Fail(Exception e)
+        {
+            if (status != WaitableStatus.Running)
+            {
+                return;
+            }
+
+            Exception = e;
+            status = WaitableStatus.Fail;
+            foreach (var callback in failCallbacks)
+            {
+                callback(e);
+            }
+            Dispose();
+        }
+
+        void IWaitable.OnFail(Action callback)
+        {
+            if (callback == null)
+            {
+                return;
+            }
+            (this as IWaitable).OnFail(e => callback());
+        }
+
+        void IWaitable.OnFail(Action<Exception> callback)
+        {
+            if (callback == null)
+            {
+                return;
+            }
+            switch (status)
+            {
+                case WaitableStatus.Fail:
+                    callback(Exception);
+                    break;
+                case WaitableStatus.Running:
+                    failCallbacks.Add(callback);
+                    break;
+            }
+        }
+
+        protected virtual void OnAbort()
+        {
+        }
+
+        private void Dispose()
+        {
+            successCallbacks = null;
+            failCallbacks = null;
+            OnDispose();
+        }
+
+        protected virtual void OnDispose()
+        {
+        }
 
     }
 
@@ -43,19 +117,22 @@ namespace Coroutine
 
         protected void Success()
         {
-            OnSuccess();
+            DoSuccess();
         }
 
     }
 
-    public abstract class WaitableTask<T> : Waitable
+    public abstract class WaitableTask<T> : Waitable, IWaitable<T>
     {
 
         protected void Success(T result)
         {
-            OnSuccess();
+            DoSuccess();
         }
 
+        void IWaitable<T>.OnSuccess(Action<T> callback)
+        {
+        }
     }
 
 }
