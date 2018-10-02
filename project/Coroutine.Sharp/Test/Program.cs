@@ -37,7 +37,6 @@ namespace Test
                 yield return promise;
                 Console.WriteLine(promise.Exception);
                 yield return WaitFor.Milliseconds(TimerManager, 2000);
-                throw new ArgumentException();
             }
         }
 

@@ -103,11 +103,6 @@ namespace Coroutine
         {
             successCallbacks = null;
             failCallbacks = null;
-            OnDispose();
-        }
-
-        protected virtual void OnDispose()
-        {
         }
 
     }

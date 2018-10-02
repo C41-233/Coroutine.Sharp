@@ -27,6 +27,18 @@ namespace Coroutine
         {
             actions.Enqueue(callback);
         }
+
+        public Action<Coroutine, Exception> OnUnhandledException { private get; set; } = DefaultUnhandledException;
+
+        private static void DefaultUnhandledException(Coroutine c, Exception e)
+        {
+            Console.Error.WriteLine(e);
+        }
+
+        internal void RaiseUnhandledException(Coroutine coroutine, Exception exception)
+        {
+            OnUnhandledException?.Invoke(coroutine, exception);
+        }
     }
 
 }
