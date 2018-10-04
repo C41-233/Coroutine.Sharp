@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using Coroutine;
@@ -16,27 +15,36 @@ namespace Test
 
         static void Main(string[] args)
         {
-            CoroutineManager.StartCoroutine(MyCoroutine());
+            var co = CoroutineManager.StartCoroutine(MyCoroutine());
+            int i = 0;
             while (true)
             {
                 TimerManager.Update(DateTime.Now.ToTimeStamp());
                 CoroutineManager.OneLoop();
                 Thread.Sleep(10);
+                i++;
+                if (i == 500)
+                {
+                    co.Abort();
+                }
             }
         }
 
         private static IEnumerable<IWaitable> MyCoroutine()
         {
-            while (true)
             {
                 Console.WriteLine($"haha : {DateTime.Now}");
-                var promise = new Promise((success, fail) =>
-                {
-                    TimerManager.StartTimerAfter(1000, () => fail(new Exception()));
-                });
-                yield return promise;
-                Console.WriteLine(promise.Exception);
-                yield return WaitFor.Milliseconds(TimerManager, 2000);
+                yield return CoroutineManager.StartCoroutine(AnotherCoroutine());
+                Console.WriteLine("End");
+            }
+        }
+
+        private static IEnumerable<IWaitable> AnotherCoroutine()
+        {
+            while (true)
+            {
+                Console.WriteLine("wait");
+                yield return WaitFor.Milliseconds(TimerManager, 1000);
             }
         }
 

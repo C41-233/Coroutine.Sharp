@@ -42,6 +42,7 @@
     <Compile Include="Coroutine\Timer\TimerHandle.cs" />
     <Compile Include="Coroutine\Timer\TimerManager.cs" />
     <Compile Include="Coroutine\Waitable.cs" />
+    <Compile Include="Coroutine\WaitableAbortException.cs" />
     <Compile Include="Coroutine\WaitableStatus.cs" />
     <Compile Include="Coroutine\Wait\WaitFor.cs" />
     <Compile Include="Coroutine\Wait\WaitForMilliseconds.cs" />

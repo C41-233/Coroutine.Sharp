@@ -57,10 +57,7 @@ namespace Coroutine
             waitable.OnFail(e =>
             {
                 this.waitable = null;
-                coroutineManager.Enqueue(() =>
-                {
-                    coroutineManager.Enqueue(NextStep);
-                });
+                coroutineManager.Enqueue(NextStep);
             });
         }
 
@@ -71,15 +68,15 @@ namespace Coroutine
             enumerator.Dispose();
             enumerator = null;
 
-            successCallbacks = null;
-            failCallbacks = null;
+            SuccessCallbacks = null;
+            FailCallbacks = null;
         }
 
         public WaitableStatus Status { get; private set; }
         public Exception Exception { get; private set; }
 
-        private List<Action> successCallbacks = new List<Action>(1);
-        private List<Action<Exception>> failCallbacks = new List<Action<Exception>>(1);
+        private List<Action> SuccessCallbacks = new List<Action>(1);
+        private List<Action<Exception>> FailCallbacks = new List<Action<Exception>>(1);
 
         private void Success()
         {
@@ -89,11 +86,13 @@ namespace Coroutine
             }
 
             Status = WaitableStatus.Success;
+            var successCallbacks = SuccessCallbacks;
+            Dispose();
+
             foreach (var callback in successCallbacks)
             {
                 callback();
             }
-            Dispose();
         }
 
         public void OnSuccess(Action callback)
@@ -109,7 +108,7 @@ namespace Coroutine
                     callback();
                     break;
                 case WaitableStatus.Running:
-                    successCallbacks.Add(callback);
+                    SuccessCallbacks.Add(callback);
                     break;
             }
         }
@@ -124,6 +123,9 @@ namespace Coroutine
             Exception = e;
             Status = WaitableStatus.Fail;
 
+            var failCallbacks = FailCallbacks;
+            Dispose();
+
             if (failCallbacks.Count > 0)
             {
                 foreach (var callback in failCallbacks)
@@ -135,17 +137,6 @@ namespace Coroutine
             {
                 coroutineManager.RaiseUnhandledException(this, e);
             }
-
-            Dispose();
-        }
-
-        public void OnFail(Action callback)
-        {
-            if (callback == null)
-            {
-                return;
-            }
-            OnFail(e => callback());
         }
 
         public void OnFail(Action<Exception> callback)
@@ -160,8 +151,24 @@ namespace Coroutine
                     callback(Exception);
                     break;
                 case WaitableStatus.Running:
-                    failCallbacks.Add(callback);
+                    FailCallbacks.Add(callback);
                     break;
+            }
+        }
+
+        public void Abort()
+        {
+            Status = WaitableStatus.Fail;
+            Exception = new WaitableAbortException();
+
+            waitable?.Abort();
+
+            var failCallbacks = FailCallbacks;
+            Dispose();
+
+            foreach (var callback in failCallbacks)
+            {
+                callback(Exception);
             }
         }
     }

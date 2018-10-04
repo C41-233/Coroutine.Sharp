@@ -6,7 +6,6 @@
         Running,
         Success,
         Fail,
-        Aborted
 
     }
 

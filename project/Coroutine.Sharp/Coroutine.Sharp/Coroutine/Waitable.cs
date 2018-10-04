@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Coroutine
 {
@@ -69,15 +70,6 @@ namespace Coroutine
             Dispose();
         }
 
-        void IWaitable.OnFail(Action callback)
-        {
-            if (callback == null)
-            {
-                return;
-            }
-            (this as IWaitable).OnFail(e => callback());
-        }
-
         void IWaitable.OnFail(Action<Exception> callback)
         {
             if (callback == null)
@@ -93,6 +85,25 @@ namespace Coroutine
                     failCallbacks.Add(callback);
                     break;
             }
+        }
+
+        void IWaitable.Abort()
+        {
+            if (status != WaitableStatus.Running)
+            {
+                return;
+            }
+
+            Exception = new WaitableAbortException();
+            status = WaitableStatus.Fail;
+
+            OnAbort();
+
+            foreach (var callback in failCallbacks)
+            {
+                callback(Exception);
+            }
+            Dispose();
         }
 
         protected virtual void OnAbort()
