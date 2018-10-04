@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace Coroutine
 {
@@ -131,13 +130,33 @@ namespace Coroutine
     public abstract class WaitableTask<T> : Waitable, IWaitable<T>
     {
 
+        public T Result
+        {
+            get
+            {
+                if (Exception != null)
+                {
+                    throw Exception;
+                }
+                return result;
+            }
+        }
+
+        private T result;
+
         protected void Success(T result)
         {
+            this.result = result;
             DoSuccess();
         }
 
         void IWaitable<T>.OnSuccess(Action<T> callback)
         {
+            if (callback == null)
+            {
+                return;
+            }
+            (this as IWaitable).OnSuccess(() => callback(result));
         }
     }
 

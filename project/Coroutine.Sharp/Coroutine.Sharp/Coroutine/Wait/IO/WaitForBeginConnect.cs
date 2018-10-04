@@ -1,0 +1,74 @@
+﻿using System;
+using System.Net;
+using System.Net.Sockets;
+
+namespace Coroutine.Wait
+{
+    public class WaitForBeginConnect : WaitableTask
+    {
+
+        public WaitForBeginConnect(Socket socket, string host, int port)
+        {
+            try
+            {
+                socket.BeginConnect(host, port, ConnectCallback, socket);
+            }
+            catch (Exception e)
+            {
+                Fail(e);
+            }
+        }
+
+        public WaitForBeginConnect(Socket socket, IPAddress[] addresses, int port)
+        {
+            try
+            {
+                socket.BeginConnect(addresses, port, ConnectCallback, socket);
+            }
+            catch (Exception e)
+            {
+                Fail(e);
+            }
+        }
+
+        public WaitForBeginConnect(Socket socket, IPAddress address, int port)
+        {
+            try
+            {
+                socket.BeginConnect(address, port, ConnectCallback, socket);
+            }
+            catch (Exception e)
+            {
+                Fail(e);
+            }
+        }
+
+        public WaitForBeginConnect(Socket socket, EndPoint endPointt)
+        {
+            try
+            {
+                socket.BeginConnect(endPointt, ConnectCallback, socket);
+            }
+            catch (Exception e)
+            {
+                Fail(e);
+            }
+        }
+
+        private void ConnectCallback(IAsyncResult ar)
+        {
+            var socket = (Socket) ar.AsyncState;
+            try
+            {
+                socket.EndConnect(ar);
+                Success();
+            }
+            catch (Exception e)
+            {
+                Fail(e);
+            }
+        }
+
+    }
+
+}

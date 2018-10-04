@@ -44,7 +44,7 @@ namespace Test
             while (true)
             {
                 Console.WriteLine("wait");
-                yield return WaitFor.Milliseconds(TimerManager, 1000);
+                yield return WaitFor.Seconds(TimerManager, 1000);
             }
         }
 

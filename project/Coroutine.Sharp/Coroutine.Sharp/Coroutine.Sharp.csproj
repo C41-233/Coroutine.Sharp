@@ -38,6 +38,7 @@
     <Compile Include="Coroutine\Base\PriorityQueue.cs" />
     <Compile Include="Coroutine\IWaitable.cs" />
     <Compile Include="Coroutine\Promise.cs" />
+    <Compile Include="Coroutine\Base\TimeUnit.cs" />
     <Compile Include="Coroutine\Timer\DateTimeExtension.cs" />
     <Compile Include="Coroutine\Timer\TimerHandle.cs" />
     <Compile Include="Coroutine\Timer\TimerManager.cs" />
@@ -45,11 +46,13 @@
     <Compile Include="Coroutine\WaitableAbortException.cs" />
     <Compile Include="Coroutine\WaitableStatus.cs" />
     <Compile Include="Coroutine\Wait\WaitFor.cs" />
-    <Compile Include="Coroutine\Wait\WaitForMilliseconds.cs" />
+    <Compile Include="Coroutine\Wait\IO\WaitForBeginConnect.cs" />
+    <Compile Include="Coroutine\Wait\Timer\WaitForMilliseconds.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
