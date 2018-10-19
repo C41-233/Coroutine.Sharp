@@ -4,10 +4,10 @@ using System.Net.Sockets;
 
 namespace Coroutine.Wait
 {
-    public class WaitForBeginConnect : WaitableTask
+    internal class WaitForConnect : WaitableTask
     {
 
-        public WaitForBeginConnect(Socket socket, string host, int port)
+        public WaitForConnect(Socket socket, string host, int port)
         {
             try
             {
@@ -19,7 +19,7 @@ namespace Coroutine.Wait
             }
         }
 
-        public WaitForBeginConnect(Socket socket, IPAddress[] addresses, int port)
+        public WaitForConnect(Socket socket, IPAddress[] addresses, int port)
         {
             try
             {
@@ -31,7 +31,7 @@ namespace Coroutine.Wait
             }
         }
 
-        public WaitForBeginConnect(Socket socket, IPAddress address, int port)
+        public WaitForConnect(Socket socket, IPAddress address, int port)
         {
             try
             {
@@ -43,7 +43,7 @@ namespace Coroutine.Wait
             }
         }
 
-        public WaitForBeginConnect(Socket socket, EndPoint endPointt)
+        public WaitForConnect(Socket socket, EndPoint endPointt)
         {
             try
             {

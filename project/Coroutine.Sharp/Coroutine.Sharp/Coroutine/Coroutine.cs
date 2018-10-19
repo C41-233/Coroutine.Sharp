@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Coroutine.Wait;
 
 namespace Coroutine
 {
@@ -49,15 +50,22 @@ namespace Coroutine
             //等待的事件成功，继续下一步
             waitable.OnSuccess(() =>
             {
-                this.waitable = null;
                 coroutineManager.Enqueue(NextStep);
+                this.waitable = null;
             });
 
-            //等待的事件失败，继续下一步，由调用者处理异常，coroutine本身未失败
             waitable.OnFail(e =>
             {
+                if (this.waitable is BreakOnFailWaitable)
+                {
+                    coroutineManager.Enqueue(() => AbortFail(e));
+                }
+                else
+                {
+                    //等待的事件失败，继续下一步，由调用者处理异常，coroutine本身未失败
+                    coroutineManager.Enqueue(NextStep);
+                }
                 this.waitable = null;
-                coroutineManager.Enqueue(NextStep);
             });
         }
 
@@ -95,11 +103,11 @@ namespace Coroutine
             }
         }
 
-        public void OnSuccess(Action callback)
+        public IWaitable OnSuccess(Action callback)
         {
             if (callback == null)
             {
-                return;
+                return this;
             }
 
             switch (Status)
@@ -110,6 +118,26 @@ namespace Coroutine
                 case WaitableStatus.Running:
                     SuccessCallbacks.Add(callback);
                     break;
+            }
+            return this;
+        }
+
+        private void AbortFail(Exception e)
+        {
+            if (Status != WaitableStatus.Running)
+            {
+                return;
+            }
+
+            Exception = e;
+            Status = WaitableStatus.Fail;
+
+            var failCallbacks = FailCallbacks;
+            Dispose();
+
+            foreach (var callback in failCallbacks)
+            {
+                callback(e);
             }
         }
 
@@ -135,15 +163,15 @@ namespace Coroutine
             }
             else
             {
-                coroutineManager.RaiseUnhandledException(this, e);
+                coroutineManager.OnUnhandledException?.Invoke(this, e);
             }
         }
 
-        public void OnFail(Action<Exception> callback)
+        public IWaitable OnFail(Action<Exception> callback)
         {
             if (callback == null)
             {
-                return;
+                return this;
             }
             switch (Status)
             {
@@ -154,6 +182,7 @@ namespace Coroutine
                     FailCallbacks.Add(callback);
                     break;
             }
+            return this;
         }
 
         public void Abort()

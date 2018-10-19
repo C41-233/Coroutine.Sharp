@@ -15,36 +15,25 @@ namespace Test
 
         static void Main(string[] args)
         {
-            var co = CoroutineManager.StartCoroutine(MyCoroutine());
-            int i = 0;
+            var co = CoroutineManager.StartCoroutine(Receive());
             while (true)
             {
                 TimerManager.Update(DateTime.Now.ToTimeStamp());
                 CoroutineManager.OneLoop();
                 Thread.Sleep(10);
-                i++;
-                if (i == 500)
-                {
-                    co.Abort();
-                }
             }
         }
 
-        private static IEnumerable<IWaitable> MyCoroutine()
-        {
-            {
-                Console.WriteLine($"haha : {DateTime.Now}");
-                yield return CoroutineManager.StartCoroutine(AnotherCoroutine());
-                Console.WriteLine("End");
-            }
-        }
-
-        private static IEnumerable<IWaitable> AnotherCoroutine()
+        private static IEnumerable<IWaitable> Receive()
         {
             while (true)
             {
-                Console.WriteLine("wait");
-                yield return WaitFor.Seconds(TimerManager, 1000);
+                Console.WriteLine("start");
+                yield return WaitFor.Any(
+                    WaitFor.Milliseconds(TimerManager, 2000),
+                    WaitFor.Milliseconds(TimerManager, 100)
+                );
+                Console.WriteLine("end");
             }
         }
 

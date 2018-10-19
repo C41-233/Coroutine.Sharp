@@ -45,8 +45,17 @@
     <Compile Include="Coroutine\Waitable.cs" />
     <Compile Include="Coroutine\WaitableAbortException.cs" />
     <Compile Include="Coroutine\WaitableStatus.cs" />
+    <Compile Include="Coroutine\Wait\IO\WaitForAccept.cs" />
+    <Compile Include="Coroutine\Wait\IO\WaitForReceive.cs" />
+    <Compile Include="Coroutine\Wait\IO\WaitForReceiveFrom.cs" />
+    <Compile Include="Coroutine\Wait\IO\WaitForSend.cs" />
+    <Compile Include="Coroutine\Wait\IO\WaitForSendTo.cs" />
+    <Compile Include="Coroutine\Wait\Logic\BreakOnFailWaitable.cs" />
+    <Compile Include="Coroutine\Wait\Logic\FilterWaitable.cs" />
+    <Compile Include="Coroutine\Wait\Logic\PreventAbortWaitable.cs" />
+    <Compile Include="Coroutine\Wait\Logic\WaitForAny.cs" />
     <Compile Include="Coroutine\Wait\WaitFor.cs" />
-    <Compile Include="Coroutine\Wait\IO\WaitForBeginConnect.cs" />
+    <Compile Include="Coroutine\Wait\IO\WaitForConnect.cs" />
     <Compile Include="Coroutine\Wait\Timer\WaitForMilliseconds.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

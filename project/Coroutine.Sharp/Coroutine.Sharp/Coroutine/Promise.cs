@@ -10,9 +10,5 @@ namespace Coroutine
             promise(Success, Fail);
         }
 
-        protected override void OnAbort()
-        {
-        }
-
     }
 }

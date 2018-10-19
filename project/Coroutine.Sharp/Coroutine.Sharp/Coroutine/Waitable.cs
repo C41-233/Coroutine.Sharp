@@ -17,11 +17,11 @@ namespace Coroutine
 
         private List<Action> successCallbacks = new List<Action>(1);
 
-        void IWaitable.OnSuccess(Action callback)
+        IWaitable IWaitable.OnSuccess(Action callback)
         {
             if (callback == null)
             {
-                return;
+                return this;
             }
             switch (status)
             {
@@ -32,6 +32,7 @@ namespace Coroutine
                     successCallbacks.Add(callback);
                     break;
             }
+            return this;
         }
 
         internal void DoSuccess()
@@ -69,11 +70,11 @@ namespace Coroutine
             Dispose();
         }
 
-        void IWaitable.OnFail(Action<Exception> callback)
+        IWaitable IWaitable.OnFail(Action<Exception> callback)
         {
             if (callback == null)
             {
-                return;
+                return this;
             }
             switch (status)
             {
@@ -84,6 +85,7 @@ namespace Coroutine
                     failCallbacks.Add(callback);
                     break;
             }
+            return this;
         }
 
         void IWaitable.Abort()
@@ -150,14 +152,62 @@ namespace Coroutine
             DoSuccess();
         }
 
-        void IWaitable<T>.OnSuccess(Action<T> callback)
+        IWaitable<T> IWaitable<T>.OnSuccess(Action<T> callback)
         {
             if (callback == null)
             {
-                return;
+                return this;
             }
             (this as IWaitable).OnSuccess(() => callback(result));
+            return this;
         }
     }
 
+    public abstract class WaitableTask<T1, T2> : Waitable, IWaitable<T1, T2>
+    {
+
+        public T1 Result1
+        {
+            get
+            {
+                if (Exception != null)
+                {
+                    throw Exception;
+                }
+                return result1;
+            }
+        }
+
+        public T2 Result2
+        {
+            get
+            {
+                if (Exception != null)
+                {
+                    throw Exception;
+                }
+                return result2;
+            }
+        }
+
+        private T1 result1;
+        private T2 result2;
+
+        protected void Success(T1 result1, T2 result2)
+        {
+            this.result1 = result1;
+            this.result2 = result2;
+            DoSuccess();
+        }
+
+        IWaitable<T1, T2> IWaitable<T1, T2>.OnSuccess(Action<T1, T2> callback)
+        {
+            if (callback == null)
+            {
+                return this;
+            }
+            (this as IWaitable).OnSuccess(() => callback(result1, result2));
+            return this;
+        }
+    }
 }
