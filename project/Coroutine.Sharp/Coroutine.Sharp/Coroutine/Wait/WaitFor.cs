@@ -11,13 +11,31 @@ namespace Coroutine.Wait
     {
 
         #region Logic
+
         /// <summary>
-        /// 同时等待多个Waitable，任意一个Waitable的状态变为Success时，当前Waitable就变为Success。
+        /// 同时等待多个过程，任意一个过程的成功时，当前过程就进入成功状态，并中断其他过程。
         /// </summary>
         /// <returns>第一个成功的Waitable</returns>
-        public static IWaitable<IWaitable> Any(params IWaitable[] waitables)
+        public static IWaitable<IWaitable> AnySuccess(params IWaitable[] waitables)
         {
-            return new WaitForAny(waitables);
+            return new WaitForAnySuccess(waitables);
+        }
+
+        /// <summary>
+        /// 等待多个过程，所有过程都成功时，当前过程进入成功状态。
+        /// 任意一个过程失败时，当前过程失败，并中断其他过程。
+        /// </summary>
+        public static IWaitable AllSuccess(params IWaitable[] waitables)
+        {
+            return new WaitForAllSuccess(waitables);
+        }
+
+        /// <summary>
+        /// 等待多个过程完成。当所有过程成功时，当前过程进入成功状态；否则进入失败状态。
+        /// </summary>
+        public static IWaitable All(params IWaitable[] waitables)
+        {
+            return new WaitForAll(waitables);
         }
         #endregion
 

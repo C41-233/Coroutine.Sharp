@@ -29,7 +29,7 @@ namespace Test
             while (true)
             {
                 Console.WriteLine("start");
-                yield return WaitFor.Any(
+                yield return WaitFor.AnySuccess(
                     WaitFor.Milliseconds(TimerManager, 2000),
                     WaitFor.Milliseconds(TimerManager, 100)
                 );

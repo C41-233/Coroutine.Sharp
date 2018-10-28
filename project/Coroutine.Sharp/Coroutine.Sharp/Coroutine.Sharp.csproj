@@ -53,7 +53,9 @@
     <Compile Include="Coroutine\Wait\Logic\BreakOnFailWaitable.cs" />
     <Compile Include="Coroutine\Wait\Logic\FilterWaitable.cs" />
     <Compile Include="Coroutine\Wait\Logic\PreventAbortWaitable.cs" />
-    <Compile Include="Coroutine\Wait\Logic\WaitForAny.cs" />
+    <Compile Include="Coroutine\Wait\Logic\WaitForAllSuccess.cs" />
+    <Compile Include="Coroutine\Wait\Logic\WaitForAll.cs" />
+    <Compile Include="Coroutine\Wait\Logic\WaitForAnySuccess.cs" />
     <Compile Include="Coroutine\Wait\WaitFor.cs" />
     <Compile Include="Coroutine\Wait\IO\WaitForConnect.cs" />
     <Compile Include="Coroutine\Wait\Timer\WaitForMilliseconds.cs" />

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Coroutine.Wait
 {
-    internal class WaitForAny : WaitableTask<IWaitable>
+    internal class WaitForAnySuccess : WaitableTask<IWaitable>
     {
 
         private readonly IWaitable[] waitables;
@@ -11,9 +11,7 @@ namespace Coroutine.Wait
         private bool isFinish;
         private int failCount;
 
-        private readonly object barrier = new object();
-
-        public WaitForAny(IWaitable[] waitables)
+        public WaitForAnySuccess(IWaitable[] waitables)
         {
             exceptions = new List<Exception>(waitables.Length);
 
@@ -28,7 +26,7 @@ namespace Coroutine.Wait
 
         private void OnSuccessCallback(IWaitable successWaitable)
         {
-            lock (barrier)
+            lock (waitables)
             {
                 if (isFinish)
                 {
@@ -50,7 +48,7 @@ namespace Coroutine.Wait
 
         private void OnFailCallback(Exception e)
         {
-            lock (barrier)
+            lock (waitables)
             {
                 if (isFinish)
                 {
