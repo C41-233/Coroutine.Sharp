@@ -42,37 +42,22 @@ namespace Coroutine.Wait
         #region Time
         public static IWaitable Milliseconds(TimerManager timerManager, long milliseconds)
         {
-            return new WaitForMilliseconds(timerManager, milliseconds);
-        }
-
-        public static IWaitable Seconds(TimerManager timerManager, long seconds)
-        {
-            return Milliseconds(timerManager, seconds * TimeUnit.Seconds);
+            return new WaitForTimeSpan(timerManager, TimeSpan.FromMilliseconds(milliseconds));
         }
 
         public static IWaitable Seconds(TimerManager timerManager, double seconds)
         {
-            return Milliseconds(timerManager, (long)(seconds * TimeUnit.Seconds));
-        }
-
-        public static IWaitable Minutes(TimerManager timerManager, long minutes)
-        {
-            return Milliseconds(timerManager, minutes * TimeUnit.Minutes);
+            return new WaitForTimeSpan(timerManager, TimeSpan.FromSeconds(seconds));
         }
 
         public static IWaitable Minutes(TimerManager timerManager, double minutes)
         {
-            return Milliseconds(timerManager, (long)(minutes * TimeUnit.Minutes));
-        }
-
-        public static IWaitable Hours(TimerManager timerManager, long hours)
-        {
-            return Milliseconds(timerManager, hours * TimeUnit.Hours);
+            return new WaitForTimeSpan(timerManager, TimeSpan.FromMinutes(minutes));
         }
 
         public static IWaitable Hours(TimerManager timerManager, double hours)
         {
-            return Milliseconds(timerManager, (long)(hours * TimeUnit.Hours));
+            return new WaitForTimeSpan(timerManager, TimeSpan.FromHours(hours));
         }
         #endregion
 

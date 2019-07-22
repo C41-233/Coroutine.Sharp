@@ -10,7 +10,7 @@ namespace Test
     class Program
     {
 
-        private static readonly TimerManager TimerManager = new TimerManager(DateTime.Now.ToTimeStamp());
+        private static readonly TimerManager TimerManager = new TimerManager(DateTime.Now);
         private static readonly CoroutineManager CoroutineManager = new CoroutineManager();
 
         static void Main(string[] args)
@@ -18,7 +18,7 @@ namespace Test
             var co = CoroutineManager.StartCoroutine(Receive());
             while (true)
             {
-                TimerManager.Update(DateTime.Now.ToTimeStamp());
+                TimerManager.Update(DateTime.Now);
                 CoroutineManager.OneLoop();
                 Thread.Sleep(10);
             }
@@ -28,12 +28,12 @@ namespace Test
         {
             while (true)
             {
-                Console.WriteLine($"start {TimerManager.Now.ToDateTime()}");
+                Console.WriteLine($"start {TimerManager.Now}");
                 yield return WaitFor.AnySuccess(
                     WaitFor.Milliseconds(TimerManager, 2000),
                     WaitFor.Milliseconds(TimerManager, 100)
                 );
-                Console.WriteLine($"end {TimerManager.Now.ToDateTime()}");
+                Console.WriteLine($"end {TimerManager.Now}");
             }
         }
 

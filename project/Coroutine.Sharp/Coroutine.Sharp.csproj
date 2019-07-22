@@ -38,8 +38,6 @@
     <Compile Include="Coroutine\Base\PriorityQueue.cs" />
     <Compile Include="Coroutine\IWaitable.cs" />
     <Compile Include="Coroutine\Promise.cs" />
-    <Compile Include="Coroutine\Base\TimeUnit.cs" />
-    <Compile Include="Coroutine\Timer\DateTimeExtension.cs" />
     <Compile Include="Coroutine\Timer\TimerHandle.cs" />
     <Compile Include="Coroutine\Timer\TimerManager.cs" />
     <Compile Include="Coroutine\Waitable.cs" />
@@ -58,7 +56,7 @@
     <Compile Include="Coroutine\Wait\Logic\WaitForAnySuccess.cs" />
     <Compile Include="Coroutine\Wait\WaitFor.cs" />
     <Compile Include="Coroutine\Wait\IO\WaitForConnect.cs" />
-    <Compile Include="Coroutine\Wait\Timer\WaitForMilliseconds.cs" />
+    <Compile Include="Coroutine\Wait\Timer\WaitForTimeSpan.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

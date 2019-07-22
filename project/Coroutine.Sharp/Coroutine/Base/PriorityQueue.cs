@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Coroutine.Base
 {
@@ -9,19 +8,15 @@ namespace Coroutine.Base
 
         private const int DefaultSize = 16;
 
-        private readonly Comparer<T> comparer;
+        private readonly Comparison<T> comparison;
 
         private T[] buffer;
 
         public int Count { get; private set; }
 
-        public PriorityQueue() : this(Comparer<T>.Default)
+        public PriorityQueue(Comparison<T> comparison)
         {
-        }
-
-        public PriorityQueue(Comparer<T> comparer)
-        {
-            this.comparer = comparer;
+            this.comparison = comparison;
             buffer = new T[DefaultSize];
         }
 
@@ -32,7 +27,7 @@ namespace Coroutine.Base
                 Array.Resize(ref buffer, buffer.Length * 2);
             }
             buffer[++Count] = value;
-            ShifUp(Count);
+            ShiftUp(Count);
         }
 
         public T Top => buffer[1];
@@ -45,7 +40,7 @@ namespace Coroutine.Base
             return first;
         }
 
-        private void ShifUp(int hole)
+        private void ShiftUp(int hole)
         {
             var value = buffer[hole];
             while (hole > 1 && Less(value, buffer[hole / 2]))
@@ -79,7 +74,7 @@ namespace Coroutine.Base
             buffer[hole] = tmp;
         }
 
-        private bool Less(T a, T b) => comparer.Compare(a, b) < 0;
+        private bool Less(T a, T b) => comparison(a, b) < 0;
 
     }
 

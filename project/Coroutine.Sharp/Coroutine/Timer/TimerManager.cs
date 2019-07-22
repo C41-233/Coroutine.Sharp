@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Coroutine.Base;
 
 namespace Coroutine.Timer
@@ -8,31 +9,35 @@ namespace Coroutine.Timer
 
         private readonly PriorityQueue<TimerHandle> queue;
 
-        public long Now { get; private set; }
+        public DateTime Now { get; private set; }
 
-        public TimerManager(long timestamp)
+        public Action<Exception> OnUnhandledException { internal get; set; } = DefaultUnhandledException;
+
+        public TimerManager(DateTime startTime)
         {
-            Now = timestamp;
-            queue = new PriorityQueue<TimerHandle>();
+            Now = startTime;
+            queue = new PriorityQueue<TimerHandle>((x, y) => Comparer<DateTime>.Default.Compare(x.At, y.At));
         }
 
-        public TimerHandle StartTimerAfter(long after, Action callback)
+        public TimerHandle StartTimerAfter(TimeSpan span, Action callback)
         {
-            var timer = new TimerHandle(Now + after, callback);
-            queue.Enqueue(timer);
-            return timer;
+            return StartTimerAt(Now + span, callback);
+        }
+        public TimerHandle StartTimerAfter(long milliseconds, Action callback)
+        {
+            return StartTimerAt(Now.AddMilliseconds(milliseconds), callback);
         }
 
-        public TimerHandle StartTimerAt(long at, Action callback)
+        public TimerHandle StartTimerAt(DateTime at, Action callback)
         {
             var timer = new TimerHandle(at, callback);
             queue.Enqueue(timer);
             return timer;
         }
 
-        public void Update(long timestamp)
+        public void Update(DateTime now)
         {
-            Now = timestamp;
+            Now = now;
             while (queue.Count > 0)
             {
                 var timer = queue.Top;
@@ -48,8 +53,20 @@ namespace Coroutine.Timer
                 timer.Stop();
                 queue.Dequeue();
 
-                timer.Callback();
+                try
+                {
+                    timer.Callback();
+                }
+                catch(Exception e)
+                {
+                    OnUnhandledException(e);
+                }
             }
+        }
+
+        private static void DefaultUnhandledException(Exception e)
+        {
+            Console.Error.WriteLine(e);
         }
 
     }
