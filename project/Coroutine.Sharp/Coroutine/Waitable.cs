@@ -158,7 +158,7 @@ namespace Coroutine
             {
                 return this;
             }
-            (this as IWaitable).OnSuccess(() => callback(result));
+            ((IWaitable) this).OnSuccess(() => callback(result));
             return this;
         }
     }

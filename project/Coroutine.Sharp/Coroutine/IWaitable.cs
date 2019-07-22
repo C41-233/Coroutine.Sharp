@@ -12,7 +12,6 @@ namespace Coroutine
 
         IWaitable OnSuccess(Action callback);
 
-
         IWaitable OnFail(Action<Exception> callback);
 
         void Abort();
