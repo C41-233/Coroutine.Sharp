@@ -47,26 +47,33 @@ namespace Coroutine
         {
             this.waitable = waitable;
 
-            //等待的事件成功，继续下一步
-            waitable.OnSuccess(() =>
+            if (waitable != null)
+            {
+                //等待的事件成功，继续下一步
+                waitable.OnSuccess(() =>
+                {
+                    coroutineManager.Enqueue(NextStep);
+                    this.waitable = null;
+                });
+
+                waitable.OnFail(e =>
+                {
+                    if (this.waitable is BreakOnFailWaitable)
+                    {
+                        coroutineManager.Enqueue(() => AbortFail(e));
+                    }
+                    else
+                    {
+                        //等待的事件失败，继续下一步，由调用者处理异常，coroutine本身未失败
+                        coroutineManager.Enqueue(NextStep);
+                    }
+                    this.waitable = null;
+                });
+            }
+            else
             {
                 coroutineManager.Enqueue(NextStep);
-                this.waitable = null;
-            });
-
-            waitable.OnFail(e =>
-            {
-                if (this.waitable is BreakOnFailWaitable)
-                {
-                    coroutineManager.Enqueue(() => AbortFail(e));
-                }
-                else
-                {
-                    //等待的事件失败，继续下一步，由调用者处理异常，coroutine本身未失败
-                    coroutineManager.Enqueue(NextStep);
-                }
-                this.waitable = null;
-            });
+            }
         }
 
         private void Dispose()
@@ -163,7 +170,7 @@ namespace Coroutine
             }
             else
             {
-                coroutineManager.OnUnhandledException?.Invoke(this, e);
+                coroutineManager.OnUnhandledException?.Invoke(e);
             }
         }
 

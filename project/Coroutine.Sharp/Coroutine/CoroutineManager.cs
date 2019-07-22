@@ -28,9 +28,9 @@ namespace Coroutine
             actions.Enqueue(callback);
         }
 
-        public Action<Coroutine, Exception> OnUnhandledException { internal get; set; } = DefaultUnhandledException;
+        public Action<Exception> OnUnhandledException { internal get; set; } = DefaultUnhandledException;
 
-        private static void DefaultUnhandledException(Coroutine c, Exception e)
+        private static void DefaultUnhandledException(Exception e)
         {
             Console.Error.WriteLine(e);
         }
