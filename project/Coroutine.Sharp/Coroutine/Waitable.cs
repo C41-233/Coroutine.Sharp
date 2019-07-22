@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Coroutine
 {
+
     public abstract class Waitable : IWaitable
     {
 
