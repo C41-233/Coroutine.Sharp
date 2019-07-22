@@ -9,11 +9,15 @@ namespace Coroutine
 
         private readonly CoroutineManager coroutineManager;
         private IEnumerator<IWaitable> enumerator;
+        private readonly BubbleException bubbleException;
+
         private IWaitable waitable;
 
-        internal Coroutine(CoroutineManager coroutineManager, IEnumerator<IWaitable> co)
+        internal Coroutine(CoroutineManager coroutineManager, IEnumerator<IWaitable> co, BubbleException bubbleException)
         {
             this.coroutineManager = coroutineManager;
+            this.bubbleException = bubbleException;
+
             enumerator = co;
 
             NextStep();
@@ -58,15 +62,20 @@ namespace Coroutine
 
                 waitable.OnFail(e =>
                 {
-                    if (this.waitable is BreakOnFailWaitable)
+                    switch (bubbleException)
                     {
-                        coroutineManager.Enqueue(() => AbortFail(e));
+                        case BubbleException.Abort:
+                            coroutineManager.Enqueue(() => AbortFail(e));
+                            break;
+                        case BubbleException.Throw:
+                            coroutineManager.Enqueue(() => Fail(e));
+                            break;
+                        default:
+                            //等待的事件失败，继续下一步，由调用者处理异常，coroutine本身未失败
+                            coroutineManager.Enqueue(NextStep);
+                            break;
                     }
-                    else
-                    {
-                        //等待的事件失败，继续下一步，由调用者处理异常，coroutine本身未失败
-                        coroutineManager.Enqueue(NextStep);
-                    }
+
                     this.waitable = null;
                 });
             }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Coroutine;
-using Coroutine.Timer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTest
@@ -64,6 +63,36 @@ namespace UnitTest
                 Assert.AreEqual(0, i);
                 Assert.AreEqual(1, Frame);
                 i++;
+            }
+        }
+
+        [TestMethod]
+        public void TestCascade()
+        {
+            var i = 0;
+            CoroutineManager.StartCoroutine(RunFather(), BubbleException.Throw);
+            Tick();
+
+            IEnumerable<IWaitable> RunFather()
+            {
+                Assert.AreEqual(0, i);
+                Assert.AreEqual(0, Frame);
+                i++;
+
+                yield return CoroutineManager.StartCoroutine(RunChild());
+
+                Assert.AreEqual(2, i);
+                Assert.AreEqual(2, Frame);
+            }
+
+            IEnumerable<IWaitable> RunChild()
+            {
+                Assert.AreEqual(1, i);
+                Assert.AreEqual(0, Frame);
+                yield return null;
+                i++;
+                Assert.AreEqual(2, i);
+                Assert.AreEqual(1, Frame);
             }
         }
 

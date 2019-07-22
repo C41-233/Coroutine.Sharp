@@ -7,9 +7,9 @@ namespace Coroutine
     public class CoroutineManager
     {
 
-        public Coroutine StartCoroutine(IEnumerable<IWaitable> co)
+        public Coroutine StartCoroutine(IEnumerable<IWaitable> co, BubbleException bubbleException = BubbleException.Ignore)
         {
-            var coroutine = new Coroutine(this, co.GetEnumerator());
+            var coroutine = new Coroutine(this, co.GetEnumerator(), bubbleException);
             return coroutine;
         }
 
@@ -35,6 +35,27 @@ namespace Coroutine
             Console.Error.WriteLine(e);
         }
 
+    }
+
+    /// <summary>
+    /// 当前Coroutine正在等待的IWaitable失败时的处理方法
+    /// </summary>
+    public enum BubbleException
+    {
+        /// <summary>
+        /// 不处理，由调用者主动处理
+        /// </summary>
+        Ignore,
+
+        /// <summary>
+        /// 中断当前的Coroutine
+        /// </summary>
+        Abort,
+
+        /// <summary>
+        /// 级联抛出异常交由异常处理
+        /// </summary>
+        Throw,
     }
 
 }

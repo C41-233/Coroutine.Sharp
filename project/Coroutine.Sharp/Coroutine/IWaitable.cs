@@ -38,6 +38,21 @@ namespace Coroutine
     public static class WaitableExtends
     {
 
+        public static IWaitable Co(this IWaitable self, out IWaitable waitable)
+        {
+            waitable = self;
+            return self;
+        }
+
+        public static IWaitable EnsureSuccess(this IWaitable self)
+        {
+            if (self.Exception == null)
+            {
+                return self;
+            }
+            throw new Exception(null, self.Exception);
+        }
+
         public static IWaitable OnFail(this IWaitable self, Action callback)
         {
             if (callback == null)
@@ -50,21 +65,6 @@ namespace Coroutine
         public static IWaitable PreventCaptureAbort(this IWaitable self)
         {
             return new PreventAbortWaitable(self);
-        }
-
-        public static IWaitable BreakOnFail(this IWaitable self)
-        {
-            return new BreakOnFailWaitable(self);
-        }
-
-        public static IWaitable BreakOnFail(this IWaitable self, Action callback)
-        {
-            return new BreakOnFailWaitable(self).OnFail(callback);
-        }
-
-        public static IWaitable BreakOnFail(this IWaitable self, Action<Exception> callback)
-        {
-            return new BreakOnFailWaitable(self).OnFail(callback);
         }
 
     }

@@ -49,7 +49,6 @@
     <Compile Include="Coroutine\Wait\IO\WaitForReceiveFrom.cs" />
     <Compile Include="Coroutine\Wait\IO\WaitForSend.cs" />
     <Compile Include="Coroutine\Wait\IO\WaitForSendTo.cs" />
-    <Compile Include="Coroutine\Wait\Logic\BreakOnFailWaitable.cs" />
     <Compile Include="Coroutine\Wait\Logic\FilterWaitable.cs" />
     <Compile Include="Coroutine\Wait\Logic\PreventAbortWaitable.cs" />
     <Compile Include="Coroutine\Wait\Logic\WaitForAllSuccess.cs" />
