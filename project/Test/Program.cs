@@ -28,12 +28,12 @@ namespace Test
         {
             while (true)
             {
-                Console.WriteLine("start");
+                Console.WriteLine($"start {TimerManager.Now.ToDateTime()}");
                 yield return WaitFor.AnySuccess(
                     WaitFor.Milliseconds(TimerManager, 2000),
                     WaitFor.Milliseconds(TimerManager, 100)
                 );
-                Console.WriteLine("end");
+                Console.WriteLine($"end {TimerManager.Now.ToDateTime()}");
             }
         }
 

@@ -7,17 +7,18 @@ namespace Coroutine.Timer
     {
 
         private readonly PriorityQueue<TimerHandle> queue;
-        private long now;
+
+        public long Now { get; private set; }
 
         public TimerManager(long timestamp)
         {
-            now = timestamp;
+            Now = timestamp;
             queue = new PriorityQueue<TimerHandle>();
         }
 
         public TimerHandle StartTimerAfter(long after, Action callback)
         {
-            var timer = new TimerHandle(now + after, callback);
+            var timer = new TimerHandle(Now + after, callback);
             queue.Enqueue(timer);
             return timer;
         }
@@ -31,7 +32,7 @@ namespace Coroutine.Timer
 
         public void Update(long timestamp)
         {
-            now = timestamp;
+            Now = timestamp;
             while (queue.Count > 0)
             {
                 var timer = queue.Top;
@@ -40,7 +41,7 @@ namespace Coroutine.Timer
                     queue.Dequeue();
                     continue;
                 }
-                if (timer.At > now)
+                if (timer.At > Now)
                 {
                     break;
                 }

@@ -12,5 +12,11 @@ namespace Coroutine.Timer
             var span = self.Subtract(UtcStart);
             return (long)span.TotalMilliseconds;
         }
+
+        public static DateTime ToDateTime(this long self)
+        {
+            return UtcStart + TimeSpan.FromMilliseconds(self);
+        }
+
     }
 }
