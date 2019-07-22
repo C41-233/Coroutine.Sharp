@@ -4,7 +4,7 @@ using Coroutine.Wait;
 
 namespace Coroutine
 {
-    public class Coroutine : IWaitable
+    public sealed class Coroutine : IWaitable
     {
 
         private readonly CoroutineManager coroutineManager;
@@ -76,15 +76,15 @@ namespace Coroutine
             enumerator.Dispose();
             enumerator = null;
 
-            SuccessCallbacks = null;
-            FailCallbacks = null;
+            successCallbacks = null;
+            failCallbacks = null;
         }
 
         public WaitableStatus Status { get; private set; }
         public Exception Exception { get; private set; }
 
-        private List<Action> SuccessCallbacks = new List<Action>(1);
-        private List<Action<Exception>> FailCallbacks = new List<Action<Exception>>(1);
+        private List<Action> successCallbacks = new List<Action>(1);
+        private List<Action<Exception>> failCallbacks = new List<Action<Exception>>(1);
 
         private void Success()
         {
@@ -94,10 +94,10 @@ namespace Coroutine
             }
 
             Status = WaitableStatus.Success;
-            var successCallbacks = SuccessCallbacks;
+            var localSuccessCallbacks = successCallbacks;
             Dispose();
 
-            foreach (var callback in successCallbacks)
+            foreach (var callback in localSuccessCallbacks)
             {
                 callback();
             }
@@ -116,7 +116,7 @@ namespace Coroutine
                     callback();
                     break;
                 case WaitableStatus.Running:
-                    SuccessCallbacks.Add(callback);
+                    successCallbacks.Add(callback);
                     break;
             }
             return this;
@@ -132,10 +132,10 @@ namespace Coroutine
             Exception = e;
             Status = WaitableStatus.Fail;
 
-            var failCallbacks = FailCallbacks;
+            var localFailCallbacks = failCallbacks;
             Dispose();
 
-            foreach (var callback in failCallbacks)
+            foreach (var callback in localFailCallbacks)
             {
                 callback(e);
             }
@@ -151,12 +151,12 @@ namespace Coroutine
             Exception = e;
             Status = WaitableStatus.Fail;
 
-            var failCallbacks = FailCallbacks;
+            var localFailCallbacks = failCallbacks;
             Dispose();
 
-            if (failCallbacks.Count > 0)
+            if (localFailCallbacks.Count > 0)
             {
-                foreach (var callback in failCallbacks)
+                foreach (var callback in localFailCallbacks)
                 {
                     callback(e);
                 }
@@ -179,7 +179,7 @@ namespace Coroutine
                     callback(Exception);
                     break;
                 case WaitableStatus.Running:
-                    FailCallbacks.Add(callback);
+                    failCallbacks.Add(callback);
                     break;
             }
             return this;
@@ -192,10 +192,10 @@ namespace Coroutine
 
             waitable?.Abort();
 
-            var failCallbacks = FailCallbacks;
+            var localFailCallbacks = failCallbacks;
             Dispose();
 
-            foreach (var callback in failCallbacks)
+            foreach (var callback in localFailCallbacks)
             {
                 callback(Exception);
             }

@@ -2,7 +2,7 @@
 
 namespace Coroutine.Timer
 {
-    public class TimerHandle
+    public sealed class TimerHandle
     {
 
         public DateTime At { get; }
