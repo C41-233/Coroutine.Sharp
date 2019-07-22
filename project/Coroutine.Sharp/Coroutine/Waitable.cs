@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Coroutine.Base;
 
 namespace Coroutine
 {
@@ -7,7 +8,9 @@ namespace Coroutine
     public abstract class Waitable : IWaitable
     {
 
-        WaitableStatus IWaitable.Status => status;
+        private readonly SpinLock spinLock = new SpinLock();
+
+        public WaitableStatus Status => status;
 
         private volatile WaitableStatus status;
 
@@ -18,32 +21,47 @@ namespace Coroutine
 
         private List<Action> successCallbacks = new List<Action>(1);
 
-        IWaitable IWaitable.OnSuccess(Action callback)
+        public IWaitable OnSuccess(Action callback)
         {
             if (callback == null)
             {
                 return this;
             }
-            switch (status)
+
+            var call = false;
+            using (spinLock.Hold())
             {
-                case WaitableStatus.Success:
-                    callback();
-                    break;
-                case WaitableStatus.Running:
-                    successCallbacks.Add(callback);
-                    break;
+                switch (status)
+                {
+                    case WaitableStatus.Success:
+                        call = true;
+                        break;
+                    case WaitableStatus.Running:
+                        successCallbacks.Add(callback);
+                        break;
+                }
             }
+
+            if (call)
+            {
+                callback();
+            }
+
             return this;
         }
 
         internal void DoSuccess()
         {
-            if (status != WaitableStatus.Running)
+            using (spinLock.Hold())
             {
-                return;
+                if (status != WaitableStatus.Running)
+                {
+                    return;
+                }
+
+                status = WaitableStatus.Success;
             }
-            
-            status = WaitableStatus.Success;
+
             foreach (var callback in successCallbacks)
             {
                 callback();
@@ -57,13 +75,17 @@ namespace Coroutine
 
         protected void Fail(Exception e)
         {
-            if (status != WaitableStatus.Running)
+            using (spinLock.Hold())
             {
-                return;
+                if (status != WaitableStatus.Running)
+                {
+                    return;
+                }
+
+                Exception = e;
+                status = WaitableStatus.Fail;
             }
 
-            Exception = e;
-            status = WaitableStatus.Fail;
             foreach (var callback in failCallbacks)
             {
                 callback(e);
@@ -71,33 +93,47 @@ namespace Coroutine
             Dispose();
         }
 
-        IWaitable IWaitable.OnFail(Action<Exception> callback)
+        public IWaitable OnFail(Action<Exception> callback)
         {
             if (callback == null)
             {
                 return this;
             }
-            switch (status)
+
+            var call = false;
+            using (spinLock.Hold())
             {
-                case WaitableStatus.Fail:
-                    callback(Exception);
-                    break;
-                case WaitableStatus.Running:
-                    failCallbacks.Add(callback);
-                    break;
+                switch (status)
+                {
+                    case WaitableStatus.Fail:
+                        call = true;
+                        break;
+                    case WaitableStatus.Running:
+                        failCallbacks.Add(callback);
+                        break;
+                }
             }
+
+            if (call)
+            {
+                callback(Exception);
+            }
+
             return this;
         }
 
-        void IWaitable.Abort()
+        public void Abort()
         {
-            if (status != WaitableStatus.Running)
+            using (spinLock.Hold())
             {
-                return;
-            }
+                if (status != WaitableStatus.Running)
+                {
+                    return;
+                }
 
-            Exception = new WaitableAbortException();
-            status = WaitableStatus.Fail;
+                Exception = new WaitableAbortException();
+                status = WaitableStatus.Fail;
+            }
 
             OnAbort();
 
@@ -153,13 +189,13 @@ namespace Coroutine
             DoSuccess();
         }
 
-        IWaitable<T> IWaitable<T>.OnSuccess(Action<T> callback)
+        public IWaitable<T> OnSuccess(Action<T> callback)
         {
             if (callback == null)
             {
                 return this;
             }
-            ((IWaitable) this).OnSuccess(() => callback(result));
+            OnSuccess(() => callback(result));
             return this;
         }
     }
@@ -201,13 +237,13 @@ namespace Coroutine
             DoSuccess();
         }
 
-        IWaitable<T1, T2> IWaitable<T1, T2>.OnSuccess(Action<T1, T2> callback)
+        public IWaitable<T1, T2> OnSuccess(Action<T1, T2> callback)
         {
             if (callback == null)
             {
                 return this;
             }
-            (this as IWaitable).OnSuccess(() => callback(result1, result2));
+            OnSuccess(() => callback(result1, result2));
             return this;
         }
     }
