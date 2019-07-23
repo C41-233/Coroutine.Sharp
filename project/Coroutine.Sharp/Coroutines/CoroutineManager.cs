@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Coroutines.Base;
 
@@ -9,24 +10,24 @@ namespace Coroutines
 
         public BubbleExceptionApproach DefaultBubbleExceptionApproach { get; set; } = BubbleExceptionApproach.Ignore;
 
-        public Coroutine<T> StartCoroutine<T>(IEnumerable<IWaitable> co, BubbleExceptionApproach bubbleExceptionApproach)
+        public Coroutine<T> StartCoroutine<T>(IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach)
         {
             var coroutine = new Coroutine<T>(this, co, bubbleExceptionApproach);
             return coroutine;
         }
 
-        public Coroutine<T> StartCoroutine<T>(IEnumerable<IWaitable> co)
+        public Coroutine<T> StartCoroutine<T>(IEnumerable co)
         {
             return StartCoroutine<T>(co, DefaultBubbleExceptionApproach);
         }
 
-        public Coroutine StartCoroutine(IEnumerable<IWaitable> co, BubbleExceptionApproach bubbleExceptionApproach)
+        public Coroutine StartCoroutine(IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach)
         {
             var coroutine = new Coroutine(this, co.GetEnumerator(), bubbleExceptionApproach);
             return coroutine;
         }
 
-        public Coroutine StartCoroutine(IEnumerable<IWaitable> co)
+        public Coroutine StartCoroutine(IEnumerable co)
         {
             return StartCoroutine(co, DefaultBubbleExceptionApproach);
         }
@@ -51,11 +52,6 @@ namespace Coroutines
         internal void Enqueue(Action callback)
         {
             actions.Enqueue(callback);
-        }
-
-        private static void DefaultUnhandledException(Exception e)
-        {
-            Console.Error.WriteLine(e);
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Coroutines
@@ -8,7 +9,7 @@ namespace Coroutines
     {
 
         private readonly CoroutineManager coroutineManager;
-        private IEnumerator<IWaitable> enumerator;
+        private IEnumerator enumerator;
         private readonly BubbleExceptionApproach approach;
 
         private IWaitable waitable;
@@ -28,7 +29,7 @@ namespace Coroutines
 
         private T r;
 
-        internal Coroutine(CoroutineManager coroutineManager, IEnumerable<IWaitable> co, BubbleExceptionApproach approach)
+        internal Coroutine(CoroutineManager coroutineManager, IEnumerable co, BubbleExceptionApproach approach)
         {
             this.coroutineManager = coroutineManager;
             this.approach = approach;
@@ -58,59 +59,59 @@ namespace Coroutines
             }
 
             var current = enumerator.Current;
-
-            if (current is CompleteWaitable<T> result)
+            switch (current)
             {
-                Success(result.R);
-                return;
+                case null:
+                    coroutineManager.Enqueue(NextStep);
+                    break;
+                case CompleteWaitable<T> result:
+                    Success(result.R);
+                    break;
+                default:
+                    Dispatch((IWaitable) current);
+                    break;
             }
-
-            Dispatch(current);
         }
 
         private void Dispatch(IWaitable waitable)
         {
             this.waitable = waitable;
 
-            if (waitable != null)
-            {
-                //等待的事件成功，继续下一步
-                waitable.OnSuccess(() =>
-                {
-                    coroutineManager.Enqueue(NextStep);
-                    this.waitable = null;
-                });
-
-                waitable.OnFail(e =>
-                {
-                    switch (approach)
-                    {
-                        case BubbleExceptionApproach.Abort:
-                            coroutineManager.Enqueue(() => Abort(false));
-                            break;
-                        case BubbleExceptionApproach.Throw:
-                            coroutineManager.Enqueue(() => Fail(e));
-                            break;
-                        default:
-                            //等待的事件失败，继续下一步，由调用者处理异常，coroutine本身未失败
-                            coroutineManager.Enqueue(NextStep);
-                            break;
-                    }
-
-                    this.waitable = null;
-                });
-            }
-            else
+            //等待的事件成功，继续下一步
+            waitable.OnSuccess(() =>
             {
                 coroutineManager.Enqueue(NextStep);
-            }
+                this.waitable = null;
+            });
+
+            waitable.OnFail(e =>
+            {
+                switch (approach)
+                {
+                    case BubbleExceptionApproach.Abort:
+                        coroutineManager.Enqueue(() => Abort(false));
+                        break;
+                    case BubbleExceptionApproach.Throw:
+                        coroutineManager.Enqueue(() => Fail(e));
+                        break;
+                    default:
+                        //等待的事件失败，继续下一步，由调用者处理异常，coroutine本身未失败
+                        coroutineManager.Enqueue(NextStep);
+                        break;
+                }
+
+                this.waitable = null;
+            });
         }
 
         private void Dispose()
         {
             waitable = null;
 
-            enumerator.Dispose();
+            if (enumerator is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
             enumerator = null;
 
             successCallbacks = null;
