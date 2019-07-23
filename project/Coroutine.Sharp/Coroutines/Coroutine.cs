@@ -53,6 +53,16 @@ namespace Coroutines
                 case null:
                     coroutineManager.Enqueue(NextStep);
                     break;
+                case ICompleteWaitable _:
+                    Success();
+                    break;
+                case IWaitableEnumerable waitableEnumerable:
+                    waitableEnumerable.Bind(coroutineManager);
+                    Dispatch(waitableEnumerable);
+                    break;
+                case IEnumerable enumerable:
+                    Dispatch(coroutineManager.StartCoroutine(enumerable));
+                    break;
                 default:
                     Dispatch((IWaitable)current);
                     break;

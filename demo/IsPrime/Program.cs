@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Coroutines;
 
@@ -13,15 +14,15 @@ namespace IsPrime
             var coroutineManager = new CoroutineManager();
             coroutineManager.StartCoroutine(MainLoop());
 
-            IEnumerable<IWaitable> MainLoop()
+            IEnumerable MainLoop()
             {
-                yield return coroutineManager.StartCoroutine<bool>(IsPrimeAsync(1)).With(out var a);
+                yield return IsPrimeAsync(1).With<bool>(out var a);
                 Console.WriteLine(a); // true
 
-                yield return coroutineManager.StartCoroutine<bool>(IsPrimeAsync(2)).With(out var b);
+                yield return IsPrimeAsync(2).With<bool>(out var b);
                 Console.WriteLine(b); // true
 
-                yield return coroutineManager.StartCoroutine<bool>(IsPrimeAsync(100)).With(out var c);
+                yield return IsPrimeAsync(100).With<bool>(out var c);
                 Console.WriteLine(c); // false
 
                 run = false;
@@ -34,7 +35,7 @@ namespace IsPrime
 
         }
 
-        private static IEnumerable<IWaitable> IsPrimeAsync(int n)
+        private static IEnumerable IsPrimeAsync(int n)
         {
             if(n < 0)
             {

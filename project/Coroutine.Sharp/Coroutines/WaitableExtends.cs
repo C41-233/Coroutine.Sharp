@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 
 namespace Coroutines
 {
@@ -15,6 +16,13 @@ namespace Coroutines
         {
             value = new WaitableValue<T>(self);
             return self;
+        }
+
+        public static IWaitable<T> With<T>(this IEnumerable self, out WaitableValue<T> value)
+        {
+            var waitable = new WaitableEnumerable<T>(self);
+            value = new WaitableValue<T>(waitable);
+            return waitable;
         }
 
         public static bool IsRunning(this IWaitable self)
@@ -105,6 +113,31 @@ namespace Coroutines
             }
 
             return "";
+        }
+    }
+
+    internal interface IWaitableEnumerable : IWaitable
+    {
+
+        void Bind(CoroutineManager coroutineManager);
+
+    }
+
+    internal class WaitableEnumerable<T> : WaitableTask<T>, IWaitableEnumerable
+    {
+
+        private readonly IEnumerable enumerable;
+
+        public WaitableEnumerable(IEnumerable enumerable)
+        {
+            this.enumerable = enumerable;
+        }
+
+        public void Bind(CoroutineManager coroutineManager)
+        {
+            var coroutine = coroutineManager.StartCoroutine<T>(enumerable);
+            coroutine.OnSuccess(Success);
+            coroutine.OnFail(Fail);
         }
     }
 

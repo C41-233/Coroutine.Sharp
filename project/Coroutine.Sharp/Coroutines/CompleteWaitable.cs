@@ -2,11 +2,16 @@
 
 namespace Coroutines
 {
+
+    internal interface ICompleteWaitable
+    {
+    }
+
     /// <summary>
     /// 固定成功值的Waitable
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    internal sealed class CompleteWaitable<T> : IWaitable<T>
+    internal sealed class CompleteWaitable<T> : IWaitable<T>, ICompleteWaitable
     {
 
         public T R { get; }

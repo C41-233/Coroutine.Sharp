@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using Coroutines;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -40,7 +40,7 @@ namespace UnitTest
             Tick();
             Assert.AreEqual(1, i);
 
-            IEnumerable<IWaitable> Run()
+            IEnumerable Run()
             {
                 i++;
                 Assert.AreEqual(0, Frame);
@@ -57,7 +57,7 @@ namespace UnitTest
             Tick();
             Assert.AreEqual(1, i);
 
-            IEnumerable<IWaitable> Run()
+            IEnumerable Run()
             {
                 Assert.AreEqual(0, i);
                 Assert.AreEqual(0, Frame);
@@ -75,7 +75,7 @@ namespace UnitTest
             CoroutineManager.StartCoroutine(RunFather());
             Tick();
 
-            IEnumerable<IWaitable> RunFather()
+            IEnumerable RunFather()
             {
                 Assert.AreEqual(0, i);
                 Assert.AreEqual(0, Frame);
@@ -87,7 +87,7 @@ namespace UnitTest
                 Assert.AreEqual(2, Frame);
             }
 
-            IEnumerable<IWaitable> RunChild()
+            IEnumerable RunChild()
             {
                 Assert.AreEqual(1, i);
                 Assert.AreEqual(0, Frame);
@@ -109,7 +109,7 @@ namespace UnitTest
             Assert.AreEqual(0, i);
             Assert.IsTrue(co.IsError());
 
-            IEnumerable<IWaitable> Run(bool t)
+            IEnumerable Run(bool t)
             {
                 if (t)
                 {
@@ -132,7 +132,7 @@ namespace UnitTest
             Assert.AreEqual(1, i);
             Assert.IsTrue(co.IsFail());
 
-            IEnumerable<IWaitable> RunFather()
+            IEnumerable RunFather()
             {
                 Assert.AreEqual(0, i);
                 Assert.AreEqual(0, Frame);
@@ -143,7 +143,7 @@ namespace UnitTest
                 Assert.Fail();
             }
 
-            IEnumerable<IWaitable> RunChild()
+            IEnumerable RunChild()
             {
                 throw new ArgumentException();
             }
@@ -161,7 +161,7 @@ namespace UnitTest
             //handle
             Assert.AreEqual(3, i);
 
-            IEnumerable<IWaitable> RunFather()
+            IEnumerable RunFather()
             {
                 Assert.AreEqual(0, i);
                 Assert.AreEqual(0, Frame);
@@ -172,7 +172,7 @@ namespace UnitTest
                 Assert.Fail();
             }
 
-            IEnumerable<IWaitable> RunChild()
+            IEnumerable RunChild()
             {
                 i++;
                 yield return null;
@@ -193,7 +193,7 @@ namespace UnitTest
             //handle
             Assert.AreEqual(-10, i);
 
-            IEnumerable<IWaitable> RunFather()
+            IEnumerable RunFather()
             {
                 Assert.AreEqual(0, i);
                 Assert.AreEqual(0, Frame);
@@ -207,7 +207,7 @@ namespace UnitTest
                 Assert.Fail();
             }
 
-            IEnumerable<IWaitable> RunChild()
+            IEnumerable RunChild()
             {
                 i++;
                 yield return null;
@@ -234,7 +234,7 @@ namespace UnitTest
             }
             Assert.AreEqual(10, i);
 
-            IEnumerable<IWaitable> RunFather()
+            IEnumerable RunFather()
             {
                 while (true)
                 {
@@ -269,7 +269,7 @@ namespace UnitTest
             Assert.IsTrue(co1.IsAbort());
             Assert.IsTrue(co2.IsAbort());
 
-            IEnumerable<IWaitable> RunFather()
+            IEnumerable RunFather()
             {
                 i++;
                 co2 = CoroutineManager.StartCoroutine(RunChild());
@@ -277,7 +277,7 @@ namespace UnitTest
                 i++;
             }
 
-            IEnumerable<IWaitable> RunChild()
+            IEnumerable RunChild()
             {
                 while (true)
                 {
@@ -319,14 +319,14 @@ namespace UnitTest
             Assert.AreEqual(WaitableStatus.Fail, co2.Status);
             Assert.AreEqual(WaitableStatus.Success, co1.Status);
 
-            IEnumerable<IWaitable> RunFather()
+            IEnumerable RunFather()
             {
                 i++;
                 yield return co2.OnFail(e => j++);
                 i++;
             }
 
-            IEnumerable<IWaitable> RunChild()
+            IEnumerable RunChild()
             {
                 while (true)
                 {
@@ -362,14 +362,14 @@ namespace UnitTest
             CoroutineManager.OneLoop();
             Assert.AreEqual(6, i);
 
-            IEnumerable<IWaitable> RunFather()
+            IEnumerable RunFather()
             {
                 i++;
                 yield return co2;
                 i++;
             }
 
-            IEnumerable<IWaitable> RunChild()
+            IEnumerable RunChild()
             {
                 while (true)
                 {
