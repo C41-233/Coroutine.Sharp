@@ -203,6 +203,46 @@ namespace UnitTest
             }
         }
 
+        [TestMethod]
+        public void TestCascadeThrow3()
+        {
+            var i = 0;
+
+            CoroutineManager.OnUnhandledException = e =>
+            {
+                Assert.Fail();
+            };
+            CoroutineManager.StartCoroutine(RunFather(), BubbleExceptionApproach.Abort);
+
+            Assert.AreEqual(2, i);
+            Tick();
+
+            //handle
+            Assert.AreEqual(-10, i);
+
+            IEnumerable<IWaitable> RunFather()
+            {
+                Assert.AreEqual(0, i);
+                Assert.AreEqual(0, Frame);
+                i++;
+
+                yield return CoroutineManager.StartCoroutine(RunChild()).OnFail(e =>
+                {
+                    i = -10;
+                });
+
+                Assert.Fail();
+            }
+
+            IEnumerable<IWaitable> RunChild()
+            {
+                i++;
+                yield return null;
+                i++;
+                throw new ArgumentException();
+            }
+        }
+
         private void Tick()
         {
             for (var i=0; i<1000; i++)
