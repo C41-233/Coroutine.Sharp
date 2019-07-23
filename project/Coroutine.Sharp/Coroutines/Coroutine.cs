@@ -6,6 +6,11 @@ namespace Coroutines
     public sealed class Coroutine : IWaitable
     {
 
+        public static IWaitable<T> Complete<T>(T value)
+        {
+            return new CoroutineResult<T>(value);
+        }
+
         private CoroutineManager coroutineManager;
         private IEnumerator<IWaitable> enumerator;
         private BubbleExceptionApproach approach;
@@ -38,6 +43,7 @@ namespace Coroutines
                 return;
             }
 
+            waitable = null;
             if (moveNext)
             {
                 Dispatch(enumerator.Current);

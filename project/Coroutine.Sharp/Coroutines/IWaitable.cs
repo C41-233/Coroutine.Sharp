@@ -25,13 +25,4 @@ namespace Coroutines
 
     }
 
-    public interface IWaitable<out T1, out T2> : IWaitable
-    {
-        T1 R1 { get; }
-
-        T2 R2 { get; }
-
-        IWaitable<T1, T2> OnSuccess(Action<T1, T2> callback);
-    }
-
 }

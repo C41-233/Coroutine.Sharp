@@ -7,11 +7,6 @@ namespace Coroutines
     public sealed class Coroutine<T> : IWaitable<T>
     {
 
-        public static IWaitable<T> Complete(T value)
-        {
-            return new CoroutineResult<T>(value);
-        }
-
         private CoroutineManager coroutineManager;
         private IEnumerator<IWaitable> enumerator;
         private BubbleExceptionApproach approach;
@@ -59,6 +54,7 @@ namespace Coroutines
                 return;
             }
 
+            waitable = null;
             if (!moveNext)
             {
                 Success(default);
@@ -231,7 +227,7 @@ namespace Coroutines
             }
 
             Status = WaitableStatus.Fail;
-            Exception = new WaitableAbortException();
+            Exception = null;
 
             if (recursive)
             {
@@ -243,7 +239,7 @@ namespace Coroutines
 
             foreach (var callback in localFailCallbacks)
             {
-                callback(Exception);
+                callback(null);
             }
         }
     }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Coroutines
 {
@@ -12,9 +11,9 @@ namespace Coroutines
             return self;
         }
 
-        public static IWaitable<T> Co<T>(this IWaitable<T> self, out WaitableValue<T> waitable)
+        public static IWaitable<T> Co<T>(this IWaitable<T> self, out WaitableValue<T> value)
         {
-            waitable = new WaitableValue<T>(self);
+            value = new WaitableValue<T>(self);
             return self;
         }
 
@@ -59,24 +58,53 @@ namespace Coroutines
 
     }
 
-    public struct WaitableValue<T>
+    public struct WaitableValue<T> : IWaitable<T>
     {
 
         private readonly IWaitable<T> waitable;
-
-        public static implicit operator T(WaitableValue<T> waitable)
-        {
-            return waitable.waitable.R;
-        }
+        public T R => waitable.R;
 
         internal WaitableValue(IWaitable<T> waitable)
         {
             this.waitable = waitable;
         }
 
+        public static implicit operator T(WaitableValue<T> self)
+        {
+            return self.R;
+        }
+
+        public WaitableStatus Status => waitable.Status;
+        public Exception Exception => waitable.Exception;
+
+        public IWaitable OnSuccess(Action callback)
+        {
+            return waitable.OnSuccess(callback);
+        }
+
+        public IWaitable OnFail(Action<Exception> callback)
+        {
+            return waitable.OnFail(callback);
+        }
+
+        public void Abort(bool recursive = true)
+        {
+            waitable.Abort(recursive);
+        }
+
+        public IWaitable<T> OnSuccess(Action<T> callback)
+        {
+            return waitable.OnSuccess(callback);
+        }
+
         public override string ToString()
         {
-            return waitable.R?.ToString() ?? "";
+            if (waitable.Status == WaitableStatus.Success)
+            {
+                return waitable.R?.ToString() ?? "";
+            }
+
+            return "";
         }
     }
 
