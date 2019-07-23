@@ -243,6 +243,70 @@ namespace UnitTest
             }
         }
 
+        [TestMethod]
+        public void TestAbort1()
+        {
+            var i = 0;
+
+            CoroutineManager.StartCoroutine(RunFather()).Co(out var co);
+            Assert.AreEqual(1, i);
+
+            for (var tick=0; tick<1000; tick++)
+            {
+                CoroutineManager.OneLoop();
+                if (i == 10)
+                {
+                    co.Abort();
+                }
+            }
+            Assert.AreEqual(10, i);
+
+            IEnumerable<IWaitable> RunFather()
+            {
+                while (true)
+                {
+                    i++;
+                    yield return null;
+                }
+            }
+        }
+
+        [TestMethod]
+        public void TestAbort2()
+        {
+            var i = 0;
+
+            var co = CoroutineManager.StartCoroutine(RunFather());
+
+            Assert.AreEqual(2, i);
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(3, i);
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(4, i);
+            co.Abort();
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(4, i);
+
+            Tick();
+            Assert.AreEqual(4, i);
+
+            IEnumerable<IWaitable> RunFather()
+            {
+                i++;
+                yield return CoroutineManager.StartCoroutine(RunChild());
+                i++;
+            }
+
+            IEnumerable<IWaitable> RunChild()
+            {
+                while (true)
+                {
+                    i++;
+                    yield return null;
+                }
+            }
+        }
+
         private void Tick()
         {
             for (var i=0; i<1000; i++)
