@@ -63,7 +63,7 @@ namespace Coroutines
 
             var current = enumerator.Current;
 
-            if (current is CoroutineResult<T> result)
+            if (current is CompleteWaitable<T> result)
             {
                 Success(result.R);
                 return;
@@ -243,42 +243,4 @@ namespace Coroutines
             }
         }
     }
-
-    internal sealed class CoroutineResult<T> : IWaitable<T>
-    {
-
-        public T R { get; }
-
-        WaitableStatus IWaitable.Status => WaitableStatus.Success;
-
-        Exception IWaitable.Exception => null;
-
-        public CoroutineResult(T r)
-        {
-            R = r;
-        }
-
-        IWaitable IWaitable.OnSuccess(Action callback)
-        {
-            callback?.Invoke();
-            return this;
-        }
-
-        public IWaitable<T> OnSuccess(Action<T> callback)
-        {
-            callback?.Invoke(R);
-            return this;
-        }
-
-        public IWaitable OnFail(Action<Exception> callback)
-        {
-            return this;
-        }
-
-        public void Abort(bool recursive)
-        {
-        }
-
-    }
-
 }

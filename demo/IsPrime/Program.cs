@@ -18,13 +18,13 @@ namespace IsPrime
                 WaitableValue<bool> result;
 
                 yield return coroutineManager.StartCoroutine<bool>(IsPrimeAsync(1)).Co(out result);
-                Console.WriteLine(result);
+                Console.WriteLine(result); // true
 
                 yield return coroutineManager.StartCoroutine<bool>(IsPrimeAsync(2)).Co(out result);
-                Console.WriteLine(result);
+                Console.WriteLine(result); // true
 
                 yield return coroutineManager.StartCoroutine<bool>(IsPrimeAsync(100)).Co(out result);
-                Console.WriteLine(result);
+                Console.WriteLine(result); // false
 
                 run = false;
             }

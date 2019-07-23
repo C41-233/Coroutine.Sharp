@@ -8,7 +8,7 @@ namespace Coroutines
 
         public static IWaitable<T> Complete<T>(T value)
         {
-            return new CoroutineResult<T>(value);
+            return new CompleteWaitable<T>(value);
         }
 
         private CoroutineManager coroutineManager;
