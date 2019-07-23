@@ -21,7 +21,6 @@ namespace UnitTest
             Frame = 0;
             CoroutineManager = new CoroutineManager
             {
-                OnUnhandledException = e => throw new Exception(null, e),
                 DefaultBubbleExceptionApproach = BubbleExceptionApproach.Throw,
             };
         }
@@ -103,18 +102,12 @@ namespace UnitTest
         public void TestThrow()
         {
             var i = 0;
-            CoroutineManager.OnUnhandledException = e =>
-            {
-                if (e is ArgumentException)
-                {
-                    i++; 
-                }
-            };
             Assert.AreEqual(0, i);
-            CoroutineManager.StartCoroutine(Run(true));
-            Assert.AreEqual(1, i);
+            var co = CoroutineManager.StartCoroutine(Run(true));
+            Assert.AreEqual(0, i);
             Tick();
-            Assert.AreEqual(1, i);
+            Assert.AreEqual(0, i);
+            Assert.IsTrue(co.IsError());
 
             IEnumerable<IWaitable> Run(bool t)
             {
@@ -132,20 +125,12 @@ namespace UnitTest
         public void TestCascadeThrow1()
         {
             var i = 0;
+            var co = CoroutineManager.StartCoroutine(RunFather());
 
-            CoroutineManager.OnUnhandledException = e =>
-            {
-                if (e is ArgumentException)
-                {
-                    i++;
-                }
-            };
-            CoroutineManager.StartCoroutine(RunFather());
-
-            //自身+1，handle+1
-            Assert.AreEqual(2, i);
+            Assert.AreEqual(1, i);
             Tick();
-            Assert.AreEqual(2, i);
+            Assert.AreEqual(1, i);
+            Assert.IsTrue(co.IsFail());
 
             IEnumerable<IWaitable> RunFather()
             {
@@ -168,21 +153,13 @@ namespace UnitTest
         public void TestCascadeThrow2()
         {
             var i = 0;
-
-            CoroutineManager.OnUnhandledException = e =>
-            {
-                if (e is ArgumentException)
-                {
-                    i++;
-                }
-            };
             CoroutineManager.StartCoroutine(RunFather());
 
             Assert.AreEqual(2, i);
             Tick();
 
             //handle
-            Assert.AreEqual(4, i);
+            Assert.AreEqual(3, i);
 
             IEnumerable<IWaitable> RunFather()
             {
@@ -208,11 +185,6 @@ namespace UnitTest
         public void TestCascadeThrow3()
         {
             var i = 0;
-
-            CoroutineManager.OnUnhandledException = e =>
-            {
-                Assert.Fail();
-            };
             CoroutineManager.StartCoroutine(RunFather(), BubbleExceptionApproach.Abort);
 
             Assert.AreEqual(2, i);

@@ -11,21 +11,17 @@ namespace Coroutines
             return new CompleteWaitable<T>(value);
         }
 
-        private CoroutineManager coroutineManager;
+        private readonly CoroutineManager coroutineManager;
         private IEnumerator<IWaitable> enumerator;
-        private BubbleExceptionApproach approach;
+        private readonly BubbleExceptionApproach approach;
 
         private IWaitable waitable;
 
-        internal Coroutine(IEnumerator<IWaitable> co)
+        internal Coroutine(CoroutineManager coroutineManager, IEnumerator<IWaitable> co, BubbleExceptionApproach approach)
         {
-            enumerator = co;
-        }
-
-        internal void Start(CoroutineManager coroutineManager, BubbleExceptionApproach approach)
-        {
-            this.approach = approach;
             this.coroutineManager = coroutineManager;
+            this.approach = approach;
+            enumerator = co;
             NextStep();
         }
 
@@ -163,16 +159,9 @@ namespace Coroutines
             var localFailCallbacks = failCallbacks;
             Dispose();
 
-            if (localFailCallbacks.Count > 0)
+            foreach (var callback in localFailCallbacks)
             {
-                foreach (var callback in localFailCallbacks)
-                {
-                    callback(e);
-                }
-            }
-            else
-            {
-                throw e is WaitableFlowException ? e : new WaitableFlowException(e);
+                callback(e);
             }
         }
 

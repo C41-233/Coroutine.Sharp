@@ -11,8 +11,6 @@ namespace Coroutines.Timers
 
         public DateTime Now { get; private set; }
 
-        public Action<Exception> OnUnhandledException { internal get; set; } = DefaultUnhandledException;
-
         public TimerManager(DateTime startTime)
         {
             Now = startTime;
@@ -59,14 +57,9 @@ namespace Coroutines.Timers
                 }
                 catch(Exception e)
                 {
-                    OnUnhandledException?.Invoke(e);
+                    Console.WriteLine(e);
                 }
             }
-        }
-
-        private static void DefaultUnhandledException(Exception e)
-        {
-            Console.Error.WriteLine(e);
         }
 
     }

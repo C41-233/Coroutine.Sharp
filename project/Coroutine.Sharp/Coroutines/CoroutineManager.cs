@@ -11,15 +11,7 @@ namespace Coroutines
 
         public Coroutine<T> StartCoroutine<T>(IEnumerable<IWaitable> co, BubbleExceptionApproach bubbleExceptionApproach)
         {
-            var coroutine = new Coroutine<T>(co);
-            try
-            {
-                coroutine.Start(this, bubbleExceptionApproach);
-            }
-            catch (Exception e)
-            {
-                UnHandleException(e);
-            }
+            var coroutine = new Coroutine<T>(this, co, bubbleExceptionApproach);
             return coroutine;
         }
 
@@ -35,15 +27,7 @@ namespace Coroutines
 
         public Coroutine StartCoroutine(IEnumerable<IWaitable> co, BubbleExceptionApproach bubbleExceptionApproach)
         {
-            var coroutine = new Coroutine(co.GetEnumerator());
-            try
-            {
-                coroutine.Start(this, bubbleExceptionApproach);
-            }
-            catch (Exception e)
-            {
-                UnHandleException(e);
-            }
+            var coroutine = new Coroutine(this, co.GetEnumerator(), bubbleExceptionApproach);
             return coroutine;
         }
 
@@ -59,7 +43,7 @@ namespace Coroutines
                 }
                 catch (Exception e)
                 {
-                    UnHandleException(e);
+                    Console.Error.WriteLine(e);
                 }
             }
         }
@@ -67,13 +51,6 @@ namespace Coroutines
         internal void Enqueue(Action callback)
         {
             actions.Enqueue(callback);
-        }
-
-        public Action<Exception> OnUnhandledException { internal get; set; } = DefaultUnhandledException;
-
-        private void UnHandleException(Exception e)
-        {
-            OnUnhandledException?.Invoke(e is WaitableFlowException ? e.InnerException : e);
         }
 
         private static void DefaultUnhandledException(Exception e)

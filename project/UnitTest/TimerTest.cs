@@ -15,10 +15,7 @@ namespace UnitTest
         public void Before()
         {
             StartTime = DateTime.Now;
-            TimerManager = new TimerManager(StartTime)
-            {
-                OnUnhandledException = e => throw e
-            };
+            TimerManager = new TimerManager(DateTime.Now);
         }
 
         [TestCleanup]
