@@ -307,6 +307,52 @@ namespace UnitTest
             }
         }
 
+        [TestMethod]
+        public void TestAbort3()
+        {
+            var i = 0;
+
+            var co2 = CoroutineManager.StartCoroutine(RunChild());
+            Assert.AreEqual(1, i);
+
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(2, i);
+
+            var co1 = CoroutineManager.StartCoroutine(RunFather(), BubbleExceptionApproach.Ignore);
+            Assert.AreEqual(3, i);
+
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(4, i);
+
+            co2.Abort();
+            Assert.AreEqual(4, i);
+
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(5, i);
+
+            Tick();
+            Assert.AreEqual(5, i);
+
+            Assert.AreEqual(WaitableStatus.Fail, co2.Status);
+            Assert.AreEqual(WaitableStatus.Success, co1.Status);
+
+            IEnumerable<IWaitable> RunFather()
+            {
+                i++;
+                yield return co2;
+                i++;
+            }
+
+            IEnumerable<IWaitable> RunChild()
+            {
+                while (true)
+                {
+                    i++;
+                    yield return null;
+                }
+            }
+        }
+
         private void Tick()
         {
             for (var i=0; i<1000; i++)

@@ -43,15 +43,6 @@ namespace Coroutine
             return self;
         }
 
-        public static IWaitable EnsureSuccess(this IWaitable self)
-        {
-            if (self.Exception == null)
-            {
-                return self;
-            }
-            throw new Exception("fail waitable", self.Exception);
-        }
-
         public static bool IsAbort(this IWaitable self)
         {
             return self.Status == WaitableStatus.Fail && self.Exception is WaitableAbortException;
