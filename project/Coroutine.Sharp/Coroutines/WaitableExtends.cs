@@ -57,18 +57,6 @@ namespace Coroutines
             return self.OnFail(e => callback());
         }
 
-        public static IWaitable Co(this IEnumerable<IWaitable> enumerable)
-        {
-            return new Coroutine(enumerable.GetEnumerator());
-        }
-
-        public static IWaitable<T> Co<T>(this IEnumerable<IWaitable> enumerable, out WaitableValue<T> result)
-        {
-            var coroutine = new Coroutine<T>(enumerable);
-            result = new WaitableValue<T>(coroutine);
-            return coroutine;
-        }
-
     }
 
     public struct WaitableValue<T>
