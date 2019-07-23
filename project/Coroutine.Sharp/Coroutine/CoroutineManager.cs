@@ -7,7 +7,14 @@ namespace Coroutine
     public class CoroutineManager
     {
 
-        public Coroutine StartCoroutine(IEnumerable<IWaitable> co, BubbleExceptionApproach bubbleExceptionApproach = BubbleExceptionApproach.Ignore)
+        public BubbleExceptionApproach DefaultBubbleExceptionApproach { get; set; } = BubbleExceptionApproach.Ignore;
+
+        public Coroutine StartCoroutine(IEnumerable<IWaitable> co)
+        {
+            return StartCoroutine(co, DefaultBubbleExceptionApproach);
+        }
+
+        public Coroutine StartCoroutine(IEnumerable<IWaitable> co, BubbleExceptionApproach bubbleExceptionApproach)
         {
             var coroutine = new Coroutine(this, co.GetEnumerator(), bubbleExceptionApproach);
             try

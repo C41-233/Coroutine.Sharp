@@ -20,7 +20,8 @@ namespace UnitTest
             Frame = 0;
             CoroutineManager = new CoroutineManager
             {
-                OnUnhandledException = e => throw new Exception(null, e)
+                OnUnhandledException = e => throw new Exception(null, e),
+                DefaultBubbleExceptionApproach = BubbleExceptionApproach.Throw,
             };
         }
 
@@ -71,7 +72,7 @@ namespace UnitTest
         public void TestCascade()
         {
             var i = 0;
-            CoroutineManager.StartCoroutine(RunFather(), BubbleExceptionApproach.Throw);
+            CoroutineManager.StartCoroutine(RunFather());
             Tick();
 
             IEnumerable<IWaitable> RunFather()
@@ -127,7 +128,7 @@ namespace UnitTest
         }
 
         [TestMethod]
-        public void TestCascadeThrow()
+        public void TestCascadeThrow1()
         {
             var i = 0;
 
@@ -138,7 +139,7 @@ namespace UnitTest
                     i++;
                 }
             };
-            CoroutineManager.StartCoroutine(RunFather(), BubbleExceptionApproach.Throw);
+            CoroutineManager.StartCoroutine(RunFather());
 
             //自身+1，handle+1
             Assert.AreEqual(2, i);
@@ -158,6 +159,46 @@ namespace UnitTest
 
             IEnumerable<IWaitable> RunChild()
             {
+                throw new ArgumentException();
+            }
+        }
+
+        [TestMethod]
+        public void TestCascadeThrow2()
+        {
+            var i = 0;
+
+            CoroutineManager.OnUnhandledException = e =>
+            {
+                if (e is ArgumentException)
+                {
+                    i++;
+                }
+            };
+            CoroutineManager.StartCoroutine(RunFather());
+
+            Assert.AreEqual(2, i);
+            Tick();
+
+            //handle
+            Assert.AreEqual(4, i);
+
+            IEnumerable<IWaitable> RunFather()
+            {
+                Assert.AreEqual(0, i);
+                Assert.AreEqual(0, Frame);
+                i++;
+
+                yield return CoroutineManager.StartCoroutine(RunChild());
+
+                Assert.Fail();
+            }
+
+            IEnumerable<IWaitable> RunChild()
+            {
+                i++;
+                yield return null;
+                i++;
                 throw new ArgumentException();
             }
         }
