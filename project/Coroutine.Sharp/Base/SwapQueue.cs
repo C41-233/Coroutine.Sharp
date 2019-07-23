@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Coroutine.Base
+namespace Coroutines.Base
 {
     internal class SwapQueue<T>
     {

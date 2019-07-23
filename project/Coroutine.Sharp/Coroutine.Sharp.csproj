@@ -7,7 +7,7 @@
     <ProjectGuid>{C5E4999C-2DC6-4F61-9AF4-CB0F5E846B1B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Coroutine</RootNamespace>
+    <RootNamespace>Coroutines</RootNamespace>
     <AssemblyName>Coroutine.Sharp</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -34,27 +34,27 @@
   <ItemGroup>
     <Compile Include="Base\SpinLock.cs" />
     <Compile Include="Base\SwapQueue.cs" />
-    <Compile Include="Coroutine\Coroutine.cs" />
-    <Compile Include="Coroutine\CoroutineManager.cs" />
+    <Compile Include="Coroutines\Coroutine.cs" />
+    <Compile Include="Coroutines\CoroutineManager.cs" />
     <Compile Include="Base\PriorityQueue.cs" />
-    <Compile Include="Coroutine\IWaitable.cs" />
-    <Compile Include="Coroutine\Promise.cs" />
-    <Compile Include="Timer\TimerHandle.cs" />
-    <Compile Include="Timer\TimerManager.cs" />
-    <Compile Include="Coroutine\Waitable.cs" />
-    <Compile Include="Coroutine\Exceptions.cs" />
-    <Compile Include="Coroutine\WaitableStatus.cs" />
-    <Compile Include="Coroutine\Wait\IO\WaitForAccept.cs" />
-    <Compile Include="Coroutine\Wait\IO\WaitForReceive.cs" />
-    <Compile Include="Coroutine\Wait\IO\WaitForReceiveFrom.cs" />
-    <Compile Include="Coroutine\Wait\IO\WaitForSend.cs" />
-    <Compile Include="Coroutine\Wait\IO\WaitForSendTo.cs" />
-    <Compile Include="Coroutine\Wait\Logic\WaitForAllSuccess.cs" />
-    <Compile Include="Coroutine\Wait\Logic\WaitForAll.cs" />
-    <Compile Include="Coroutine\Wait\Logic\WaitForAnySuccess.cs" />
-    <Compile Include="Coroutine\Wait\WaitFor.cs" />
-    <Compile Include="Coroutine\Wait\IO\WaitForConnect.cs" />
-    <Compile Include="Coroutine\Wait\Timer\WaitForTimeSpan.cs" />
+    <Compile Include="Coroutines\IWaitable.cs" />
+    <Compile Include="Coroutines\Promise.cs" />
+    <Compile Include="Timers\TimerHandle.cs" />
+    <Compile Include="Timers\TimerManager.cs" />
+    <Compile Include="Coroutines\Waitable.cs" />
+    <Compile Include="Coroutines\Exceptions.cs" />
+    <Compile Include="Coroutines\WaitableStatus.cs" />
+    <Compile Include="Coroutines\Wait\IO\WaitForAccept.cs" />
+    <Compile Include="Coroutines\Wait\IO\WaitForReceive.cs" />
+    <Compile Include="Coroutines\Wait\IO\WaitForReceiveFrom.cs" />
+    <Compile Include="Coroutines\Wait\IO\WaitForSend.cs" />
+    <Compile Include="Coroutines\Wait\IO\WaitForSendTo.cs" />
+    <Compile Include="Coroutines\Wait\Logic\WaitForAllSuccess.cs" />
+    <Compile Include="Coroutines\Wait\Logic\WaitForAll.cs" />
+    <Compile Include="Coroutines\Wait\Logic\WaitForAnySuccess.cs" />
+    <Compile Include="Coroutines\Wait\WaitFor.cs" />
+    <Compile Include="Coroutines\Wait\IO\WaitForConnect.cs" />
+    <Compile Include="Coroutines\Wait\Timer\WaitForTimeSpan.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

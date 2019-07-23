@@ -2,7 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 
-namespace Coroutine.Wait
+namespace Coroutines.Wait
 {
     internal class WaitForSendTo : WaitableTask<int>
     {

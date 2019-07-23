@@ -1,16 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 
-namespace Coroutine.Wait
+namespace Coroutines.Wait
 {
-    internal class WaitForAllSuccess : WaitableTask
+    internal class WaitForAll : WaitableTask
     {
 
-        private readonly IWaitable[] waitables;
+        private readonly List<Exception> exceptions;
         private int countDown;
 
-        public WaitForAllSuccess(IWaitable[] waitables)
+        public WaitForAll(IWaitable[] waitables)
         {
-            this.waitables = (IWaitable[]) waitables.Clone();
+            exceptions = new List<Exception>(waitables.Length);
             countDown = waitables.Length;
             foreach (var waitable in waitables)
             {
@@ -21,39 +22,41 @@ namespace Coroutine.Wait
 
         private void OnSuccessCallback()
         {
-            lock (waitables)
+            lock (exceptions)
             {
-                if (countDown <= 0)
-                {
-                    return;
-                }
                 countDown--;
                 if (countDown != 0)
                 {
                     return;
                 }
             }
-            Success();
+            Done();
         }
 
         private void OnFailCallback(Exception e)
         {
-            lock (waitables)
+            lock (exceptions)
             {
-                if (countDown <= 0)
+                exceptions.Add(e);
+                countDown--;
+                if (countDown != 0)
                 {
                     return;
                 }
-                countDown = 0;
             }
-            foreach (var waitable in waitables)
+            Done();
+        }
+
+        private void Done()
+        {
+            if (exceptions.Count == 0)
             {
-                if (waitable.Status == WaitableStatus.Running)
-                {
-                    waitable.Abort();
-                }
+                Success();
             }
-            Fail(e);
+            else
+            {
+                Fail(new AggregateException(exceptions));
+            }
         }
 
     }

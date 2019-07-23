@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Coroutine
+namespace Coroutines
 {
     public interface IWaitable
     {
@@ -37,15 +37,40 @@ namespace Coroutine
     public static class WaitableExtends
     {
 
-        public static IWaitable Co(this IWaitable self, out IWaitable waitable)
+        public static T Co<T>(this T self, out T waitable) where T : IWaitable
         {
             waitable = self;
             return self;
         }
 
+        public static bool IsRunning(this IWaitable self)
+        {
+            return self.Status == WaitableStatus.Running;
+        }
+
+        public static bool IsSuccess(this IWaitable self)
+        {
+            return self.Status == WaitableStatus.Success;
+        }
+
+        public static bool IsFail(this IWaitable self)
+        {
+            return self.Status == WaitableStatus.Fail;
+        }
+
         public static bool IsAbort(this IWaitable self)
         {
             return self.Status == WaitableStatus.Fail && self.Exception is WaitableAbortException;
+        }
+
+        public static bool IsFinish(this IWaitable self)
+        {
+            return self.Status != WaitableStatus.Running;
+        }
+
+        public static bool IsError(this IWaitable self)
+        {
+            return self.Status == WaitableStatus.Fail && !(self.Exception is WaitableAbortException);
         }
 
         public static IWaitable OnFail(this IWaitable self, Action callback)

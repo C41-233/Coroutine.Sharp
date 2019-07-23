@@ -1,4 +1,4 @@
-﻿namespace Coroutine
+﻿namespace Coroutines
 {
     public enum WaitableStatus
     {

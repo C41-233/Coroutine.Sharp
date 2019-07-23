@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Coroutine.Timer
+namespace Coroutines.Timers
 {
     public sealed class TimerHandle
     {

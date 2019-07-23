@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Coroutine
+namespace Coroutines
 {
     public sealed class Coroutine : IWaitable
     {

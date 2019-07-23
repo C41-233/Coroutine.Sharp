@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Coroutine.Base;
+using Coroutines.Base;
 
-namespace Coroutine.Timer
+namespace Coroutines.Timers
 {
     public class TimerManager
     {

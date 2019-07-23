@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace Coroutine.Base
+namespace Coroutines.Base
 {
     internal class SpinLock
     {

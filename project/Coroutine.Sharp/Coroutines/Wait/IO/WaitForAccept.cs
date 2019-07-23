@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 
-namespace Coroutine.Wait
+namespace Coroutines.Wait
 {
     internal class WaitForAccept : WaitableTask<Socket>
     {

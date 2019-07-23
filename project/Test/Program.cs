@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using Coroutine;
-using Coroutine.Timer;
-using Coroutine.Wait;
+using Coroutines;
+using Coroutines.Timers;
+using Coroutines.Wait;
 
 namespace Test
 {

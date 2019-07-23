@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Coroutine.Base
+namespace Coroutines.Base
 {
 
     internal class PriorityQueue<T>

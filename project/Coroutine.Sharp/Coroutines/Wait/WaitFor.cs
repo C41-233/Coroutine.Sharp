@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using Coroutine.Base;
-using Coroutine.Timer;
+using Coroutines.Timers;
 
-namespace Coroutine.Wait
+namespace Coroutines.Wait
 {
     public static class WaitFor
     {

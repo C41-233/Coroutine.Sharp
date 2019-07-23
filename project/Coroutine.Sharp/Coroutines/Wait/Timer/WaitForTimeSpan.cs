@@ -1,7 +1,7 @@
 ﻿using System;
-using Coroutine.Timer;
+using Coroutines.Timers;
 
-namespace Coroutine.Wait
+namespace Coroutines.Wait
 {
 
     internal class WaitForTimeSpan : WaitableTask

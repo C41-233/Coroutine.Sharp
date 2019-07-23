@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Coroutine;
+using System.Diagnostics.CodeAnalysis;
+using Coroutines;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 // ReSharper disable ImplicitlyCapturedClosure
 
@@ -272,28 +273,34 @@ namespace UnitTest
         }
 
         [TestMethod]
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public void TestAbort2()
         {
             var i = 0;
+            Coroutine co2 = null;
 
-            var co = CoroutineManager.StartCoroutine(RunFather());
+            var co1 = CoroutineManager.StartCoroutine(RunFather());
 
             Assert.AreEqual(2, i);
             CoroutineManager.OneLoop();
             Assert.AreEqual(3, i);
             CoroutineManager.OneLoop();
             Assert.AreEqual(4, i);
-            co.Abort();
+            co1.Abort();
             CoroutineManager.OneLoop();
             Assert.AreEqual(4, i);
 
             Tick();
             Assert.AreEqual(4, i);
+            Assert.AreEqual(WaitableStatus.Fail, co1.Status);
+            Assert.AreEqual(WaitableStatus.Fail, co2.Status);
+            Assert.IsTrue(co1.IsAbort());
+            Assert.IsTrue(co2.IsAbort());
 
             IEnumerable<IWaitable> RunFather()
             {
                 i++;
-                yield return CoroutineManager.StartCoroutine(RunChild());
+                yield return CoroutineManager.StartCoroutine(RunChild()).Co(out co2);
                 i++;
             }
 
@@ -311,6 +318,7 @@ namespace UnitTest
         public void TestAbort3()
         {
             var i = 0;
+            var j = 0;
 
             var co2 = CoroutineManager.StartCoroutine(RunChild());
             Assert.AreEqual(1, i);
@@ -326,15 +334,60 @@ namespace UnitTest
 
             co2.Abort();
             Assert.AreEqual(4, i);
+            Assert.AreEqual(1, j);
 
             CoroutineManager.OneLoop();
             Assert.AreEqual(5, i);
 
             Tick();
             Assert.AreEqual(5, i);
+            Assert.AreEqual(1, j);
 
             Assert.AreEqual(WaitableStatus.Fail, co2.Status);
             Assert.AreEqual(WaitableStatus.Success, co1.Status);
+
+            IEnumerable<IWaitable> RunFather()
+            {
+                i++;
+                yield return co2.OnFail(e => j++);
+                i++;
+            }
+
+            IEnumerable<IWaitable> RunChild()
+            {
+                while (true)
+                {
+                    i++;
+                    yield return null;
+                }
+            }
+        }
+
+        [TestMethod]
+        public void TestAbort4()
+        {
+            var i = 0;
+
+            var co2 = CoroutineManager.StartCoroutine(RunChild());
+            Assert.AreEqual(1, i);
+
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(2, i);
+
+            var co1 = CoroutineManager.StartCoroutine(RunFather(), BubbleExceptionApproach.Ignore);
+            Assert.AreEqual(3, i);
+
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(4, i);
+
+            co1.Abort(false);
+            Assert.AreEqual(4, i);
+
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(5, i);
+
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(6, i);
 
             IEnumerable<IWaitable> RunFather()
             {

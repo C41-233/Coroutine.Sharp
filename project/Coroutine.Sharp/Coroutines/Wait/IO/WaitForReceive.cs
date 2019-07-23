@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Net.Sockets;
 
-namespace Coroutine.Wait
+namespace Coroutines.Wait
 {
-    internal class WaitForSend : WaitableTask<int>
+    internal class WaitForReceive : WaitableTask<int>
     {
 
-        public WaitForSend(Socket socket, byte[] buffer, int offset, int size, SocketFlags flags)
+        public WaitForReceive(Socket socket, byte[] buffer, int offset, int size, SocketFlags flags)
         {
             try
             {
-                socket.BeginSend(buffer, offset, size, flags, SendCallback, socket);
+                socket.BeginReceive(buffer, offset, size, flags, ReceiveCallback, socket);
             }
             catch (Exception e)
             {
@@ -19,11 +19,11 @@ namespace Coroutine.Wait
             }
         }
 
-        public WaitForSend(Socket socket, IList<ArraySegment<byte>> buffers, SocketFlags flags)
+        public WaitForReceive(Socket socket, IList<ArraySegment<byte>> buffers, SocketFlags flags)
         {
             try
             {
-                socket.BeginSend(buffers, flags, SendCallback, socket);
+                socket.BeginReceive(buffers, flags, ReceiveCallback, socket);
             }
             catch (Exception e)
             {
@@ -31,13 +31,13 @@ namespace Coroutine.Wait
             }
         }
 
-        private void SendCallback(IAsyncResult ar)
+        private void ReceiveCallback(IAsyncResult ar)
         {
             var socket = (Socket) ar.AsyncState;
             try
             {
-                var nsend = socket.EndSend(ar);
-                Success(nsend);
+                int nread = socket.EndReceive(ar);
+                Success(nread);
             }
             catch (Exception e)
             {

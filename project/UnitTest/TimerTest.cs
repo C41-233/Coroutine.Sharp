@@ -1,5 +1,5 @@
 ﻿using System;
-using Coroutine.Timer;
+using Coroutines.Timers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTest

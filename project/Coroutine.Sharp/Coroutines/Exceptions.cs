@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Coroutine
+namespace Coroutines
 {
 
     internal sealed class WaitableFlowException : Exception
