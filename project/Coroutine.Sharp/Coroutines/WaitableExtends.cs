@@ -5,13 +5,13 @@ namespace Coroutines
     public static class WaitableExtends
     {
 
-        public static IWaitable Co(this IWaitable self, out IWaitable waitable)
+        public static IWaitable With(this IWaitable self, out IWaitable waitable)
         {
             waitable = self;
             return self;
         }
 
-        public static IWaitable<T> Co<T>(this IWaitable<T> self, out WaitableValue<T> value)
+        public static IWaitable<T> With<T>(this IWaitable<T> self, out WaitableValue<T> value)
         {
             value = new WaitableValue<T>(self);
             return self;

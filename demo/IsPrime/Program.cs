@@ -15,16 +15,14 @@ namespace IsPrime
 
             IEnumerable<IWaitable> MainLoop()
             {
-                WaitableValue<bool> result;
+                yield return coroutineManager.StartCoroutine<bool>(IsPrimeAsync(1)).With(out var a);
+                Console.WriteLine(a); // true
 
-                yield return coroutineManager.StartCoroutine<bool>(IsPrimeAsync(1)).Co(out result);
-                Console.WriteLine(result); // true
+                yield return coroutineManager.StartCoroutine<bool>(IsPrimeAsync(2)).With(out var b);
+                Console.WriteLine(b); // true
 
-                yield return coroutineManager.StartCoroutine<bool>(IsPrimeAsync(2)).Co(out result);
-                Console.WriteLine(result); // true
-
-                yield return coroutineManager.StartCoroutine<bool>(IsPrimeAsync(100)).Co(out result);
-                Console.WriteLine(result); // false
+                yield return coroutineManager.StartCoroutine<bool>(IsPrimeAsync(100)).With(out var c);
+                Console.WriteLine(c); // false
 
                 run = false;
             }

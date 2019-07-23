@@ -9,6 +9,8 @@ namespace Coroutines.Timers
 
         private readonly PriorityQueue<TimerHandle> queue;
 
+        public Action<Exception> OnUnhandledException { get; set; } = e => Console.Error.WriteLine(e);
+
         public DateTime Now { get; private set; }
 
         public TimerManager(DateTime startTime)
@@ -59,7 +61,7 @@ namespace Coroutines.Timers
                 }
                 catch(Exception e)
                 {
-                    Console.Error.WriteLine(e);
+                    OnUnhandledException?.Invoke(e);
                 }
             }
         }

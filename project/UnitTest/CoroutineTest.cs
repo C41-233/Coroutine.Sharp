@@ -221,7 +221,7 @@ namespace UnitTest
         {
             var i = 0;
 
-            CoroutineManager.StartCoroutine(RunFather()).Co(out var co);
+            CoroutineManager.StartCoroutine(RunFather()).With(out var co);
             Assert.AreEqual(1, i);
 
             for (var tick=0; tick<1000; tick++)
