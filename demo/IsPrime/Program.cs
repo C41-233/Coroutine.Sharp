@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using Coroutines;
 
 namespace IsPrime
@@ -44,20 +43,20 @@ namespace IsPrime
 
             if (n == 0)
             {
-                yield return Coroutine.Complete(false);
+                yield return false;
             }
 
             for (int i=3, max=(int)Math.Sqrt(n); i<=max; i+=2)
             {
                 if (n % i == 0)
                 {
-                    yield return Coroutine.Complete(false);
+                    yield return false;
                 }
 
                 yield return null;
             }
 
-            yield return Coroutine.Complete(true);
+            yield return true;
         }
 
     }
