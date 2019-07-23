@@ -178,7 +178,7 @@ namespace Coroutines
                 return;
             }
 
-            Exception = e;
+            Exception = e ?? new WaitableAbortException();
             Status = WaitableStatus.Fail;
 
             var localFailCallbacks = failCallbacks;
@@ -186,7 +186,7 @@ namespace Coroutines
 
             foreach (var callback in localFailCallbacks)
             {
-                callback(e);
+                callback(Exception);
             }
         }
 

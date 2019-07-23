@@ -20,15 +20,15 @@ namespace Coroutines
             return StartCoroutine<T>(co, DefaultBubbleExceptionApproach);
         }
 
-        public Coroutine StartCoroutine(IEnumerable<IWaitable> co)
-        {
-            return StartCoroutine(co, DefaultBubbleExceptionApproach);
-        }
-
         public Coroutine StartCoroutine(IEnumerable<IWaitable> co, BubbleExceptionApproach bubbleExceptionApproach)
         {
             var coroutine = new Coroutine(this, co.GetEnumerator(), bubbleExceptionApproach);
             return coroutine;
+        }
+
+        public Coroutine StartCoroutine(IEnumerable<IWaitable> co)
+        {
+            return StartCoroutine(co, DefaultBubbleExceptionApproach);
         }
 
         private readonly SwapQueue<Action> actions = new SwapQueue<Action>();
