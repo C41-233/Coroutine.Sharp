@@ -48,16 +48,18 @@ namespace Coroutines.Timers
                 {
                     break;
                 }
+
+                var callback = timer.Callback;
                 timer.Stop();
                 queue.Dequeue();
 
                 try
                 {
-                    timer.Callback();
+                    callback?.Invoke();
                 }
                 catch(Exception e)
                 {
-                    Console.WriteLine(e);
+                    Console.Error.WriteLine(e);
                 }
             }
         }

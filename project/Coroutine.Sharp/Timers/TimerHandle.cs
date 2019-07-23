@@ -6,7 +6,7 @@ namespace Coroutines.Timers
     {
 
         public DateTime At { get; }
-        public Action Callback { get; }
+        internal Action Callback { get; private set; }
         public bool IsStopped { get; private set; }
 
         internal TimerHandle(DateTime at, Action callback)
@@ -18,6 +18,7 @@ namespace Coroutines.Timers
         public void Stop()
         {
             IsStopped = true;
+            Callback = null;
         }
 
     }
