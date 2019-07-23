@@ -22,13 +22,13 @@ namespace IsPrime
             {
                 WaitableValue<bool> result;
 
-                yield return CoroutineManager.StartCoroutine<bool>(IsPrimeAsync(1)).Co(out result);
+                yield return IsPrimeAsync(1).Co(out result);
                 Console.WriteLine(result);
 
-                yield return CoroutineManager.StartCoroutine<bool>(IsPrimeAsync(2)).Co(out result);
+                yield return IsPrimeAsync(2).Co(out result);
                 Console.WriteLine(result);
 
-                yield return CoroutineManager.StartCoroutine<bool>(IsPrimeAsync(100)).Co(out result);
+                yield return IsPrimeAsync(100).Co(out result);
                 Console.WriteLine(result);
 
                 run = false;

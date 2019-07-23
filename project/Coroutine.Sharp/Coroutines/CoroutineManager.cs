@@ -11,10 +11,10 @@ namespace Coroutines
 
         public Coroutine<T> StartCoroutine<T>(IEnumerable<IWaitable> co, BubbleExceptionApproach bubbleExceptionApproach)
         {
-            var coroutine = new Coroutine<T>(this, co, bubbleExceptionApproach);
+            var coroutine = new Coroutine<T>(co);
             try
             {
-                coroutine.Start();
+                coroutine.Start(this, bubbleExceptionApproach);
             }
             catch (Exception e)
             {
@@ -35,10 +35,10 @@ namespace Coroutines
 
         public Coroutine StartCoroutine(IEnumerable<IWaitable> co, BubbleExceptionApproach bubbleExceptionApproach)
         {
-            var coroutine = new Coroutine(this, co.GetEnumerator(), bubbleExceptionApproach);
+            var coroutine = new Coroutine(co.GetEnumerator());
             try
             {
-                coroutine.Start();
+                coroutine.Start(this, bubbleExceptionApproach);
             }
             catch (Exception e)
             {

@@ -12,9 +12,9 @@ namespace Coroutines
             return new CoroutineResult<T>(value);
         }
 
-        private readonly CoroutineManager coroutineManager;
+        private CoroutineManager coroutineManager;
         private IEnumerator<IWaitable> enumerator;
-        private readonly BubbleExceptionApproach approach;
+        private BubbleExceptionApproach approach;
 
         private IWaitable waitable;
 
@@ -33,16 +33,15 @@ namespace Coroutines
 
         private T r;
 
-        internal Coroutine(CoroutineManager coroutineManager, IEnumerable<IWaitable> co, BubbleExceptionApproach approach)
+        internal Coroutine(IEnumerable<IWaitable> co)
         {
-            this.coroutineManager = coroutineManager;
-            this.approach = approach;
-
             enumerator = co.GetEnumerator();
         }
 
-        internal void Start()
+        internal void Start(CoroutineManager coroutineManager, BubbleExceptionApproach approach)
         {
+            this.approach = approach;
+            this.coroutineManager = coroutineManager;
             NextStep();
         }
 
@@ -252,7 +251,7 @@ namespace Coroutines
     internal sealed class CoroutineResult<T> : IWaitable<T>
     {
 
-        public T R { get; private set; }
+        public T R { get; }
 
         WaitableStatus IWaitable.Status => WaitableStatus.Success;
 

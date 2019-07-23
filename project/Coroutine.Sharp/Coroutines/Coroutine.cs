@@ -6,22 +6,21 @@ namespace Coroutines
     public sealed class Coroutine : IWaitable
     {
 
-        private readonly CoroutineManager coroutineManager;
+        private CoroutineManager coroutineManager;
         private IEnumerator<IWaitable> enumerator;
-        private readonly BubbleExceptionApproach approach;
+        private BubbleExceptionApproach approach;
 
         private IWaitable waitable;
 
-        internal Coroutine(CoroutineManager coroutineManager, IEnumerator<IWaitable> co, BubbleExceptionApproach approach)
+        internal Coroutine(IEnumerator<IWaitable> co)
         {
-            this.coroutineManager = coroutineManager;
-            this.approach = approach;
-
             enumerator = co;
         }
 
-        internal void Start()
+        internal void Start(CoroutineManager coroutineManager, BubbleExceptionApproach approach)
         {
+            this.approach = approach;
+            this.coroutineManager = coroutineManager;
             NextStep();
         }
 
