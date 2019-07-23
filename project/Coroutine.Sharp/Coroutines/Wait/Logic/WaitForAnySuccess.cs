@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Coroutines.Wait
+namespace Coroutines
 {
     internal class WaitForAnySuccess : WaitableTask<IWaitable>
     {

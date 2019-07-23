@@ -38,7 +38,7 @@
     <Compile Include="Coroutines\CoroutineManager.cs" />
     <Compile Include="Base\PriorityQueue.cs" />
     <Compile Include="Coroutines\IWaitable.cs" />
-    <Compile Include="Coroutines\Promise.cs" />
+    <Compile Include="Coroutines\Wait\Logic\WaitForPromise.cs" />
     <Compile Include="Timers\TimerHandle.cs" />
     <Compile Include="Timers\TimerManager.cs" />
     <Compile Include="Coroutines\Waitable.cs" />

@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using Coroutines.Timers;
 
-namespace Coroutines.Wait
+namespace Coroutines
 {
     public static class WaitFor
     {
@@ -35,6 +35,11 @@ namespace Coroutines.Wait
         public static IWaitable All(params IWaitable[] waitables)
         {
             return new WaitForAll(waitables);
+        }
+
+        public static IWaitable Promise(Action<Action, Action<Exception>> promise)
+        {
+            return new WaitForPromise(promise);
         }
         #endregion
 

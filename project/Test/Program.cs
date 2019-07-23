@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using Coroutines;
 using Coroutines.Timers;
-using Coroutines.Wait;
 
 namespace Test
 {

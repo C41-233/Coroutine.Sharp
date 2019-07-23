@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Coroutines.Wait
+namespace Coroutines
 {
     internal class WaitForAllSuccess : WaitableTask
     {

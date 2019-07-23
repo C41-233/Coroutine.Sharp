@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Sockets;
 
-namespace Coroutines.Wait
+namespace Coroutines
 {
     internal class WaitForSend : WaitableTask<int>
     {

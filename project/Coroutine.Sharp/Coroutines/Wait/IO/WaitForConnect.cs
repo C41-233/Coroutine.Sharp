@@ -2,7 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 
-namespace Coroutines.Wait
+namespace Coroutines
 {
     internal class WaitForConnect : WaitableTask
     {
