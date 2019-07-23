@@ -42,15 +42,13 @@
     <Compile Include="Timer\TimerHandle.cs" />
     <Compile Include="Timer\TimerManager.cs" />
     <Compile Include="Coroutine\Waitable.cs" />
-    <Compile Include="Coroutine\WaitableAbortException.cs" />
+    <Compile Include="Coroutine\Exceptions.cs" />
     <Compile Include="Coroutine\WaitableStatus.cs" />
     <Compile Include="Coroutine\Wait\IO\WaitForAccept.cs" />
     <Compile Include="Coroutine\Wait\IO\WaitForReceive.cs" />
     <Compile Include="Coroutine\Wait\IO\WaitForReceiveFrom.cs" />
     <Compile Include="Coroutine\Wait\IO\WaitForSend.cs" />
     <Compile Include="Coroutine\Wait\IO\WaitForSendTo.cs" />
-    <Compile Include="Coroutine\Wait\Logic\FilterWaitable.cs" />
-    <Compile Include="Coroutine\Wait\Logic\PreventAbortWaitable.cs" />
     <Compile Include="Coroutine\Wait\Logic\WaitForAllSuccess.cs" />
     <Compile Include="Coroutine\Wait\Logic\WaitForAll.cs" />
     <Compile Include="Coroutine\Wait\Logic\WaitForAnySuccess.cs" />

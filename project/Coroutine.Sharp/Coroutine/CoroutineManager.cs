@@ -7,9 +7,17 @@ namespace Coroutine
     public class CoroutineManager
     {
 
-        public Coroutine StartCoroutine(IEnumerable<IWaitable> co, BubbleException bubbleException = BubbleException.Ignore)
+        public Coroutine StartCoroutine(IEnumerable<IWaitable> co, BubbleExceptionApproach bubbleExceptionApproach = BubbleExceptionApproach.Ignore)
         {
-            var coroutine = new Coroutine(this, co.GetEnumerator(), bubbleException);
+            var coroutine = new Coroutine(this, co.GetEnumerator(), bubbleExceptionApproach);
+            try
+            {
+                coroutine.Start();
+            }
+            catch (Exception e)
+            {
+                OnUnhandledException?.Invoke(e);
+            }
             return coroutine;
         }
 
@@ -19,7 +27,14 @@ namespace Coroutine
         {
             foreach (var action in actions.DequeueAll())
             {
-                action();
+                try
+                {
+                    action();
+                }
+                catch (Exception e)
+                {
+                    OnUnhandledException?.Invoke(e);
+                }
             }
         }
 
@@ -40,7 +55,7 @@ namespace Coroutine
     /// <summary>
     /// 当前Coroutine正在等待的IWaitable失败时的处理方法
     /// </summary>
-    public enum BubbleException
+    public enum BubbleExceptionApproach
     {
         /// <summary>
         /// 不处理，由调用者主动处理

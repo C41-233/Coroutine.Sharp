@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Coroutine.Wait;
 
 namespace Coroutine
 {
@@ -9,17 +8,20 @@ namespace Coroutine
 
         private readonly CoroutineManager coroutineManager;
         private IEnumerator<IWaitable> enumerator;
-        private readonly BubbleException bubbleException;
+        private readonly BubbleExceptionApproach approach;
 
         private IWaitable waitable;
 
-        internal Coroutine(CoroutineManager coroutineManager, IEnumerator<IWaitable> co, BubbleException bubbleException)
+        internal Coroutine(CoroutineManager coroutineManager, IEnumerator<IWaitable> co, BubbleExceptionApproach approach)
         {
             this.coroutineManager = coroutineManager;
-            this.bubbleException = bubbleException;
+            this.approach = approach;
 
             enumerator = co;
+        }
 
+        internal void Start()
+        {
             NextStep();
         }
 
@@ -62,12 +64,12 @@ namespace Coroutine
 
                 waitable.OnFail(e =>
                 {
-                    switch (bubbleException)
+                    switch (approach)
                     {
-                        case BubbleException.Abort:
-                            coroutineManager.Enqueue(() => AbortFail(e));
+                        case BubbleExceptionApproach.Abort:
+                            coroutineManager.Enqueue(() => Abort(false));
                             break;
-                        case BubbleException.Throw:
+                        case BubbleExceptionApproach.Throw:
                             coroutineManager.Enqueue(() => Fail(e));
                             break;
                         default:
@@ -138,25 +140,6 @@ namespace Coroutine
             return this;
         }
 
-        private void AbortFail(Exception e)
-        {
-            if (Status != WaitableStatus.Running)
-            {
-                return;
-            }
-
-            Exception = e;
-            Status = WaitableStatus.Fail;
-
-            var localFailCallbacks = failCallbacks;
-            Dispose();
-
-            foreach (var callback in localFailCallbacks)
-            {
-                callback(e);
-            }
-        }
-
         private void Fail(Exception e)
         {
             if (Status != WaitableStatus.Running)
@@ -179,7 +162,7 @@ namespace Coroutine
             }
             else
             {
-                coroutineManager.OnUnhandledException?.Invoke(e);
+                throw new WaitableFlowException(e);
             }
         }
 
@@ -201,12 +184,20 @@ namespace Coroutine
             return this;
         }
 
-        public void Abort()
+        public void Abort(bool recursive = true)
         {
+            if (Status != WaitableStatus.Running)
+            {
+                return;
+            }
+
             Status = WaitableStatus.Fail;
             Exception = new WaitableAbortException();
 
-            waitable?.Abort();
+            if (recursive)
+            {
+                waitable?.Abort();
+            }
 
             var localFailCallbacks = failCallbacks;
             Dispose();

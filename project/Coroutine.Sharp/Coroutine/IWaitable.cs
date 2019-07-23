@@ -1,5 +1,4 @@
 ﻿using System;
-using Coroutine.Wait;
 
 namespace Coroutine
 {
@@ -14,7 +13,7 @@ namespace Coroutine
 
         IWaitable OnFail(Action<Exception> callback);
 
-        void Abort();
+        void Abort(bool recursive = true);
     }
 
     public interface IWaitable<out T> : IWaitable
@@ -50,7 +49,12 @@ namespace Coroutine
             {
                 return self;
             }
-            throw new Exception(null, self.Exception);
+            throw new Exception("fail waitable", self.Exception);
+        }
+
+        public static bool IsAbort(this IWaitable self)
+        {
+            return self.Status == WaitableStatus.Fail && self.Exception is WaitableAbortException;
         }
 
         public static IWaitable OnFail(this IWaitable self, Action callback)
@@ -60,11 +64,6 @@ namespace Coroutine
                 return self;
             }
             return self.OnFail(e => callback());
-        }
-
-        public static IWaitable PreventCaptureAbort(this IWaitable self)
-        {
-            return new PreventAbortWaitable(self);
         }
 
     }

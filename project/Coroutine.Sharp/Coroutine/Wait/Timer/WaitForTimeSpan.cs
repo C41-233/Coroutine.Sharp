@@ -14,7 +14,7 @@ namespace Coroutine.Wait
             timer = timerManager.StartTimerAfter(timeSpan, Success);
         }
 
-        protected override void OnAbort()
+        protected override void OnAbort(bool recursive)
         {
             timer.Stop();
         }

@@ -59,7 +59,7 @@ namespace Coroutine.Timer
                 }
                 catch(Exception e)
                 {
-                    OnUnhandledException(e);
+                    OnUnhandledException?.Invoke(e);
                 }
             }
         }

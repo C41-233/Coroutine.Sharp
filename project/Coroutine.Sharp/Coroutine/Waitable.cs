@@ -122,7 +122,7 @@ namespace Coroutine
             return this;
         }
 
-        public void Abort()
+        public void Abort(bool recursive = true)
         {
             using (spinLock.Hold())
             {
@@ -135,7 +135,7 @@ namespace Coroutine
                 status = WaitableStatus.Fail;
             }
 
-            OnAbort();
+            OnAbort(recursive);
 
             foreach (var callback in failCallbacks)
             {
@@ -144,7 +144,7 @@ namespace Coroutine
             Dispose();
         }
 
-        protected virtual void OnAbort()
+        protected virtual void OnAbort(bool recursive)
         {
         }
 

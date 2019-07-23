@@ -70,7 +70,7 @@ namespace UnitTest
         public void TestCascade()
         {
             var i = 0;
-            CoroutineManager.StartCoroutine(RunFather(), BubbleException.Throw);
+            CoroutineManager.StartCoroutine(RunFather(), BubbleExceptionApproach.Throw);
             Tick();
 
             IEnumerable<IWaitable> RunFather()
@@ -93,6 +93,32 @@ namespace UnitTest
                 i++;
                 Assert.AreEqual(2, i);
                 Assert.AreEqual(1, Frame);
+            }
+        }
+
+        [TestMethod]
+        public void TestThrow()
+        {
+            var i = 0;
+            CoroutineManager.OnUnhandledException = e =>
+            {
+                i++; 
+            };
+            Assert.AreEqual(0, i);
+            CoroutineManager.StartCoroutine(Run(true));
+            Assert.AreEqual(1, i);
+            Tick();
+            Assert.AreEqual(1, i);
+
+            IEnumerable<IWaitable> Run(bool t)
+            {
+                if (t)
+                {
+                    throw new ArgumentException();
+                }
+                i++;
+                yield return null;
+                i++;
             }
         }
 
