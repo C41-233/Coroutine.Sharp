@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Coroutine;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+// ReSharper disable ImplicitlyCapturedClosure
 
 namespace UnitTest
 {
@@ -102,7 +103,10 @@ namespace UnitTest
             var i = 0;
             CoroutineManager.OnUnhandledException = e =>
             {
-                i++; 
+                if (e is ArgumentException)
+                {
+                    i++; 
+                }
             };
             Assert.AreEqual(0, i);
             CoroutineManager.StartCoroutine(Run(true));
@@ -119,6 +123,42 @@ namespace UnitTest
                 i++;
                 yield return null;
                 i++;
+            }
+        }
+
+        [TestMethod]
+        public void TestCascadeThrow()
+        {
+            var i = 0;
+
+            CoroutineManager.OnUnhandledException = e =>
+            {
+                if (e is ArgumentException)
+                {
+                    i++;
+                }
+            };
+            CoroutineManager.StartCoroutine(RunFather(), BubbleExceptionApproach.Throw);
+
+            //自身+1，handle+1
+            Assert.AreEqual(2, i);
+            Tick();
+            Assert.AreEqual(2, i);
+
+            IEnumerable<IWaitable> RunFather()
+            {
+                Assert.AreEqual(0, i);
+                Assert.AreEqual(0, Frame);
+                i++;
+
+                yield return CoroutineManager.StartCoroutine(RunChild());
+
+                Assert.Fail();
+            }
+
+            IEnumerable<IWaitable> RunChild()
+            {
+                throw new ArgumentException();
             }
         }
 

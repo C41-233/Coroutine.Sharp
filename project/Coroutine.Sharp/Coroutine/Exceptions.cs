@@ -3,7 +3,7 @@
 namespace Coroutine
 {
 
-    public sealed class WaitableFlowException : Exception
+    internal sealed class WaitableFlowException : Exception
     {
 
         public WaitableFlowException(Exception e) : base(null, e)

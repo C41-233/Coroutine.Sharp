@@ -16,7 +16,7 @@ namespace Coroutine
             }
             catch (Exception e)
             {
-                OnUnhandledException?.Invoke(e);
+                UnHandleException(e);
             }
             return coroutine;
         }
@@ -33,7 +33,7 @@ namespace Coroutine
                 }
                 catch (Exception e)
                 {
-                    OnUnhandledException?.Invoke(e);
+                    UnHandleException(e);
                 }
             }
         }
@@ -44,6 +44,11 @@ namespace Coroutine
         }
 
         public Action<Exception> OnUnhandledException { internal get; set; } = DefaultUnhandledException;
+
+        private void UnHandleException(Exception e)
+        {
+            OnUnhandledException?.Invoke(e is WaitableFlowException ? e.InnerException : e);
+        }
 
         private static void DefaultUnhandledException(Exception e)
         {

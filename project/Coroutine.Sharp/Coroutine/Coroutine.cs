@@ -162,7 +162,7 @@ namespace Coroutine
             }
             else
             {
-                throw new WaitableFlowException(e);
+                throw e is WaitableFlowException ? e : new WaitableFlowException(e);
             }
         }
 
