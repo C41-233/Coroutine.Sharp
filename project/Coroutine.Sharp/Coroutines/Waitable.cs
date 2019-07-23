@@ -131,7 +131,7 @@ namespace Coroutines
                     return;
                 }
 
-                Exception = new WaitableAbortException();
+                Exception = null;
                 status = WaitableStatus.Fail;
             }
 
@@ -169,13 +169,13 @@ namespace Coroutines
     public abstract class WaitableTask<T> : Waitable, IWaitable<T>
     {
 
-        public T Result
+        public T R
         {
             get
             {
                 if (Exception != null)
                 {
-                    throw Exception;
+                    throw new WaitableFlowException(Exception);
                 }
                 return result;
             }
@@ -200,51 +200,4 @@ namespace Coroutines
         }
     }
 
-    public abstract class WaitableTask<T1, T2> : Waitable, IWaitable<T1, T2>
-    {
-
-        public T1 Result1
-        {
-            get
-            {
-                if (Exception != null)
-                {
-                    throw Exception;
-                }
-                return result1;
-            }
-        }
-
-        public T2 Result2
-        {
-            get
-            {
-                if (Exception != null)
-                {
-                    throw Exception;
-                }
-                return result2;
-            }
-        }
-
-        private T1 result1;
-        private T2 result2;
-
-        protected void Success(T1 result1, T2 result2)
-        {
-            this.result1 = result1;
-            this.result2 = result2;
-            DoSuccess();
-        }
-
-        public IWaitable<T1, T2> OnSuccess(Action<T1, T2> callback)
-        {
-            if (callback == null)
-            {
-                return this;
-            }
-            OnSuccess(() => callback(result1, result2));
-            return this;
-        }
-    }
 }

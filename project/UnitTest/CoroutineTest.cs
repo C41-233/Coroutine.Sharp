@@ -300,7 +300,8 @@ namespace UnitTest
             IEnumerable<IWaitable> RunFather()
             {
                 i++;
-                yield return CoroutineManager.StartCoroutine(RunChild()).Co(out co2);
+                co2 = CoroutineManager.StartCoroutine(RunChild());
+                yield return co2;
                 i++;
             }
 

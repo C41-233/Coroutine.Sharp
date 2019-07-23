@@ -3,8 +3,14 @@ using System.Collections.Generic;
 
 namespace Coroutines
 {
-    public sealed class Coroutine : IWaitable
+
+    public sealed class Coroutine<T> : IWaitable<T>
     {
+
+        public static IWaitable<T> Complete(T value)
+        {
+            return new CoroutineResult<T>(value);
+        }
 
         private readonly CoroutineManager coroutineManager;
         private IEnumerator<IWaitable> enumerator;
@@ -12,12 +18,27 @@ namespace Coroutines
 
         private IWaitable waitable;
 
-        internal Coroutine(CoroutineManager coroutineManager, IEnumerator<IWaitable> co, BubbleExceptionApproach approach)
+        public T R
+        {
+            get
+            {
+                if (Exception != null)
+                {
+                    throw new WaitableFlowException(Exception);
+                }
+
+                return r;
+            }
+        }
+
+        private T r;
+
+        internal Coroutine(CoroutineManager coroutineManager, IEnumerable<IWaitable> co, BubbleExceptionApproach approach)
         {
             this.coroutineManager = coroutineManager;
             this.approach = approach;
 
-            enumerator = co;
+            enumerator = co.GetEnumerator();
         }
 
         internal void Start()
@@ -39,14 +60,21 @@ namespace Coroutines
                 return;
             }
 
-            if (moveNext)
+            if (!moveNext)
             {
-                Dispatch(enumerator.Current);
+                Success(default);
+                return;
             }
-            else
+
+            var current = enumerator.Current;
+
+            if (current is CoroutineResult<T> result)
             {
-                Success();
+                Success(result.R);
+                return;
             }
+
+            Dispatch(current);
         }
 
         private void Dispatch(IWaitable waitable)
@@ -101,23 +129,25 @@ namespace Coroutines
         public WaitableStatus Status { get; private set; }
         public Exception Exception { get; private set; }
 
-        private List<Action> successCallbacks = new List<Action>(1);
+        private List<Action<T>> successCallbacks = new List<Action<T>>(1);
         private List<Action<Exception>> failCallbacks = new List<Action<Exception>>(1);
 
-        private void Success()
+        private void Success(T t)
         {
             if (Status != WaitableStatus.Running)
             {
                 return;
             }
 
+            r = t;
             Status = WaitableStatus.Success;
+
             var localSuccessCallbacks = successCallbacks;
             Dispose();
 
             foreach (var callback in localSuccessCallbacks)
             {
-                callback();
+                callback(t);
             }
         }
 
@@ -127,11 +157,21 @@ namespace Coroutines
             {
                 return this;
             }
+            OnSuccess(t => callback());
+            return this;
+        }
+
+        public IWaitable<T> OnSuccess(Action<T> callback)
+        {
+            if (callback == null)
+            {
+                return this;
+            }
 
             switch (Status)
             {
                 case WaitableStatus.Success:
-                    callback();
+                    callback(R);
                     break;
                 case WaitableStatus.Running:
                     successCallbacks.Add(callback);
@@ -145,11 +185,6 @@ namespace Coroutines
             if (Status != WaitableStatus.Running)
             {
                 return;
-            }
-
-            if (e == null)
-            {
-                e = new WaitableAbortException();
             }
 
             Exception = e;
@@ -197,7 +232,7 @@ namespace Coroutines
             }
 
             Status = WaitableStatus.Fail;
-            Exception = null;
+            Exception = new WaitableAbortException();
 
             if (recursive)
             {
@@ -211,6 +246,42 @@ namespace Coroutines
             {
                 callback(Exception);
             }
+        }
+    }
+
+    internal sealed class CoroutineResult<T> : IWaitable<T>
+    {
+
+        public T R { get; private set; }
+
+        WaitableStatus IWaitable.Status => WaitableStatus.Success;
+
+        Exception IWaitable.Exception => null;
+
+        public CoroutineResult(T r)
+        {
+            R = r;
+        }
+
+        IWaitable IWaitable.OnSuccess(Action callback)
+        {
+            callback?.Invoke();
+            return this;
+        }
+
+        public IWaitable<T> OnSuccess(Action<T> callback)
+        {
+            callback?.Invoke(R);
+            return this;
+        }
+
+        public IWaitable OnFail(Action<Exception> callback)
+        {
+            return this;
+        }
+
+        public void Abort(bool recursive)
+        {
         }
 
     }

@@ -9,6 +9,25 @@ namespace Coroutines
 
         public BubbleExceptionApproach DefaultBubbleExceptionApproach { get; set; } = BubbleExceptionApproach.Ignore;
 
+        public Coroutine<T> StartCoroutine<T>(IEnumerable<IWaitable> co, BubbleExceptionApproach bubbleExceptionApproach)
+        {
+            var coroutine = new Coroutine<T>(this, co, bubbleExceptionApproach);
+            try
+            {
+                coroutine.Start();
+            }
+            catch (Exception e)
+            {
+                UnHandleException(e);
+            }
+            return coroutine;
+        }
+
+        public Coroutine<T> StartCoroutine<T>(IEnumerable<IWaitable> co)
+        {
+            return StartCoroutine<T>(co, DefaultBubbleExceptionApproach);
+        }
+
         public Coroutine StartCoroutine(IEnumerable<IWaitable> co)
         {
             return StartCoroutine(co, DefaultBubbleExceptionApproach);
