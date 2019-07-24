@@ -35,6 +35,7 @@ namespace BestAiServer
                 CoroutineManager.StartCoroutine(ProcessClient(client)).Catch(e =>
                 {
                     Console.Error.WriteLine(e);
+                    client.R.Close();
                 });
             }
         }
@@ -48,7 +49,7 @@ namespace BestAiServer
                 yield return WaitFor.Receive(socket, bs).With(out var nread);
                 if (nread.IsError())
                 {
-                    Console.WriteLine($"Error {remote} : {nread.Exception}");
+                    Console.WriteLine($"Error receive {remote} : {nread.Exception}");
                     socket.Close();
                     break;
                 }
@@ -62,7 +63,47 @@ namespace BestAiServer
 
                 var receive = Encoding.UTF8.GetString(bs, 0, nread);
                 Console.WriteLine($"receive {receive} from {socket.RemoteEndPoint}");
+
+                var answer = Answer(receive) + "\n";
+                yield return WaitFor.Send(socket, Encoding.UTF8.GetBytes(answer)).With(out var nsend);
+                if (nsend.IsError())
+                {
+                    Console.WriteLine($"Error send {remote} : {nread.Exception}");
+                    socket.Close();
+                    break;
+                }
+
+                if (nsend <= 0)
+                {
+                    Console.WriteLine($"Close {remote}");
+                    socket.Close();
+                    break;
+                }
+
             }
+        }
+
+        private static string Answer(string question)
+        {
+            question = question.Trim();
+
+            if (question.Contains("什么"))
+            {
+                return "不知道！";
+            }
+
+            question = question.Replace("你", "我");
+            if (question.EndsWith("吗？"))
+            {
+                return question.Substring(0, question.Length - 2) + "！";
+            }
+
+            if (question.EndsWith("？"))
+            {
+                return question.Substring(0, question.Length - 1) + "！";
+            }
+
+            return question;
         }
 
     }

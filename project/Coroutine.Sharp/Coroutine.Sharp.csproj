@@ -41,6 +41,7 @@
     <Compile Include="Coroutines\CompleteWaitable.cs" />
     <Compile Include="Coroutines\IWaitable.cs" />
     <Compile Include="Coroutines\WaitableExtends.cs" />
+    <Compile Include="Coroutines\WaitableValue.cs" />
     <Compile Include="Coroutines\Wait\Logic\WaitForPromise.cs" />
     <Compile Include="Timers\TimerHandle.cs" />
     <Compile Include="Timers\TimerManager.cs" />
