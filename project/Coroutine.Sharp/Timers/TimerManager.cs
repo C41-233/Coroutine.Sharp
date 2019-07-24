@@ -66,5 +66,14 @@ namespace Coroutines.Timers
             }
         }
 
+        public void Dispose()
+        {
+            foreach (var timer in queue)
+            {
+                timer.Stop();
+            }
+            queue.Clear();
+        }
+
     }
 }

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Coroutines.Base
 {
 
-    internal class PriorityQueue<T>
+    internal class PriorityQueue<T> : IEnumerable<T>
     {
 
         private const int DefaultSize = 16;
@@ -75,6 +77,29 @@ namespace Coroutines.Base
         }
 
         private bool Less(T a, T b) => comparison(a, b) < 0;
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            for (var i = 1; i <= Count; i++)
+            {
+                yield return buffer[i];
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public void Clear()
+        {
+            for (var i = 1; i <= Count; i++)
+            {
+                buffer[i] = default;
+            }
+
+            Count = 0;
+        }
 
     }
 

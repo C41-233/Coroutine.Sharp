@@ -26,12 +26,14 @@ namespace BestAiServer
 
         private static IEnumerable MainLoop()
         {
+            Console.WriteLine("server start...");
             var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.Bind(new IPEndPoint(IPAddress.Any, 8000));
             socket.Listen(5);
             while (true)
             {
                 yield return WaitFor.Accept(socket).With(out var client);
+                Console.WriteLine($"connect client {client.R.RemoteEndPoint}");
                 CoroutineManager.StartCoroutine(ProcessClient(client)).Catch(e =>
                 {
                     Console.Error.WriteLine(e);
@@ -49,7 +51,14 @@ namespace BestAiServer
                 yield return WaitFor.Receive(socket, bs).With(out var nread);
                 if (nread.IsError())
                 {
-                    Console.WriteLine($"Error receive {remote} : {nread.Exception}");
+                    if (nread.Exception is SocketException e)
+                    {
+                        Console.WriteLine($"Close {remote} : {e.SocketErrorCode}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Error receive {remote} : {nread.Exception}");
+                    }
                     socket.Close();
                     break;
                 }
