@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IsPrime", "IsPrime.csproj", "{7DA401E4-65DB-4539-B8B1-6BCE6B77FEF3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IsPrime", "IsPrime\IsPrime.csproj", "{7DA401E4-65DB-4539-B8B1-6BCE6B77FEF3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +20,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {7A35C28E-3176-478A-BBBA-283762FE841C}
+		SolutionGuid = {86FCB1E7-4B19-4531-9D2C-ECEF8BFDCD1E}
 	EndGlobalSection
 EndGlobal
