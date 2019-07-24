@@ -14,8 +14,8 @@ namespace Coroutines
             countDown = waitables.Length;
             foreach (var waitable in waitables)
             {
-                waitable.OnSuccess(OnSuccessCallback);
-                waitable.OnFail(OnFailCallback);
+                waitable.Then(OnSuccessCallback);
+                waitable.Catch(OnFailCallback);
             }
         }
 

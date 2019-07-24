@@ -5,7 +5,8 @@
 
         Running,
         Success,
-        Fail,
+        Error,
+        Abort,
 
     }
 

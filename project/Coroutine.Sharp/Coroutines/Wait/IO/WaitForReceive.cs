@@ -36,7 +36,7 @@ namespace Coroutines
             var socket = (Socket) ar.AsyncState;
             try
             {
-                int nread = socket.EndReceive(ar);
+                var nread = socket.EndReceive(ar);
                 Success(nread);
             }
             catch (Exception e)

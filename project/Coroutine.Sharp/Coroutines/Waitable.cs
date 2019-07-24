@@ -21,7 +21,7 @@ namespace Coroutines
 
         private List<Action> successCallbacks = new List<Action>(1);
 
-        public IWaitable OnSuccess(Action callback)
+        public IWaitable Then(Action callback)
         {
             if (callback == null)
             {
@@ -69,7 +69,7 @@ namespace Coroutines
             Dispose();
         }
 
-        private List<Action<Exception>> failCallbacks = new List<Action<Exception>>(1);
+        private List<Action<Exception>> catchCallbacks = new List<Action<Exception>>(1);
 
         public Exception Exception { get; private set; }
 
@@ -83,17 +83,17 @@ namespace Coroutines
                 }
 
                 Exception = e;
-                status = WaitableStatus.Fail;
+                status = WaitableStatus.Error;
             }
 
-            foreach (var callback in failCallbacks)
+            foreach (var callback in catchCallbacks)
             {
                 callback(e);
             }
             Dispose();
         }
 
-        public IWaitable OnFail(Action<Exception> callback)
+        public IWaitable Catch(Action<Exception> callback)
         {
             if (callback == null)
             {
@@ -105,11 +105,12 @@ namespace Coroutines
             {
                 switch (status)
                 {
-                    case WaitableStatus.Fail:
+                    case WaitableStatus.Abort:
+                    case WaitableStatus.Error:
                         call = true;
                         break;
                     case WaitableStatus.Running:
-                        failCallbacks.Add(callback);
+                        catchCallbacks.Add(callback);
                         break;
                 }
             }
@@ -132,12 +133,12 @@ namespace Coroutines
                 }
 
                 Exception = null;
-                status = WaitableStatus.Fail;
+                status = WaitableStatus.Abort;
             }
 
             OnAbort(recursive);
 
-            foreach (var callback in failCallbacks)
+            foreach (var callback in catchCallbacks)
             {
                 callback(Exception);
             }
@@ -151,7 +152,7 @@ namespace Coroutines
         private void Dispose()
         {
             successCallbacks = null;
-            failCallbacks = null;
+            catchCallbacks = null;
         }
 
     }
@@ -189,13 +190,13 @@ namespace Coroutines
             DoSuccess();
         }
 
-        public IWaitable<T> OnSuccess(Action<T> callback)
+        public IWaitable<T> Then(Action<T> callback)
         {
             if (callback == null)
             {
                 return this;
             }
-            OnSuccess(() => callback(result));
+            Then(() => callback(result));
             return this;
         }
     }

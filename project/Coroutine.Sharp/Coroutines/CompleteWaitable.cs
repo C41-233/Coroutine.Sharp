@@ -25,19 +25,19 @@ namespace Coroutines
             R = r;
         }
 
-        IWaitable IWaitable.OnSuccess(Action callback)
+        IWaitable IWaitable.Then(Action callback)
         {
             callback?.Invoke();
             return this;
         }
 
-        public IWaitable<T> OnSuccess(Action<T> callback)
+        public IWaitable<T> Then(Action<T> callback)
         {
             callback?.Invoke(R);
             return this;
         }
 
-        public IWaitable OnFail(Action<Exception> callback)
+        public IWaitable Catch(Action<Exception> callback)
         {
             return this;
         }

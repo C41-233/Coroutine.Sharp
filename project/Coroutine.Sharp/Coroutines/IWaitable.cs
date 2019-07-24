@@ -9,9 +9,9 @@ namespace Coroutines
 
         Exception Exception { get; }
 
-        IWaitable OnSuccess(Action callback);
+        IWaitable Then(Action callback);
 
-        IWaitable OnFail(Action<Exception> callback);
+        IWaitable Catch(Action<Exception> callback);
 
         void Abort(bool recursive = true);
     }
@@ -21,7 +21,7 @@ namespace Coroutines
 
         T R { get; }
 
-        IWaitable<T> OnSuccess(Action<T> callback);
+        IWaitable<T> Then(Action<T> callback);
 
     }
 

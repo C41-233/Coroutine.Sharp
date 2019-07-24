@@ -130,7 +130,7 @@ namespace UnitTest
             Assert.AreEqual(1, i);
             Tick();
             Assert.AreEqual(1, i);
-            Assert.IsTrue(co.IsFail());
+            Assert.IsTrue(co.IsError());
 
             IEnumerable RunFather()
             {
@@ -199,7 +199,7 @@ namespace UnitTest
                 Assert.AreEqual(0, Frame);
                 i++;
 
-                yield return CoroutineManager.StartCoroutine(RunChild()).OnFail(e =>
+                yield return CoroutineManager.StartCoroutine(RunChild()).Catch(e =>
                 {
                     i = -10;
                 });
@@ -264,8 +264,8 @@ namespace UnitTest
 
             Tick();
             Assert.AreEqual(4, i);
-            Assert.AreEqual(WaitableStatus.Fail, co1.Status);
-            Assert.AreEqual(WaitableStatus.Fail, co2.Status);
+            Assert.AreEqual(WaitableStatus.Error, co1.Status);
+            Assert.AreEqual(WaitableStatus.Error, co2.Status);
             Assert.IsTrue(co1.IsAbort());
             Assert.IsTrue(co2.IsAbort());
 
@@ -316,13 +316,13 @@ namespace UnitTest
             Assert.AreEqual(5, i);
             Assert.AreEqual(1, j);
 
-            Assert.AreEqual(WaitableStatus.Fail, co2.Status);
+            Assert.AreEqual(WaitableStatus.Error, co2.Status);
             Assert.AreEqual(WaitableStatus.Success, co1.Status);
 
             IEnumerable RunFather()
             {
                 i++;
-                yield return co2.OnFail(e => j++);
+                yield return co2.Catch(e => j++);
                 i++;
             }
 

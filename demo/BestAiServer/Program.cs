@@ -32,21 +32,34 @@ namespace BestAiServer
             while (true)
             {
                 yield return WaitFor.Accept(socket).With(out var client);
-                CoroutineManager.StartCoroutine(ProcessClient(client));
+                CoroutineManager.StartCoroutine(ProcessClient(client)).Catch(e =>
+                {
+                    Console.Error.WriteLine(e);
+                });
             }
         }
 
         private static IEnumerable ProcessClient(Socket socket)
         {
             var bs = new byte[1024];
+            var remote = socket.RemoteEndPoint;
             while (true)
             {
                 yield return WaitFor.Receive(socket, bs).With(out var nread);
-                if (!nread.IsSuccess() || nread <= 0)
+                if (nread.IsError())
                 {
+                    Console.WriteLine($"Error {remote} : {nread.Exception}");
                     socket.Close();
                     break;
                 }
+
+                if (nread <= 0)
+                {
+                    Console.WriteLine($"Close {remote}");
+                    socket.Close();
+                    break;
+                }
+
                 var receive = Encoding.UTF8.GetString(bs, 0, nread);
                 Console.WriteLine($"receive {receive} from {socket.RemoteEndPoint}");
             }

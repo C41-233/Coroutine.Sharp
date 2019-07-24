@@ -88,13 +88,13 @@ namespace Coroutines
             this.waitable = waitable;
 
             //等待的事件成功，继续下一步
-            waitable.OnSuccess(() =>
+            waitable.Then(() =>
             {
                 coroutineManager.Enqueue(NextStep);
                 this.waitable = null;
             });
 
-            waitable.OnFail(e =>
+            waitable.Catch(e =>
             {
                 switch (approach)
                 {
@@ -153,17 +153,17 @@ namespace Coroutines
             }
         }
 
-        public IWaitable OnSuccess(Action callback)
+        public IWaitable Then(Action callback)
         {
             if (callback == null)
             {
                 return this;
             }
-            OnSuccess(t => callback());
+            Then(t => callback());
             return this;
         }
 
-        public IWaitable<T> OnSuccess(Action<T> callback)
+        public IWaitable<T> Then(Action<T> callback)
         {
             if (callback == null)
             {
@@ -190,7 +190,7 @@ namespace Coroutines
             }
 
             Exception = e ?? new WaitableAbortException();
-            Status = WaitableStatus.Fail;
+            Status = WaitableStatus.Error;
 
             var localFailCallbacks = failCallbacks;
             Dispose();
@@ -201,7 +201,7 @@ namespace Coroutines
             }
         }
 
-        public IWaitable OnFail(Action<Exception> callback)
+        public IWaitable Catch(Action<Exception> callback)
         {
             if (callback == null)
             {
@@ -209,7 +209,7 @@ namespace Coroutines
             }
             switch (Status)
             {
-                case WaitableStatus.Fail:
+                case WaitableStatus.Error:
                     callback(Exception);
                     break;
                 case WaitableStatus.Running:
@@ -226,7 +226,7 @@ namespace Coroutines
                 return;
             }
 
-            Status = WaitableStatus.Fail;
+            Status = WaitableStatus.Error;
             Exception = null;
 
             if (recursive)

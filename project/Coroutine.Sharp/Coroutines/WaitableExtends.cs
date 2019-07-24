@@ -35,14 +35,9 @@ namespace Coroutines
             return self.Status == WaitableStatus.Success;
         }
 
-        public static bool IsFail(this IWaitable self)
-        {
-            return self.Status == WaitableStatus.Fail;
-        }
-
         public static bool IsAbort(this IWaitable self)
         {
-            return self.Status == WaitableStatus.Fail && self.Exception == null;
+            return self.Status == WaitableStatus.Abort;
         }
 
         public static bool IsFinish(this IWaitable self)
@@ -52,16 +47,28 @@ namespace Coroutines
 
         public static bool IsError(this IWaitable self)
         {
-            return self.Status == WaitableStatus.Fail && self.Exception != null;
+            return self.Status == WaitableStatus.Error;
         }
 
-        public static IWaitable OnFail(this IWaitable self, Action callback)
+        public static IWaitable Catch(this IWaitable self, Action callback)
         {
             if (callback == null)
             {
                 return self;
             }
-            return self.OnFail(e => callback());
+            return self.Catch(e => callback());
+        }
+
+        public static IWaitable Finally(this IWaitable self, Action callback)
+        {
+            if (callback == null)
+            {
+                return self;
+            }
+
+            self.Then(callback);
+            self.Catch(callback);
+            return self;
         }
 
     }
@@ -85,14 +92,14 @@ namespace Coroutines
         public WaitableStatus Status => waitable.Status;
         public Exception Exception => waitable.Exception;
 
-        public IWaitable OnSuccess(Action callback)
+        public IWaitable Then(Action callback)
         {
-            return waitable.OnSuccess(callback);
+            return waitable.Then(callback);
         }
 
-        public IWaitable OnFail(Action<Exception> callback)
+        public IWaitable Catch(Action<Exception> callback)
         {
-            return waitable.OnFail(callback);
+            return waitable.Catch(callback);
         }
 
         public void Abort(bool recursive = true)
@@ -100,9 +107,9 @@ namespace Coroutines
             waitable.Abort(recursive);
         }
 
-        public IWaitable<T> OnSuccess(Action<T> callback)
+        public IWaitable<T> Then(Action<T> callback)
         {
-            return waitable.OnSuccess(callback);
+            return waitable.Then(callback);
         }
 
         public override string ToString()
@@ -136,8 +143,8 @@ namespace Coroutines
         public void Bind(CoroutineManager coroutineManager)
         {
             var coroutine = coroutineManager.StartCoroutine<T>(enumerable);
-            coroutine.OnSuccess(Success);
-            coroutine.OnFail(Fail);
+            coroutine.Then(Success);
+            coroutine.Catch(Fail);
         }
     }
 

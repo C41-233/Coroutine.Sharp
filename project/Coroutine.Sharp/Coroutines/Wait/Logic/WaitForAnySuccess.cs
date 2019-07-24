@@ -19,8 +19,8 @@ namespace Coroutines
 
             foreach (var waitable in waitables)
             {
-                waitable.OnSuccess(() => OnSuccessCallback(waitable));
-                waitable.OnFail(OnFailCallback);
+                waitable.Then(() => OnSuccessCallback(waitable));
+                waitable.Catch(OnFailCallback);
             }
         }
 
