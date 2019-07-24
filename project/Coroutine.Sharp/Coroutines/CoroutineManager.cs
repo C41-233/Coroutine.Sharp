@@ -9,28 +9,6 @@ namespace Coroutines
 
         public BubbleExceptionApproach DefaultBubbleExceptionApproach { get; set; } = BubbleExceptionApproach.Ignore;
 
-        public Coroutine<T> StartCoroutine<T>(IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach)
-        {
-            var coroutine = new Coroutine<T>(this, co, bubbleExceptionApproach);
-            return coroutine;
-        }
-
-        public Coroutine<T> StartCoroutine<T>(IEnumerable co)
-        {
-            return StartCoroutine<T>(co, DefaultBubbleExceptionApproach);
-        }
-
-        public Coroutine StartCoroutine(IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach)
-        {
-            var coroutine = new Coroutine(this, co.GetEnumerator(), bubbleExceptionApproach);
-            return coroutine;
-        }
-
-        public Coroutine StartCoroutine(IEnumerable co)
-        {
-            return StartCoroutine(co, DefaultBubbleExceptionApproach);
-        }
-
         private readonly SwapQueue<Action> actions = new SwapQueue<Action>();
 
         public void OneLoop()
@@ -52,6 +30,42 @@ namespace Coroutines
         {
             actions.Enqueue(callback);
         }
+
+        public class Container
+        {
+
+            public CoroutineManager CoroutineManager { get; }
+
+            internal Container(CoroutineManager coroutineManager)
+            {
+                CoroutineManager = coroutineManager;
+            }
+
+            public Coroutine<T> StartCoroutine<T>(IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach)
+            {
+                var coroutine = new Coroutine<T>(this, co, bubbleExceptionApproach);
+                return coroutine;
+            }
+
+            public Coroutine<T> StartCoroutine<T>(IEnumerable co)
+            {
+                return StartCoroutine<T>(co, CoroutineManager.DefaultBubbleExceptionApproach);
+            }
+
+            public Coroutine StartCoroutine(IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach)
+            {
+                var coroutine = new Coroutine(this, co.GetEnumerator(), bubbleExceptionApproach);
+                return coroutine;
+            }
+
+            public Coroutine StartCoroutine(IEnumerable co)
+            {
+                return StartCoroutine(co, CoroutineManager.DefaultBubbleExceptionApproach);
+            }
+
+        }
+
+        public Container CreateContainer() => new Container(this);
 
     }
 

@@ -76,7 +76,7 @@ namespace Coroutines
     internal interface IWaitableEnumerable : IWaitable
     {
 
-        void Bind(CoroutineManager coroutineManager);
+        void Bind(CoroutineManager.Container coroutineContainer);
 
     }
 
@@ -90,9 +90,9 @@ namespace Coroutines
             this.enumerable = enumerable;
         }
 
-        public void Bind(CoroutineManager coroutineManager)
+        public void Bind(CoroutineManager.Container coroutineContainer)
         {
-            var coroutine = coroutineManager.StartCoroutine<T>(enumerable);
+            var coroutine = coroutineContainer.StartCoroutine<T>(enumerable);
             coroutine.Then(Success);
             coroutine.Catch(Fail);
         }

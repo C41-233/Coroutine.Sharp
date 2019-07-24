@@ -8,7 +8,8 @@ namespace Coroutines
     public sealed class Coroutine<T> : IWaitable<T>
     {
 
-        private readonly CoroutineManager coroutineManager;
+        private readonly CoroutineManager.Container coroutineContainer;
+        private CoroutineManager coroutineManager => coroutineContainer.CoroutineManager;
         private IEnumerator enumerator;
         private readonly BubbleExceptionApproach approach;
 
@@ -29,9 +30,9 @@ namespace Coroutines
 
         private T r;
 
-        internal Coroutine(CoroutineManager coroutineManager, IEnumerable co, BubbleExceptionApproach approach)
+        internal Coroutine(CoroutineManager.Container coroutineContainer, IEnumerable co, BubbleExceptionApproach approach)
         {
-            this.coroutineManager = coroutineManager;
+            this.coroutineContainer = coroutineContainer;
             this.approach = approach;
             enumerator = co.GetEnumerator();
             NextStep();
@@ -71,11 +72,11 @@ namespace Coroutines
                     Success(result.R);
                     break;
                 case IWaitableEnumerable waitableEnumerable:
-                    waitableEnumerable.Bind(coroutineManager);
+                    waitableEnumerable.Bind(coroutineContainer);
                     Dispatch(waitableEnumerable);
                     break;
                 case IEnumerable enumerable:
-                    Dispatch(coroutineManager.StartCoroutine(enumerable));
+                    Dispatch(coroutineContainer.StartCoroutine(enumerable));
                     break;
                 default:
                     Dispatch((IWaitable) current);

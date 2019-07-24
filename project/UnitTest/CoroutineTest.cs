@@ -13,6 +13,7 @@ namespace UnitTest
     {
 
         private CoroutineManager CoroutineManager;
+        private CoroutineManager.Container CoroutineContainer;
         private int Frame;
 
         [TestInitialize]
@@ -23,6 +24,7 @@ namespace UnitTest
             {
                 DefaultBubbleExceptionApproach = BubbleExceptionApproach.Throw,
             };
+            CoroutineContainer = CoroutineManager.CreateContainer();
         }
 
         [TestCleanup]
@@ -35,7 +37,7 @@ namespace UnitTest
         public void Test1()
         {
             var i = 0;
-            CoroutineManager.StartCoroutine(Run());
+            CoroutineContainer.StartCoroutine(Run());
             Assert.AreEqual(1, i);
             Tick();
             Assert.AreEqual(1, i);
@@ -52,7 +54,7 @@ namespace UnitTest
         public void Test2()
         {
             var i = 0;
-            CoroutineManager.StartCoroutine(Run());
+            CoroutineContainer.StartCoroutine(Run());
             Assert.AreEqual(0, i);
             Tick();
             Assert.AreEqual(1, i);
@@ -72,7 +74,7 @@ namespace UnitTest
         public void TestCascade()
         {
             var i = 0;
-            CoroutineManager.StartCoroutine(RunFather());
+            CoroutineContainer.StartCoroutine(RunFather());
             Tick();
 
             IEnumerable RunFather()
@@ -81,7 +83,7 @@ namespace UnitTest
                 Assert.AreEqual(0, Frame);
                 i++;
 
-                yield return CoroutineManager.StartCoroutine(RunChild());
+                yield return CoroutineContainer.StartCoroutine(RunChild());
 
                 Assert.AreEqual(2, i);
                 Assert.AreEqual(2, Frame);
@@ -103,7 +105,7 @@ namespace UnitTest
         {
             var i = 0;
             Assert.AreEqual(0, i);
-            var co = CoroutineManager.StartCoroutine(Run(true));
+            var co = CoroutineContainer.StartCoroutine(Run(true));
             Assert.AreEqual(0, i);
             Tick();
             Assert.AreEqual(0, i);
@@ -125,7 +127,7 @@ namespace UnitTest
         public void TestCascadeThrow1()
         {
             var i = 0;
-            var co = CoroutineManager.StartCoroutine(RunFather());
+            var co = CoroutineContainer.StartCoroutine(RunFather());
 
             Assert.AreEqual(1, i);
             Tick();
@@ -138,7 +140,7 @@ namespace UnitTest
                 Assert.AreEqual(0, Frame);
                 i++;
 
-                yield return CoroutineManager.StartCoroutine(RunChild());
+                yield return CoroutineContainer.StartCoroutine(RunChild());
 
                 Assert.Fail();
             }
@@ -153,7 +155,7 @@ namespace UnitTest
         public void TestCascadeThrow2()
         {
             var i = 0;
-            CoroutineManager.StartCoroutine(RunFather());
+            CoroutineContainer.StartCoroutine(RunFather());
 
             Assert.AreEqual(2, i);
             Tick();
@@ -167,7 +169,7 @@ namespace UnitTest
                 Assert.AreEqual(0, Frame);
                 i++;
 
-                yield return CoroutineManager.StartCoroutine(RunChild());
+                yield return CoroutineContainer.StartCoroutine(RunChild());
 
                 Assert.Fail();
             }
@@ -185,7 +187,7 @@ namespace UnitTest
         public void TestCascadeThrow3()
         {
             var i = 0;
-            CoroutineManager.StartCoroutine(RunFather(), BubbleExceptionApproach.Abort);
+            CoroutineContainer.StartCoroutine(RunFather(), BubbleExceptionApproach.Abort);
 
             Assert.AreEqual(2, i);
             Tick();
@@ -199,7 +201,7 @@ namespace UnitTest
                 Assert.AreEqual(0, Frame);
                 i++;
 
-                yield return CoroutineManager.StartCoroutine(RunChild()).Catch(e =>
+                yield return CoroutineContainer.StartCoroutine(RunChild()).Catch(e =>
                 {
                     i = -10;
                 });
@@ -221,7 +223,7 @@ namespace UnitTest
         {
             var i = 0;
 
-            CoroutineManager.StartCoroutine(RunFather()).With(out var co);
+            CoroutineContainer.StartCoroutine(RunFather()).With(out var co);
             Assert.AreEqual(1, i);
 
             for (var tick=0; tick<1000; tick++)
@@ -251,7 +253,7 @@ namespace UnitTest
             var i = 0;
             Coroutine co2 = null;
 
-            var co1 = CoroutineManager.StartCoroutine(RunFather());
+            var co1 = CoroutineContainer.StartCoroutine(RunFather());
 
             Assert.AreEqual(2, i);
             CoroutineManager.OneLoop();
@@ -272,7 +274,7 @@ namespace UnitTest
             IEnumerable RunFather()
             {
                 i++;
-                co2 = CoroutineManager.StartCoroutine(RunChild());
+                co2 = CoroutineContainer.StartCoroutine(RunChild());
                 yield return co2;
                 i++;
             }
@@ -293,13 +295,13 @@ namespace UnitTest
             var i = 0;
             var j = 0;
 
-            var co2 = CoroutineManager.StartCoroutine(RunChild());
+            var co2 = CoroutineContainer.StartCoroutine(RunChild());
             Assert.AreEqual(1, i);
 
             CoroutineManager.OneLoop();
             Assert.AreEqual(2, i);
 
-            var co1 = CoroutineManager.StartCoroutine(RunFather(), BubbleExceptionApproach.Ignore);
+            var co1 = CoroutineContainer.StartCoroutine(RunFather(), BubbleExceptionApproach.Ignore);
             Assert.AreEqual(3, i);
 
             CoroutineManager.OneLoop();
@@ -341,13 +343,13 @@ namespace UnitTest
         {
             var i = 0;
 
-            var co2 = CoroutineManager.StartCoroutine(RunChild());
+            var co2 = CoroutineContainer.StartCoroutine(RunChild());
             Assert.AreEqual(1, i);
 
             CoroutineManager.OneLoop();
             Assert.AreEqual(2, i);
 
-            var co1 = CoroutineManager.StartCoroutine(RunFather(), BubbleExceptionApproach.Ignore);
+            var co1 = CoroutineContainer.StartCoroutine(RunFather(), BubbleExceptionApproach.Ignore);
             Assert.AreEqual(3, i);
 
             CoroutineManager.OneLoop();

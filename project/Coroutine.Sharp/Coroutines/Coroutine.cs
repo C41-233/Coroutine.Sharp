@@ -12,15 +12,16 @@ namespace Coroutines
             return new CompleteWaitable<T>(value);
         }
 
-        private readonly CoroutineManager coroutineManager;
+        private readonly CoroutineManager.Container coroutineContainer;
+        private CoroutineManager coroutineManager => coroutineContainer.CoroutineManager;
         private IEnumerator enumerator;
         private readonly BubbleExceptionApproach approach;
 
         private IWaitable waitable;
 
-        internal Coroutine(CoroutineManager coroutineManager, IEnumerator co, BubbleExceptionApproach approach)
+        internal Coroutine(CoroutineManager.Container coroutineContainer, IEnumerator co, BubbleExceptionApproach approach)
         {
-            this.coroutineManager = coroutineManager;
+            this.coroutineContainer = coroutineContainer;
             this.approach = approach;
             enumerator = co;
             NextStep();
@@ -57,11 +58,11 @@ namespace Coroutines
                     Success();
                     break;
                 case IWaitableEnumerable waitableEnumerable:
-                    waitableEnumerable.Bind(coroutineManager);
+                    waitableEnumerable.Bind(coroutineContainer);
                     Dispatch(waitableEnumerable);
                     break;
                 case IEnumerable enumerable:
-                    Dispatch(coroutineManager.StartCoroutine(enumerable));
+                    Dispatch(coroutineContainer.StartCoroutine(enumerable));
                     break;
                 default:
                     Dispatch((IWaitable)current);
