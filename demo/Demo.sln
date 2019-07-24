@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IsPrime", "IsPrime\IsPrime.csproj", "{7DA401E4-65DB-4539-B8B1-6BCE6B77FEF3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BestAiServer", "BestAiServer\BestAiServer.csproj", "{6E0AF45F-001C-4CCF-AFF7-4F8DED718F91}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{7DA401E4-65DB-4539-B8B1-6BCE6B77FEF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DA401E4-65DB-4539-B8B1-6BCE6B77FEF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7DA401E4-65DB-4539-B8B1-6BCE6B77FEF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E0AF45F-001C-4CCF-AFF7-4F8DED718F91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E0AF45F-001C-4CCF-AFF7-4F8DED718F91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E0AF45F-001C-4CCF-AFF7-4F8DED718F91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E0AF45F-001C-4CCF-AFF7-4F8DED718F91}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
