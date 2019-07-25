@@ -17,6 +17,7 @@ namespace Coroutines.Await
 
         public static AwaitMethodBuilder Create()
         {
+            Console.WriteLine("Create");
             var coroutineManager = AwaitShareData.ThreadLocalCoroutineManager;
             if (coroutineManager == null)
             {
@@ -39,7 +40,7 @@ namespace Coroutines.Await
             this.awaitable = awaitable;
         }
 
-        public void SetResult() => awaitable.Complete();
+        public void SetResult() => awaitable.Success();
 
         public void Start<TStateMachine>(ref TStateMachine stateMachine)
             where TStateMachine : IAsyncStateMachine
@@ -51,6 +52,7 @@ namespace Coroutines.Await
             where TAwaiter : INotifyCompletion
             where TStateMachine : IAsyncStateMachine
         {
+            Console.WriteLine("AwaitOnCompleted");
             var s = stateMachine;
             var l = coroutineManager;
             awaiter.OnCompleted(
@@ -65,6 +67,7 @@ namespace Coroutines.Await
             where TAwaiter : ICriticalNotifyCompletion
             where TStateMachine : IAsyncStateMachine
         {
+            Console.WriteLine("AwaitUnsafeOnCompleted");
             var s = stateMachine;
             var l = coroutineManager;
             awaiter.UnsafeOnCompleted(
@@ -76,7 +79,7 @@ namespace Coroutines.Await
 
         public void SetException(Exception e)
         {
-            Console.WriteLine($"SetException {e}");
+            awaitable.Fail(e);
         }
 
         public void SetStateMachine(IAsyncStateMachine stateMachine)

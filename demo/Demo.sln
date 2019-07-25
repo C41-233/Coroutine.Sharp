@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IsPrime", "IsPrime\IsPrime.csproj", "{7DA401E4-65DB-4539-B8B1-6BCE6B77FEF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BestAiServer", "BestAiServer\BestAiServer.csproj", "{6E0AF45F-001C-4CCF-AFF7-4F8DED718F91}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BestAiServer(Yield)", "BestAiServer(Yield)\BestAiServer(Yield).csproj", "{6E0AF45F-001C-4CCF-AFF7-4F8DED718F91}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BestAiClient", "BestAiClient\BestAiClient.csproj", "{0A4DEB64-A100-422F-B6E4-F0E736D40E6C}"
 EndProject

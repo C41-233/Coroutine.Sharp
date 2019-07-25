@@ -31,7 +31,7 @@ namespace BestAiServer
         {
             Console.WriteLine("server start...");
             var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Bind(new IPEndPoint(IPAddress.Any, 8000));
+            socket.Bind(new IPEndPoint(IPAddress.Any, 8077));
             socket.Listen(5);
             while (true)
             {

@@ -1,4 +1,6 @@
-﻿namespace Coroutines.Await
+﻿using System;
+
+namespace Coroutines.Await
 {
     internal class Awaitable : WaitableTask
     {
@@ -9,9 +11,14 @@
             CoroutineManager = coroutineManager;
         }
 
-        public void Complete()
+        public new void Success()
         {
-            Success();
+            base.Success();
+        }
+
+        public new void Fail(Exception e)
+        {
+            base.Fail(e);
         }
 
     }

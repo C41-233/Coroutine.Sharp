@@ -31,9 +31,8 @@ namespace Test
         private static async IWaitable RunWait()
         {
             Console.WriteLine($"1 {Thread.CurrentThread.ManagedThreadId}");
-            await WaitFor.Seconds(TimerManager, 2);
-            Console.WriteLine($"2 {Thread.CurrentThread.ManagedThreadId}");
-            await WaitFor.Seconds(TimerManager, 2);
+            await Task.Delay(2000);
+            await Task.Delay(2000);
             Console.WriteLine($"3 {Thread.CurrentThread.ManagedThreadId}");
         }
 

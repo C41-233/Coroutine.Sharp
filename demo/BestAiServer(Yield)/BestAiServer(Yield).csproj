@@ -7,10 +7,11 @@
     <ProjectGuid>{6E0AF45F-001C-4CCF-AFF7-4F8DED718F91}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>BestAiServer</RootNamespace>
-    <AssemblyName>BestAiServer</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <AssemblyName>BestAiServer.Yield</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
