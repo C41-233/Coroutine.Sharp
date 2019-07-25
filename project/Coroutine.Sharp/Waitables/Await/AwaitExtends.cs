@@ -8,7 +8,6 @@ namespace Coroutines.Await
 
         public static Awaiter GetAwaiter(this IWaitable waitable)
         {
-            Console.WriteLine($"GetAwaiter {waitable}");
             return new Awaiter(waitable);
         }
 

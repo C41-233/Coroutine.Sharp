@@ -50,6 +50,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AwaitTest.cs" />
     <Compile Include="CoroutineContainerTest.cs" />
     <Compile Include="CoroutineTest.cs" />
     <Compile Include="TimerTest.cs" />

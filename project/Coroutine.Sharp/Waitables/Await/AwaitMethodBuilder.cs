@@ -4,35 +4,46 @@ using System.Runtime.CompilerServices;
 namespace Coroutines.Await
 {
 
-    public struct AwaitMethodBuilder
+    internal static class AwaitShareData
     {
 
         [ThreadStatic]
         internal static CoroutineManager ThreadLocalCoroutineManager;
 
-        private CoroutineManager coroutineManager;
+    }
+
+    public struct AwaitMethodBuilder
+    {
 
         public static AwaitMethodBuilder Create()
         {
-            Console.WriteLine("CoroutineAwaitMethodBuilder.Create");
-            if (ThreadLocalCoroutineManager == null)
+            var coroutineManager = AwaitShareData.ThreadLocalCoroutineManager;
+            if (coroutineManager == null)
             {
                 throw new WaitableFlowException("Do not call async coroutine function directly. Use CoroutineManager.Container.StartCoroutine instead.");
             }
-            var builder = new AwaitMethodBuilder
-            {
-                coroutineManager = ThreadLocalCoroutineManager,
-            };
-            ThreadLocalCoroutineManager = null;
+
+            var builder = new AwaitMethodBuilder(new Awaitable(coroutineManager));
+            AwaitShareData.ThreadLocalCoroutineManager = null;
             return builder;
         }
 
-        public void SetResult() => Console.WriteLine("SetResult");
+        public IWaitable Task => awaitable;
+
+        private readonly Awaitable awaitable;
+
+        private CoroutineManager coroutineManager => awaitable.CoroutineManager;
+
+        private AwaitMethodBuilder(Awaitable awaitable)
+        {
+            this.awaitable = awaitable;
+        }
+
+        public void SetResult() => awaitable.Complete();
 
         public void Start<TStateMachine>(ref TStateMachine stateMachine)
             where TStateMachine : IAsyncStateMachine
         {
-            Console.WriteLine("Start");
             stateMachine.MoveNext();
         }
 
@@ -40,10 +51,13 @@ namespace Coroutines.Await
             where TAwaiter : INotifyCompletion
             where TStateMachine : IAsyncStateMachine
         {
-            Console.WriteLine("AwaitOnCompleted");
-            var localCoroutineManager = coroutineManager;
             var s = stateMachine;
-            awaiter.OnCompleted(() => localCoroutineManager.Enqueue(() => s.MoveNext()));
+            var l = coroutineManager;
+            awaiter.OnCompleted(
+                () => l.Enqueue(
+                    () => s.MoveNext()
+                )
+            );
         }
 
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(
@@ -51,10 +65,13 @@ namespace Coroutines.Await
             where TAwaiter : ICriticalNotifyCompletion
             where TStateMachine : IAsyncStateMachine
         {
-            Console.WriteLine($"AwaitUnsafeOnCompleted {awaiter} {stateMachine}");
             var s = stateMachine;
-            var localCoroutineManager = coroutineManager;
-            awaiter.UnsafeOnCompleted(() => localCoroutineManager.Enqueue(() => s.MoveNext()));
+            var l = coroutineManager;
+            awaiter.UnsafeOnCompleted(
+                () => l.Enqueue(
+                    () => s.MoveNext()
+                )
+            );
         }
 
         public void SetException(Exception e)
@@ -67,14 +84,6 @@ namespace Coroutines.Await
             Console.WriteLine("SetStateMachine");
         }
 
-        public IWaitable Task
-        {
-            get
-            {
-                Console.WriteLine($"Task");
-                return null;
-            }
-        }
     }
 
 }

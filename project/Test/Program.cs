@@ -18,7 +18,7 @@ namespace Test
 
         static void Main(string[] args)
         {
-           Container.StartCoroutine(RunWait);
+           Container.StartCoroutine(RunWait).Then(() => Console.WriteLine("success"));
            Console.WriteLine("MainLoop");
             while (true)
             {
@@ -31,17 +31,10 @@ namespace Test
         private static async IWaitable RunWait()
         {
             Console.WriteLine($"1 {Thread.CurrentThread.ManagedThreadId}");
-            await WaitFor.PhysicalTimeSpan(TimeSpan.FromSeconds(2));
+            await WaitFor.Seconds(TimerManager, 2);
             Console.WriteLine($"2 {Thread.CurrentThread.ManagedThreadId}");
-            await WaitFor.PhysicalTimeSpan(TimeSpan.FromSeconds(2));
+            await WaitFor.Seconds(TimerManager, 2);
             Console.WriteLine($"3 {Thread.CurrentThread.ManagedThreadId}");
-        }
-
-        private static IEnumerable RunYield()
-        {
-            Console.WriteLine($"Before {Thread.CurrentThread.ManagedThreadId}");
-            yield return WaitFor.PhysicalTimeSpan(TimeSpan.FromSeconds(5));
-            Console.WriteLine($"After {Thread.CurrentThread.ManagedThreadId}");
         }
 
     }

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using Coroutines.Await;
 using Coroutines.Base;
 
 namespace Coroutines
@@ -125,8 +123,8 @@ namespace Coroutines
         public WaitableStatus Status { get; private set; }
         public Exception Exception { get; private set; }
 
-        private List<Action> successCallbacks = new List<Action>(1);
-        private List<Action<Exception>> failCallbacks = new List<Action<Exception>>(1);
+        private List<Action> successCallbacks = new List<Action>(2);
+        private List<Action<Exception>> failCallbacks = new List<Action<Exception>>(2);
 
         private void Success()
         {

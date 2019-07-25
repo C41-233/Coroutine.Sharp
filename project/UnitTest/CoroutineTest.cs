@@ -266,8 +266,8 @@ namespace UnitTest
 
             Tick();
             Assert.AreEqual(4, i);
-            Assert.AreEqual(WaitableStatus.Error, co1.Status);
-            Assert.AreEqual(WaitableStatus.Error, co2.Status);
+            Assert.AreEqual(WaitableStatus.Abort, co1.Status);
+            Assert.AreEqual(WaitableStatus.Abort, co2.Status);
             Assert.IsTrue(co1.IsAbort());
             Assert.IsTrue(co2.IsAbort());
 
@@ -318,7 +318,7 @@ namespace UnitTest
             Assert.AreEqual(5, i);
             Assert.AreEqual(1, j);
 
-            Assert.AreEqual(WaitableStatus.Error, co2.Status);
+            Assert.AreEqual(WaitableStatus.Abort, co2.Status);
             Assert.AreEqual(WaitableStatus.Success, co1.Status);
 
             IEnumerable RunFather()

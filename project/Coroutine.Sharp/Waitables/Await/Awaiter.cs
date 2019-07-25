@@ -20,7 +20,6 @@ namespace Coroutines.Await
 
         public void UnsafeOnCompleted(Action continuation)
         {
-            Console.WriteLine("UnsafeOnCompleted");
             waitable.Finally(continuation);
         }
 

@@ -64,7 +64,12 @@ namespace Coroutines
             return new WaitForTimeSpan(timerManager, TimeSpan.FromHours(hours));
         }
 
-        public static IWaitable PhysicalTimeSpan(TimeSpan timeSpan)
+        public static IWaitable Time(TimerManager timerManager, TimeSpan timeSpan)
+        {
+            return new WaitForTimeSpan(timerManager, timeSpan);
+        }
+
+        public static IWaitable PhysicalTime(TimeSpan timeSpan)
         {
             return new WaitForPhysicalTimeSpan(timeSpan);
         }
@@ -177,5 +182,6 @@ namespace Coroutines
             return new WaitForSendTo(socket, buffer, 0, buffer.Length, flags, new IPEndPoint(IPAddress.Parse(ip), port));
         }
         #endregion
+
     }
 }
