@@ -268,8 +268,8 @@ namespace UnitTest
             Assert.AreEqual(4, i);
             Assert.AreEqual(WaitableStatus.Abort, co1.Status);
             Assert.AreEqual(WaitableStatus.Abort, co2.Status);
-            Assert.IsTrue(co1.IsAbort());
-            Assert.IsTrue(co2.IsAbort());
+            Assert.IsTrue(co1.IsAborted());
+            Assert.IsTrue(co2.IsAborted());
 
             IEnumerable RunFather()
             {

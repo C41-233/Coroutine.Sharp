@@ -35,12 +35,12 @@ namespace Coroutines
             return self.Status == WaitableStatus.Success;
         }
 
-        public static bool IsAbort(this IWaitable self)
+        public static bool IsAborted(this IWaitable self)
         {
             return self.Status == WaitableStatus.Abort;
         }
 
-        public static bool IsFinish(this IWaitable self)
+        public static bool IsCompleted(this IWaitable self)
         {
             return self.Status != WaitableStatus.Running;
         }

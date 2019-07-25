@@ -23,7 +23,7 @@ namespace Coroutines.Await
             waitable.Finally(continuation);
         }
 
-        public bool IsCompleted => waitable.IsFinish();
+        public bool IsCompleted => waitable.IsCompleted();
 
         public void GetResult()
         {
