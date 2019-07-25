@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Coroutines.Await;
 using Coroutines.Base;
 
 namespace Coroutines
@@ -72,6 +73,7 @@ namespace Coroutines
 
             public Coroutine StartCoroutine(Func<Coroutine> func)
             {
+                CoroutineAwaitMethodBuilder.coroutineManager = CoroutineManager;
                 return func();
             }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace Coroutines.Await
 {
@@ -7,10 +8,18 @@ namespace Coroutines.Await
     public struct CoroutineAwaitMethodBuilder
     {
 
+        [ThreadStatic]
+        internal static CoroutineManager coroutineManager;
+
+        internal CoroutineManager CoroutineManager;
+
         public static CoroutineAwaitMethodBuilder Create()
         {
             Console.WriteLine("CoroutineAwaitMethodBuilder.Create");
-            return new CoroutineAwaitMethodBuilder();
+            return new CoroutineAwaitMethodBuilder
+            {
+                CoroutineManager = coroutineManager,
+            };
         }
 
         public void SetResult() => Console.WriteLine("SetResult");
@@ -28,7 +37,7 @@ namespace Coroutines.Await
         {
             Console.WriteLine("AwaitOnCompleted");
             var s = stateMachine;
-            awaiter.OnCompleted(() => s.MoveNext());
+            awaiter.OnCompleted(() => coroutineManager.Enqueue(() => s.MoveNext()));
         }
 
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(
@@ -38,7 +47,7 @@ namespace Coroutines.Await
         {
             Console.WriteLine($"AwaitUnsafeOnCompleted {awaiter} {stateMachine}");
             var s = stateMachine;
-            awaiter.UnsafeOnCompleted(() => s.MoveNext());
+            awaiter.UnsafeOnCompleted(() => coroutineManager.Enqueue(() => s.MoveNext()));
         }
 
         public void SetException(Exception e)
