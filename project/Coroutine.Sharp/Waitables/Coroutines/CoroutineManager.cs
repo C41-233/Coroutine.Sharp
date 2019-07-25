@@ -75,6 +75,14 @@ namespace Coroutines
                 return Add(coroutine);
             }
 
+            public IWaitable StartCoroutine<T>(Func<T, IWaitable> co, T arg)
+            {
+                AwaitShareData.ThreadLocalCoroutineManager = CoroutineManager;
+                var coroutine = co(arg);
+                AwaitShareData.ThreadLocalCoroutineManager = null;
+                return Add(coroutine);
+            }
+
             private IWaitable<T> Add<T>(IWaitable<T> waitable)
             {
                 waitables.Add(waitable);

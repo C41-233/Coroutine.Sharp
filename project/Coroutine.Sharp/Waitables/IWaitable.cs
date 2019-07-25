@@ -20,6 +20,7 @@ namespace Coroutines
         void Abort(bool recursive = true);
     }
 
+    [AsyncMethodBuilder(typeof(AwaitMethodBuilder<>))]
     public interface IWaitable<out T> : IWaitable
     {
 

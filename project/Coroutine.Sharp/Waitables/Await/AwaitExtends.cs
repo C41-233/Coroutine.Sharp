@@ -11,6 +11,11 @@ namespace Coroutines.Await
             return new Awaiter(waitable);
         }
 
+        public static Awaiter<T> GetAwaiter<T>(this IWaitable<T> waitable)
+        {
+            return new Awaiter<T>(waitable);
+        }
+
     }
 
 }

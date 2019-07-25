@@ -22,4 +22,25 @@ namespace Coroutines.Await
         }
 
     }
+
+    internal class Awaitable<T> : WaitableTask<T>
+    {
+        public CoroutineManager CoroutineManager { get; }
+
+        public Awaitable(CoroutineManager coroutineManager)
+        {
+            CoroutineManager = coroutineManager;
+        }
+
+        public new void Success(T value)
+        {
+            base.Success(value);
+        }
+
+        public new void Fail(Exception e)
+        {
+            base.Fail(e);
+        }
+
+    }
 }

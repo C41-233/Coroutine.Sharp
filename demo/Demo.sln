@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BestAiServer(Yield)", "Best
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BestAiClient", "BestAiClient\BestAiClient.csproj", "{0A4DEB64-A100-422F-B6E4-F0E736D40E6C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BestAiServer(Await)", "BestAiServer(Await)\BestAiServer(Await).csproj", "{6A667C8E-764E-431E-8F45-F3B827B21AE4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{0A4DEB64-A100-422F-B6E4-F0E736D40E6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A4DEB64-A100-422F-B6E4-F0E736D40E6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A4DEB64-A100-422F-B6E4-F0E736D40E6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A667C8E-764E-431E-8F45-F3B827B21AE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A667C8E-764E-431E-8F45-F3B827B21AE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A667C8E-764E-431E-8F45-F3B827B21AE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A667C8E-764E-431E-8F45-F3B827B21AE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
