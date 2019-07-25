@@ -11,7 +11,9 @@ namespace IsPrime
         {
             var run = true;
             var coroutineManager = new CoroutineManager();
-            coroutineManager.StartCoroutine(MainLoop());
+            var container = coroutineManager.CreateContainer();
+
+            container.StartCoroutine(MainLoop());
 
             IEnumerable MainLoop()
             {

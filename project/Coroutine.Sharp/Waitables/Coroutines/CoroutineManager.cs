@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using Coroutines.Base;
 
 namespace Coroutines
@@ -36,6 +37,8 @@ namespace Coroutines
 
             public CoroutineManager CoroutineManager { get; }
 
+            private readonly HashSet<IWaitable> waitables = new HashSet<IWaitable>();
+
             internal Container(CoroutineManager coroutineManager)
             {
                 CoroutineManager = coroutineManager;
@@ -44,6 +47,8 @@ namespace Coroutines
             public Coroutine<T> StartCoroutine<T>(IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach)
             {
                 var coroutine = new Coroutine<T>(this, co, bubbleExceptionApproach);
+                waitables.Add(coroutine);
+                coroutine.Finally(() => waitables.Remove(coroutine));
                 return coroutine;
             }
 
@@ -55,12 +60,25 @@ namespace Coroutines
             public Coroutine StartCoroutine(IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach)
             {
                 var coroutine = new Coroutine(this, co.GetEnumerator(), bubbleExceptionApproach);
+                waitables.Add(coroutine);
+                coroutine.Finally(() => waitables.Remove(coroutine));
                 return coroutine;
             }
 
             public Coroutine StartCoroutine(IEnumerable co)
             {
                 return StartCoroutine(co, CoroutineManager.DefaultBubbleExceptionApproach);
+            }
+
+            public void Clear()
+            {
+                var list = new IWaitable[waitables.Count];
+                waitables.CopyTo(list);
+                waitables.Clear();
+                foreach (var waitable in list)
+                {
+                    waitable.Abort();
+                }
             }
 
         }

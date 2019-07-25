@@ -11,15 +11,18 @@ namespace BestAiServer
     public class Program
     {
 
-        private static readonly CoroutineManager CoroutineManager = new CoroutineManager();
+        private static CoroutineManager.Container Container;
 
 
         public static void Main(string[] args)
         {
-            CoroutineManager.StartCoroutine(MainLoop());
+            var coroutineManager = new CoroutineManager();
+            Container = coroutineManager.CreateContainer();
+
+            Container.StartCoroutine(MainLoop());
             while (true)
             {
-                CoroutineManager.OneLoop();
+                coroutineManager.OneLoop();
                 Thread.Sleep(10);
             }
         }
@@ -34,7 +37,7 @@ namespace BestAiServer
             {
                 yield return WaitFor.Accept(socket).With(out var client);
                 Console.WriteLine($"connect client {client.R.RemoteEndPoint}");
-                CoroutineManager.StartCoroutine(ProcessClient(client)).Catch(e =>
+                Container.StartCoroutine(ProcessClient(client)).Catch(e =>
                 {
                     Console.Error.WriteLine(e);
                     client.R.Close();

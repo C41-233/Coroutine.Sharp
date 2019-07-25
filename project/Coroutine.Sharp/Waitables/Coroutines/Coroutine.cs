@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Coroutines.Base;
 
 namespace Coroutines
 {
@@ -19,10 +20,13 @@ namespace Coroutines
 
         private IWaitable waitable;
 
+        private readonly int id;
+
         internal Coroutine(CoroutineManager.Container coroutineContainer, IEnumerator co, BubbleExceptionApproach approach)
         {
             this.coroutineContainer = coroutineContainer;
             this.approach = approach;
+            id = IdGenerator.Next();
             enumerator = co;
             NextStep();
         }
@@ -201,7 +205,7 @@ namespace Coroutines
                 return;
             }
 
-            Status = WaitableStatus.Error;
+            Status = WaitableStatus.Abort;
             Exception = null;
 
             if (recursive)
@@ -218,6 +222,10 @@ namespace Coroutines
             }
         }
 
+        public override int GetHashCode()
+        {
+            return id;
+        }
     }
 
 }

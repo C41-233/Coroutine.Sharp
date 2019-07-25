@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Coroutines.Base;
 
 namespace Coroutines
 {
@@ -14,6 +15,8 @@ namespace Coroutines
         private readonly BubbleExceptionApproach approach;
 
         private IWaitable waitable;
+
+        private readonly int id;
 
         public T R
         {
@@ -34,6 +37,7 @@ namespace Coroutines
         {
             this.coroutineContainer = coroutineContainer;
             this.approach = approach;
+            id = IdGenerator.Next();
             enumerator = co.GetEnumerator();
             NextStep();
         }
@@ -227,7 +231,7 @@ namespace Coroutines
                 return;
             }
 
-            Status = WaitableStatus.Error;
+            Status = WaitableStatus.Abort;
             Exception = null;
 
             if (recursive)
@@ -242,6 +246,11 @@ namespace Coroutines
             {
                 callback(null);
             }
+        }
+
+        public override int GetHashCode()
+        {
+            return id;
         }
     }
 }
