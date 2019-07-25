@@ -10,6 +10,11 @@ namespace Coroutines
         {
         }
 
+        public WaitableFlowException(string message) : base(message)
+        {
+        }
+
+
     }
 
     /// <inheritdoc />

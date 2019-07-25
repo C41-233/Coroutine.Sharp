@@ -8,8 +8,7 @@ using Coroutines.Base;
 namespace Coroutines
 {
 
-    [AsyncMethodBuilder(typeof(CoroutineAwaitMethodBuilder))]
-    public sealed class Coroutine : IWaitable
+    internal sealed class Coroutine : IWaitable
     {
 
         public static IWaitable<T> Complete<T>(T value)

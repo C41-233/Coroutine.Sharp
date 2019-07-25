@@ -45,7 +45,7 @@ namespace Coroutines
                 CoroutineManager = coroutineManager;
             }
 
-            public Coroutine<T> StartCoroutine<T>(IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach)
+            public IWaitable<T> StartCoroutine<T>(IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach)
             {
                 var coroutine = new Coroutine<T>(this, co, bubbleExceptionApproach);
                 waitables.Add(coroutine);
@@ -53,12 +53,12 @@ namespace Coroutines
                 return coroutine;
             }
 
-            public Coroutine<T> StartCoroutine<T>(IEnumerable co)
+            public IWaitable<T> StartCoroutine<T>(IEnumerable co)
             {
                 return StartCoroutine<T>(co, CoroutineManager.DefaultBubbleExceptionApproach);
             }
 
-            public Coroutine StartCoroutine(IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach)
+            public IWaitable StartCoroutine(IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach)
             {
                 var coroutine = new Coroutine(this, co.GetEnumerator(), bubbleExceptionApproach);
                 waitables.Add(coroutine);
@@ -66,15 +66,17 @@ namespace Coroutines
                 return coroutine;
             }
 
-            public Coroutine StartCoroutine(IEnumerable co)
+            public IWaitable StartCoroutine(IEnumerable co)
             {
                 return StartCoroutine(co, CoroutineManager.DefaultBubbleExceptionApproach);
             }
 
-            public Coroutine StartCoroutine(Func<Coroutine> func)
+            public IWaitable StartCoroutine(Func<IWaitable> co)
             {
-                CoroutineAwaitMethodBuilder.coroutineManager = CoroutineManager;
-                return func();
+                AwaitMethodBuilder.ThreadLocalCoroutineManager = CoroutineManager;
+                var coroutine = co();
+                AwaitMethodBuilder.ThreadLocalCoroutineManager = null;
+                return coroutine;
             }
 
             public void Clear()

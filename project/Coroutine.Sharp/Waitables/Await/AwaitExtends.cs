@@ -12,11 +12,6 @@ namespace Coroutines.Await
             return new Awaiter(waitable);
         }
 
-        public static CoroutineAwaiter GetAwaiter(this Coroutine waitable)
-        {
-            Console.WriteLine($"GetAwaiter {waitable}");
-            return new CoroutineAwaiter(waitable);
-        }
     }
 
 }

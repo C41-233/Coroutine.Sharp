@@ -39,7 +39,7 @@
     <Compile Include="Base\SwapQueue.cs" />
     <Compile Include="Waitables\Await\Awaiter.cs" />
     <Compile Include="Waitables\Await\AwaitExtends.cs" />
-    <Compile Include="Waitables\Await\CoroutineAwaitMethodBuilder.cs" />
+    <Compile Include="Waitables\Await\AwaitMethodBuilder.cs" />
     <Compile Include="Waitables\Coroutines\Coroutine.cs" />
     <Compile Include="Waitables\Coroutines\CoroutineManager.cs" />
     <Compile Include="Base\PriorityQueue.cs" />

@@ -28,11 +28,13 @@ namespace Test
             }
         }
 
-        private static async Coroutine RunWait()
+        private static async IWaitable RunWait()
         {
-            Console.WriteLine($"Before {Thread.CurrentThread.ManagedThreadId}");
-            await WaitFor.PhysicalTimeSpan(TimeSpan.FromSeconds(5));
-            Console.WriteLine($"After {Thread.CurrentThread.ManagedThreadId}");
+            Console.WriteLine($"1 {Thread.CurrentThread.ManagedThreadId}");
+            await WaitFor.PhysicalTimeSpan(TimeSpan.FromSeconds(2));
+            Console.WriteLine($"2 {Thread.CurrentThread.ManagedThreadId}");
+            await WaitFor.PhysicalTimeSpan(TimeSpan.FromSeconds(2));
+            Console.WriteLine($"3 {Thread.CurrentThread.ManagedThreadId}");
         }
 
         private static IEnumerable RunYield()

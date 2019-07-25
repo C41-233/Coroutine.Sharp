@@ -31,30 +31,4 @@ namespace Coroutines.Await
         }
     }
 
-    public struct CoroutineAwaiter : ICriticalNotifyCompletion
-    {
-
-        private readonly Coroutine coroutine;
-
-        public CoroutineAwaiter(Coroutine coroutine)
-        {
-            this.coroutine = coroutine;
-        }
-
-        public void OnCompleted(Action continuation)
-        {
-            coroutine.Finally(continuation);
-        }
-
-        public void UnsafeOnCompleted(Action continuation)
-        {
-            coroutine.Finally(continuation);
-        }
-
-        public bool IsCompleted => coroutine.IsFinish();
-
-        public void GetResult()
-        {
-        }
-    }
 }

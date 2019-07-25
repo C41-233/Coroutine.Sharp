@@ -1,25 +1,30 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
-using System.Threading;
 
 namespace Coroutines.Await
 {
 
-    public struct CoroutineAwaitMethodBuilder
+    public struct AwaitMethodBuilder
     {
 
         [ThreadStatic]
-        internal static CoroutineManager coroutineManager;
+        internal static CoroutineManager ThreadLocalCoroutineManager;
 
-        internal CoroutineManager CoroutineManager;
+        private CoroutineManager coroutineManager;
 
-        public static CoroutineAwaitMethodBuilder Create()
+        public static AwaitMethodBuilder Create()
         {
             Console.WriteLine("CoroutineAwaitMethodBuilder.Create");
-            return new CoroutineAwaitMethodBuilder
+            if (ThreadLocalCoroutineManager == null)
             {
-                CoroutineManager = coroutineManager,
+                throw new WaitableFlowException("Do not call async coroutine function directly. Use CoroutineManager.Container.StartCoroutine instead.");
+            }
+            var builder = new AwaitMethodBuilder
+            {
+                coroutineManager = ThreadLocalCoroutineManager,
             };
+            ThreadLocalCoroutineManager = null;
+            return builder;
         }
 
         public void SetResult() => Console.WriteLine("SetResult");
@@ -36,8 +41,9 @@ namespace Coroutines.Await
             where TStateMachine : IAsyncStateMachine
         {
             Console.WriteLine("AwaitOnCompleted");
+            var localCoroutineManager = coroutineManager;
             var s = stateMachine;
-            awaiter.OnCompleted(() => coroutineManager.Enqueue(() => s.MoveNext()));
+            awaiter.OnCompleted(() => localCoroutineManager.Enqueue(() => s.MoveNext()));
         }
 
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(
@@ -47,7 +53,8 @@ namespace Coroutines.Await
         {
             Console.WriteLine($"AwaitUnsafeOnCompleted {awaiter} {stateMachine}");
             var s = stateMachine;
-            awaiter.UnsafeOnCompleted(() => coroutineManager.Enqueue(() => s.MoveNext()));
+            var localCoroutineManager = coroutineManager;
+            awaiter.UnsafeOnCompleted(() => localCoroutineManager.Enqueue(() => s.MoveNext()));
         }
 
         public void SetException(Exception e)
@@ -60,7 +67,7 @@ namespace Coroutines.Await
             Console.WriteLine("SetStateMachine");
         }
 
-        public Coroutine Task
+        public IWaitable Task
         {
             get
             {

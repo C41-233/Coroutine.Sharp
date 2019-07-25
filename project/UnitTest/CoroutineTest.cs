@@ -251,7 +251,7 @@ namespace UnitTest
         public void TestAbort2()
         {
             var i = 0;
-            Coroutine co2 = null;
+            IWaitable co2 = null;
 
             var co1 = CoroutineContainer.StartCoroutine(RunFather());
 

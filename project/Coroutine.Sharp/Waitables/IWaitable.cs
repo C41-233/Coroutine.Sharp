@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
+using Coroutines.Await;
 
 namespace Coroutines
 {
+
+    [AsyncMethodBuilder(typeof(AwaitMethodBuilder))]
     public interface IWaitable
     {
 
