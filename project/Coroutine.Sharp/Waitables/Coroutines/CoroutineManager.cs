@@ -48,9 +48,7 @@ namespace Coroutines
             public IWaitable<T> StartCoroutine<T>(IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach)
             {
                 var coroutine = new Coroutine<T>(this, co, bubbleExceptionApproach);
-                waitables.Add(coroutine);
-                coroutine.Finally(() => waitables.Remove(coroutine));
-                return coroutine;
+                return Add(coroutine);
             }
 
             public IWaitable<T> StartCoroutine<T>(IEnumerable co)
@@ -61,9 +59,7 @@ namespace Coroutines
             public IWaitable StartCoroutine(IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach)
             {
                 var coroutine = new Coroutine(this, co.GetEnumerator(), bubbleExceptionApproach);
-                waitables.Add(coroutine);
-                coroutine.Finally(() => waitables.Remove(coroutine));
-                return coroutine;
+                return Add(coroutine);
             }
 
             public IWaitable StartCoroutine(IEnumerable co)
@@ -76,7 +72,21 @@ namespace Coroutines
                 AwaitMethodBuilder.ThreadLocalCoroutineManager = CoroutineManager;
                 var coroutine = co();
                 AwaitMethodBuilder.ThreadLocalCoroutineManager = null;
-                return coroutine;
+                return Add(coroutine);
+            }
+
+            private IWaitable<T> Add<T>(IWaitable<T> waitable)
+            {
+                waitables.Add(waitable);
+                waitable.Finally(() => waitables.Remove(waitable));
+                return waitable;
+            }
+
+            private IWaitable Add(IWaitable waitable)
+            {
+                waitables.Add(waitable);
+                waitable.Finally(() => waitables.Remove(waitable));
+                return waitable;
             }
 
             public void Clear()
