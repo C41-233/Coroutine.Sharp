@@ -63,6 +63,11 @@ namespace Coroutines
         {
             return new WaitForTimeSpan(timerManager, TimeSpan.FromHours(hours));
         }
+
+        public static IWaitable PhysicalTimeSpan(TimeSpan timeSpan)
+        {
+            return new WaitForPhysicalTimeSpan(timeSpan);
+        }
         #endregion
 
         #region Socket

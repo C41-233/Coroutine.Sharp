@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Coroutines</RootNamespace>
     <AssemblyName>Coroutine.Sharp</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -22,6 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>7.3</LangVersion>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,11 +31,15 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Base\IdGenerator.cs" />
     <Compile Include="Base\SpinLock.cs" />
     <Compile Include="Base\SwapQueue.cs" />
+    <Compile Include="Waitables\Await\Awaiter.cs" />
+    <Compile Include="Waitables\Await\AwaitExtends.cs" />
+    <Compile Include="Waitables\Await\CoroutineAwaitMethodBuilder.cs" />
     <Compile Include="Waitables\Coroutines\Coroutine.cs" />
     <Compile Include="Waitables\Coroutines\CoroutineManager.cs" />
     <Compile Include="Base\PriorityQueue.cs" />
@@ -57,6 +62,7 @@
     <Compile Include="Waitables\Wait\Logic\WaitForAllSuccess.cs" />
     <Compile Include="Waitables\Wait\Logic\WaitForAll.cs" />
     <Compile Include="Waitables\Wait\Logic\WaitForAnySuccess.cs" />
+    <Compile Include="Waitables\Wait\Timer\WaitForPhysicalTimeSpan.cs" />
     <Compile Include="Waitables\Wait\WaitFor.cs" />
     <Compile Include="Waitables\Wait\IO\WaitForConnect.cs" />
     <Compile Include="Waitables\Wait\Timer\WaitForTimeSpan.cs" />

@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using Coroutines.Await;
 using Coroutines.Base;
 
 namespace Coroutines
 {
+
+    [AsyncMethodBuilder(typeof(CoroutineAwaitMethodBuilder))]
     public sealed class Coroutine : IWaitable
     {
 

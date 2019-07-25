@@ -70,6 +70,11 @@ namespace Coroutines
                 return StartCoroutine(co, CoroutineManager.DefaultBubbleExceptionApproach);
             }
 
+            public Coroutine StartCoroutine(Func<Coroutine> func)
+            {
+                return func();
+            }
+
             public void Clear()
             {
                 var list = new IWaitable[waitables.Count];
