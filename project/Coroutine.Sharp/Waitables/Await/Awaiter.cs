@@ -27,6 +27,7 @@ namespace Coroutines.Await
 
         public void GetResult()
         {
+            waitable.Throw();
         }
     }
 
