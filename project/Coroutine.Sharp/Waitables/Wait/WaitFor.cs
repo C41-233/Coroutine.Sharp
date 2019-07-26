@@ -41,6 +41,11 @@ namespace Coroutines
         {
             return new WaitForPromise(promise);
         }
+
+        public static IWaitable Yield(int frame = 1)
+        {
+            return new WaitForFrame(frame);
+        }
         #endregion
 
         #region Time

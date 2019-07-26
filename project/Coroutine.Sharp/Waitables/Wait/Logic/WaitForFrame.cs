@@ -1,7 +1,7 @@
 ﻿namespace Coroutines
 {
 
-    public sealed class WaitForFrame : WaitableTask, IBindCoroutineWaitable
+    internal sealed class WaitForFrame : WaitableTask, IBindCoroutineWaitable
     {
 
         private CoroutineManager coroutineManager;
@@ -21,7 +21,7 @@
         public void NextFrame()
         {
             n--;
-            if (n == 0)
+            if (n <= 0)
             {
                 Success();
             }

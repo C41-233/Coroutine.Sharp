@@ -38,7 +38,7 @@ namespace Test
             for (int i = 0; i < 10; i++)
             {
                 Console.WriteLine($"{frame}");
-                await new WaitForFrame(1);
+                await WaitFor.Yield(2);
             }
         }
 
@@ -47,7 +47,7 @@ namespace Test
             for(int i=0; i<10; i++)
             {
                 Console.WriteLine($"{frame}");
-                yield return new WaitForFrame(3);
+                yield return WaitFor.Yield(3);
             }
         }
 
