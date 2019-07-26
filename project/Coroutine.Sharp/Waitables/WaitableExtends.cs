@@ -73,14 +73,7 @@ namespace Coroutines
 
     }
 
-    internal interface IWaitableEnumerable : IWaitable
-    {
-
-        void Bind(CoroutineManager.Container coroutineContainer);
-
-    }
-
-    internal class WaitableEnumerable<T> : WaitableTask<T>, IWaitableEnumerable
+    internal class WaitableEnumerable<T> : WaitableTask<T>, IBindCoroutineWaitable
     {
 
         private readonly IEnumerable enumerable;
@@ -90,7 +83,7 @@ namespace Coroutines
             this.enumerable = enumerable;
         }
 
-        public void Bind(CoroutineManager.Container coroutineContainer)
+        void IBindCoroutineWaitable.Bind(CoroutineManager.Container coroutineContainer)
         {
             var coroutine = coroutineContainer.StartCoroutine<T>(enumerable);
             coroutine.Then(Success);

@@ -20,12 +20,7 @@ namespace Coroutines.Base
 
         public IEnumerable<T> DequeueAll()
         {
-            while (outQueue.Count > 0)
-            {
-                yield return outQueue.Dequeue();
-            }
-
-            lock(lockObject)
+            lock (lockObject)
             {
                 var tmp = inQueue;
                 inQueue = outQueue;

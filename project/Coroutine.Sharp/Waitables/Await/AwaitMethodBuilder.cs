@@ -8,7 +8,7 @@ namespace Coroutines.Await
     {
 
         [ThreadStatic]
-        internal static CoroutineManager ThreadLocalCoroutineManager;
+        internal static CoroutineManager.Container ThreadLocalCoroutineContainer;
 
     }
 
@@ -17,14 +17,14 @@ namespace Coroutines.Await
 
         public static AwaitMethodBuilder Create()
         {
-            var coroutineManager = AwaitShareData.ThreadLocalCoroutineManager;
+            var coroutineManager = AwaitShareData.ThreadLocalCoroutineContainer;
             if (coroutineManager == null)
             {
                 throw new WaitableFlowException("Do not call async coroutine function directly. Use CoroutineManager.Container.StartCoroutine instead.");
             }
 
             var builder = new AwaitMethodBuilder(new Awaitable(coroutineManager));
-            AwaitShareData.ThreadLocalCoroutineManager = null;
+            AwaitShareData.ThreadLocalCoroutineContainer = null;
             return builder;
         }
 
@@ -32,7 +32,7 @@ namespace Coroutines.Await
 
         private readonly Awaitable awaitable;
 
-        private CoroutineManager coroutineManager => awaitable.CoroutineManager;
+        private CoroutineManager.Container coroutineManager => awaitable.CoroutineManager;
 
         private AwaitMethodBuilder(Awaitable awaitable)
         {
@@ -52,7 +52,7 @@ namespace Coroutines.Await
             where TStateMachine : IAsyncStateMachine
         {
             var s = stateMachine;
-            var l = coroutineManager;
+            var l = coroutineManager.CoroutineManager;
             awaiter.OnCompleted(
                 () => l.Enqueue(
                     () => s.MoveNext()
@@ -66,7 +66,11 @@ namespace Coroutines.Await
             where TStateMachine : IAsyncStateMachine
         {
             var s = stateMachine;
-            var l = coroutineManager;
+            var l = coroutineManager.CoroutineManager;
+            if (awaiter is Awaiter w && w.waitable is IBindCoroutineWaitable waitForFrame)
+            {
+                waitForFrame.Bind(coroutineManager);
+            }
             awaiter.UnsafeOnCompleted(
                 () => l.Enqueue(
                     () => s.MoveNext()
@@ -91,14 +95,14 @@ namespace Coroutines.Await
 
         public static AwaitMethodBuilder<T> Create()
         {
-            var coroutineManager = AwaitShareData.ThreadLocalCoroutineManager;
+            var coroutineManager = AwaitShareData.ThreadLocalCoroutineContainer;
             if (coroutineManager == null)
             {
                 throw new WaitableFlowException("Do not call async coroutine function directly. Use CoroutineManager.Container.StartCoroutine<T> instead.");
             }
 
             var builder = new AwaitMethodBuilder<T>(new Awaitable<T>(coroutineManager));
-            AwaitShareData.ThreadLocalCoroutineManager = null;
+            AwaitShareData.ThreadLocalCoroutineContainer = null;
             return builder;
         }
 
@@ -106,7 +110,7 @@ namespace Coroutines.Await
 
         private readonly Awaitable<T> awaitable;
 
-        private CoroutineManager coroutineManager => awaitable.CoroutineManager;
+        private CoroutineManager.Container coroutineManager => awaitable.CoroutineManager;
 
         private AwaitMethodBuilder(Awaitable<T> awaitable)
         {
@@ -125,9 +129,8 @@ namespace Coroutines.Await
             where TAwaiter : INotifyCompletion
             where TStateMachine : IAsyncStateMachine
         {
-            Console.WriteLine("AwaitOnCompleted");
             var s = stateMachine;
-            var l = coroutineManager;
+            var l = coroutineManager.CoroutineManager;
             awaiter.OnCompleted(
                 () => l.Enqueue(
                     () => s.MoveNext()
@@ -140,9 +143,12 @@ namespace Coroutines.Await
             where TAwaiter : ICriticalNotifyCompletion
             where TStateMachine : IAsyncStateMachine
         {
-            Console.WriteLine("AwaitUnsafeOnCompleted");
             var s = stateMachine;
-            var l = coroutineManager;
+            var l = coroutineManager.CoroutineManager;
+            if (awaiter is Awaiter w && w.waitable is IBindCoroutineWaitable waitForFrame)
+            {
+                waitForFrame.Bind(coroutineManager);
+            }
             awaiter.UnsafeOnCompleted(
                 () => l.Enqueue(
                     () => s.MoveNext()

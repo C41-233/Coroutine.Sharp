@@ -14,8 +14,8 @@ namespace Coroutines
             return new CompleteWaitable<T>(value);
         }
 
-        private readonly CoroutineManager.Container coroutineContainer;
-        private CoroutineManager coroutineManager => coroutineContainer.CoroutineManager;
+        private readonly CoroutineManager.Container container;
+        private CoroutineManager manager => container.CoroutineManager;
         private IEnumerator enumerator;
         private readonly BubbleExceptionApproach approach;
 
@@ -23,13 +23,14 @@ namespace Coroutines
 
         private readonly int id;
 
-        internal Coroutine(CoroutineManager.Container coroutineContainer, IEnumerator co, BubbleExceptionApproach approach)
+        internal Coroutine(CoroutineManager.Container container, IEnumerator co, BubbleExceptionApproach approach)
         {
-            this.coroutineContainer = coroutineContainer;
+            this.container = container;
             this.approach = approach;
             id = IdGenerator.Next();
             enumerator = co;
-            NextStep();
+            //下一帧执行
+            manager.Enqueue(NextStep);
         }
 
         private void NextStep()
@@ -57,17 +58,17 @@ namespace Coroutines
             switch (current)
             {
                 case null:
-                    coroutineManager.Enqueue(NextStep);
+                    manager.Enqueue(NextStep);
                     break;
                 case ICompleteWaitable _:
                     Success();
                     break;
-                case IWaitableEnumerable waitableEnumerable:
-                    waitableEnumerable.Bind(coroutineContainer);
-                    Dispatch(waitableEnumerable);
+                case IBindCoroutineWaitable bindCoroutineWaitable:
+                    bindCoroutineWaitable.Bind(container);
+                    Dispatch(bindCoroutineWaitable);
                     break;
                 case IEnumerable enumerable:
-                    Dispatch(coroutineContainer.StartCoroutine(enumerable));
+                    Dispatch(container.StartCoroutine(enumerable));
                     break;
                 default:
                     Dispatch((IWaitable)current);
@@ -82,8 +83,16 @@ namespace Coroutines
             //等待的事件成功，继续下一步
             waitable.Then(() =>
             {
-                coroutineManager.Enqueue(NextStep);
+                if (waitable is WaitForFrame)
+                {
+                    this.waitable = null;
+                    NextStep();
+                }
+                else
+                {
+                    manager.Enqueue(NextStep);
                 this.waitable = null;
+                }
             });
 
             waitable.Catch(e =>
@@ -91,14 +100,14 @@ namespace Coroutines
                 switch (approach)
                 {
                     case BubbleExceptionApproach.Abort:
-                        coroutineManager.Enqueue(() => Abort(false));
+                        manager.Enqueue(() => Abort(false));
                         break;
                     case BubbleExceptionApproach.Throw:
-                        coroutineManager.Enqueue(() => Fail(e));
+                        manager.Enqueue(() => Fail(e));
                         break;
                     default:
                         //等待的事件失败，继续下一步，由调用者处理异常，coroutine本身未失败
-                        coroutineManager.Enqueue(NextStep);
+                        manager.Enqueue(NextStep);
                         break;
                 }
 

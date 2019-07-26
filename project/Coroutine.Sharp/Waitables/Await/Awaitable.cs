@@ -4,9 +4,9 @@ namespace Coroutines.Await
 {
     internal class Awaitable : WaitableTask
     {
-        public CoroutineManager CoroutineManager { get; }
+        public CoroutineManager.Container CoroutineManager { get; }
 
-        public Awaitable(CoroutineManager coroutineManager)
+        public Awaitable(CoroutineManager.Container coroutineManager)
         {
             CoroutineManager = coroutineManager;
         }
@@ -25,9 +25,9 @@ namespace Coroutines.Await
 
     internal class Awaitable<T> : WaitableTask<T>
     {
-        public CoroutineManager CoroutineManager { get; }
+        public CoroutineManager.Container CoroutineManager { get; }
 
-        public Awaitable(CoroutineManager coroutineManager)
+        public Awaitable(CoroutineManager.Container coroutineManager)
         {
             CoroutineManager = coroutineManager;
         }

@@ -6,7 +6,7 @@ namespace Coroutines.Await
     public struct Awaiter : ICriticalNotifyCompletion
     {
 
-        private readonly IWaitable waitable;
+        internal readonly IWaitable waitable;
 
         public Awaiter(IWaitable waitable)
         {
@@ -33,7 +33,7 @@ namespace Coroutines.Await
     public struct Awaiter<T> : ICriticalNotifyCompletion
     {
 
-        private readonly IWaitable<T> waitable;
+        internal readonly IWaitable<T> waitable;
 
         public Awaiter(IWaitable<T> waitable)
         {

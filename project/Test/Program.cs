@@ -16,24 +16,42 @@ namespace Test
         private static CoroutineManager CoroutineManager = new CoroutineManager();
         private static CoroutineManager.Container Container = CoroutineManager.CreateContainer();
 
+        private static int frame = 0;
+
         static void Main(string[] args)
         {
-           Container.StartCoroutine(RunWait).Then(() => Console.WriteLine("success"));
-           Console.WriteLine("MainLoop");
+            //Container.StartCoroutine(RunWait).Then(() => Console.WriteLine("success"));
+            Container.StartCoroutine(Wait2());
+            Console.WriteLine("MainLoop");
             while (true)
             {
                 TimerManager.Update(DateTime.Now);
                 CoroutineManager.OneLoop();
+                frame++;
                 Thread.Sleep(1);
             }
         }
 
-        private static async IWaitable RunWait()
+        private static async IWaitable Wait1()
         {
-            Console.WriteLine($"1 {Thread.CurrentThread.ManagedThreadId}");
-            await Task.Delay(2000);
-            await Task.Delay(2000);
-            Console.WriteLine($"3 {Thread.CurrentThread.ManagedThreadId}");
+            Console.WriteLine($"{frame}");
+            await new WaitForFrame(1);
+            Console.WriteLine($"{frame}");
+            await new WaitForFrame(1);
+            Console.WriteLine($"{frame}");
+            await new WaitForFrame(1);
+            Console.WriteLine($"{frame}");
+            await new WaitForFrame(1);
+            Console.WriteLine($"{frame}");
+        }
+
+        private static IEnumerable Wait2()
+        {
+            for(int i=0; i<10; i++)
+            {
+                Console.WriteLine($"{frame}");
+                yield return new WaitForFrame(1);
+            }
         }
 
     }
