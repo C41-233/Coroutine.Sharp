@@ -10,6 +10,20 @@ namespace Coroutines.Await
         [ThreadStatic]
         internal static CoroutineManager.Container ThreadLocalCoroutineContainer;
 
+        internal static void SafeOnComplete<TAwaiter, TStateMachine>(CoroutineManager manager, TAwaiter awaiter, TStateMachine stateMachine)
+            where TAwaiter : INotifyCompletion
+            where TStateMachine : IAsyncStateMachine
+        {
+            manager.Enqueue(() => awaiter.OnCompleted(stateMachine.MoveNext));
+        }
+
+        internal static void FastOnComplete<TAwaiter, TStateMachine>(CoroutineManager manager, ref TAwaiter awaiter, TStateMachine stateMachine)
+            where TAwaiter : INotifyCompletion
+            where TStateMachine : IAsyncStateMachine
+        {
+            awaiter.OnCompleted(() => manager.Enqueue(stateMachine.MoveNext));
+        }
+
     }
 
     public struct AwaitMethodBuilder
@@ -54,17 +68,13 @@ namespace Coroutines.Await
             where TAwaiter : INotifyCompletion
             where TStateMachine : IAsyncStateMachine
         {
-            var s = stateMachine;
-            var a = awaiter;
-            if (awaiter is Awaiter w && w.waitable is IBindCoroutineWaitable bindCoroutineWaitable)
+            if (awaiter is Awaiter waiter && waiter.waitable is IBindCoroutineWaitable bindCoroutineWaitable)
             {
                 bindCoroutineWaitable.Bind(container);
+                AwaitShareData.SafeOnComplete(manager, awaiter, stateMachine);
+                return;
             }
-            manager.Enqueue(() => 
-                a.OnCompleted(
-                () => s.MoveNext()
-                )    
-            );
+            AwaitShareData.FastOnComplete(manager, ref awaiter, stateMachine);
         }
 
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(
@@ -129,17 +139,13 @@ namespace Coroutines.Await
             where TAwaiter : INotifyCompletion
             where TStateMachine : IAsyncStateMachine
         {
-            var s = stateMachine;
-            var a = awaiter;
-            if (awaiter is Awaiter w && w.waitable is IBindCoroutineWaitable bindCoroutineWaitable)
+            if (awaiter is Awaiter<T> waiter && waiter.waitable is IBindCoroutineWaitable bindCoroutineWaitable)
             {
                 bindCoroutineWaitable.Bind(container);
+                AwaitShareData.SafeOnComplete(manager, awaiter, stateMachine);
+                return;
             }
-            manager.Enqueue(() =>
-                a.OnCompleted(
-                    () => s.MoveNext()
-                )
-            );
+            AwaitShareData.FastOnComplete(manager, ref awaiter, stateMachine);
         }
 
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(
