@@ -34,24 +34,9 @@ namespace Test
 
         private static async IWaitable Wait1()
         {
-            try
-            {
-                await Container.StartCoroutine(Wait2);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
-
-        private static async IWaitable Wait2()
-        {
-            throw new Exception();
-            for (int i=0; i<10; i++)
-            {
-                Console.WriteLine($"{frame}");
-                await WaitFor.Yield();
-            }
+            Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}");
+            await Task.Delay(1);
+            Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}");
         }
 
     }
