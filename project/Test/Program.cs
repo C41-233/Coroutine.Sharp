@@ -21,7 +21,7 @@ namespace Test
         static void Main(string[] args)
         {
             //Container.StartCoroutine(RunWait).Then(() => Console.WriteLine("success"));
-            Container.StartCoroutine(Wait2());
+            Container.StartCoroutine(Wait1);
             Console.WriteLine("MainLoop");
             while (true)
             {
@@ -34,15 +34,12 @@ namespace Test
 
         private static async IWaitable Wait1()
         {
-            Console.WriteLine($"{frame}");
-            await new WaitForFrame(1);
-            Console.WriteLine($"{frame}");
-            await new WaitForFrame(1);
-            Console.WriteLine($"{frame}");
-            await new WaitForFrame(1);
-            Console.WriteLine($"{frame}");
-            await new WaitForFrame(1);
-            Console.WriteLine($"{frame}");
+
+            for (int i = 0; i < 10; i++)
+            {
+                Console.WriteLine($"{frame}");
+                await new WaitForFrame(1);
+            }
         }
 
         private static IEnumerable Wait2()
@@ -50,7 +47,7 @@ namespace Test
             for(int i=0; i<10; i++)
             {
                 Console.WriteLine($"{frame}");
-                yield return new WaitForFrame(2);
+                yield return new WaitForFrame(3);
             }
         }
 

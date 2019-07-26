@@ -38,9 +38,9 @@ namespace UnitTest
             var i = 0;
             var thread = Thread.CurrentThread.ManagedThreadId;
             var co = CoroutineContainer.StartCoroutine(Run);
-            Assert.AreEqual(i, 1);
+            Assert.AreEqual(0, i);
             Tick();
-            Assert.AreEqual(i, 3);
+            Assert.AreEqual(3, i);
             Assert.IsTrue(co.IsSuccess());
             async IWaitable Run()
             {

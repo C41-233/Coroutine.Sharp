@@ -34,6 +34,8 @@ namespace Coroutines.Await
 
         private CoroutineManager.Container container => awaitable.CoroutineContainer;
 
+        private CoroutineManager manager => container.CoroutineManager;
+
         private AwaitMethodBuilder(Awaitable awaitable)
         {
             this.awaitable = awaitable;
@@ -44,7 +46,8 @@ namespace Coroutines.Await
         public void Start<TStateMachine>(ref TStateMachine stateMachine)
             where TStateMachine : IAsyncStateMachine
         {
-            stateMachine.MoveNext();
+            var s = stateMachine;
+            manager.Enqueue(() => s.MoveNext());
         }
 
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
@@ -52,15 +55,15 @@ namespace Coroutines.Await
             where TStateMachine : IAsyncStateMachine
         {
             var s = stateMachine;
-            var l = container.CoroutineManager;
+            var a = awaiter;
             if (awaiter is Awaiter w && w.waitable is IBindCoroutineWaitable bindCoroutineWaitable)
             {
                 bindCoroutineWaitable.Bind(container);
             }
-            awaiter.OnCompleted(
-                () => l.Enqueue(
-                    () => s.MoveNext()
-                )
+            manager.Enqueue(() => 
+                a.OnCompleted(
+                () => s.MoveNext()
+                )    
             );
         }
 
@@ -69,17 +72,7 @@ namespace Coroutines.Await
             where TAwaiter : ICriticalNotifyCompletion
             where TStateMachine : IAsyncStateMachine
         {
-            var s = stateMachine;
-            var l = container.CoroutineManager;
-            if (awaiter is Awaiter w && w.waitable is IBindCoroutineWaitable bindCoroutineWaitable)
-            {
-                bindCoroutineWaitable.Bind(container);
-            }
-            awaiter.UnsafeOnCompleted(
-                () => l.Enqueue(
-                    () => s.MoveNext()
-                )
-            );
+            AwaitOnCompleted(ref awaiter, ref stateMachine);
         }
 
         public void SetException(Exception e)
@@ -116,6 +109,8 @@ namespace Coroutines.Await
 
         private CoroutineManager.Container container => awaitable.CoroutineContainer;
 
+        private CoroutineManager manager => container.CoroutineManager;
+
         private AwaitMethodBuilder(Awaitable<T> awaitable)
         {
             this.awaitable = awaitable;
@@ -126,7 +121,8 @@ namespace Coroutines.Await
         public void Start<TStateMachine>(ref TStateMachine stateMachine)
             where TStateMachine : IAsyncStateMachine
         {
-            stateMachine.MoveNext();
+            var s = stateMachine;
+            manager.Enqueue(() => s.MoveNext());
         }
 
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
@@ -134,13 +130,13 @@ namespace Coroutines.Await
             where TStateMachine : IAsyncStateMachine
         {
             var s = stateMachine;
-            var l = container.CoroutineManager;
+            var a = awaiter;
             if (awaiter is Awaiter w && w.waitable is IBindCoroutineWaitable bindCoroutineWaitable)
             {
                 bindCoroutineWaitable.Bind(container);
             }
-            awaiter.OnCompleted(
-                () => l.Enqueue(
+            manager.Enqueue(() =>
+                a.OnCompleted(
                     () => s.MoveNext()
                 )
             );
@@ -151,17 +147,7 @@ namespace Coroutines.Await
             where TAwaiter : ICriticalNotifyCompletion
             where TStateMachine : IAsyncStateMachine
         {
-            var s = stateMachine;
-            var l = container.CoroutineManager;
-            if (awaiter is Awaiter w && w.waitable is IBindCoroutineWaitable bindCoroutineWaitable)
-            {
-                bindCoroutineWaitable.Bind(container);
-            }
-            awaiter.UnsafeOnCompleted(
-                () => l.Enqueue(
-                    () => s.MoveNext()
-                )
-            );
+            AwaitOnCompleted(ref awaiter, ref stateMachine);
         }
 
         public void SetException(Exception e)
