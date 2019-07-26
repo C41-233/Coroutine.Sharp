@@ -130,7 +130,7 @@ namespace UnitTest
             var i = 0;
             var co = CoroutineContainer.StartCoroutine(RunFather());
 
-            Assert.AreEqual(1, i);
+            Assert.AreEqual(0, i);
             Tick();
             Assert.AreEqual(1, i);
             Assert.IsTrue(co.IsError());
@@ -138,7 +138,7 @@ namespace UnitTest
             IEnumerable RunFather()
             {
                 Assert.AreEqual(0, i);
-                Assert.AreEqual(0, Frame);
+                Assert.AreEqual(1, Frame);
                 i++;
 
                 yield return CoroutineContainer.StartCoroutine(RunChild());
@@ -158,7 +158,7 @@ namespace UnitTest
             var i = 0;
             CoroutineContainer.StartCoroutine(RunFather());
 
-            Assert.AreEqual(2, i);
+            Assert.AreEqual(0, i);
             Tick();
 
             //handle
@@ -167,7 +167,7 @@ namespace UnitTest
             IEnumerable RunFather()
             {
                 Assert.AreEqual(0, i);
-                Assert.AreEqual(0, Frame);
+                Assert.AreEqual(1, Frame);
                 i++;
 
                 yield return CoroutineContainer.StartCoroutine(RunChild());
@@ -190,7 +190,7 @@ namespace UnitTest
             var i = 0;
             CoroutineContainer.StartCoroutine(RunFather(), BubbleExceptionApproach.Abort);
 
-            Assert.AreEqual(2, i);
+            Assert.AreEqual(0, i);
             Tick();
 
             //handle
@@ -199,7 +199,7 @@ namespace UnitTest
             IEnumerable RunFather()
             {
                 Assert.AreEqual(0, i);
-                Assert.AreEqual(0, Frame);
+                Assert.AreEqual(1, Frame);
                 i++;
 
                 yield return CoroutineContainer.StartCoroutine(RunChild()).Catch(e =>
