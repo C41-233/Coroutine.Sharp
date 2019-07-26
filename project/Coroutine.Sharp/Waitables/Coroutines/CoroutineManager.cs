@@ -9,6 +9,9 @@ namespace Coroutines
     public class CoroutineManager
     {
 
+        /// <summary>
+        /// 调用不带参数版本的StartCoroutine时，针对冒泡异常的处理。仅针对yield return版本的Coroutine有效。
+        /// </summary>
         public BubbleExceptionApproach DefaultBubbleExceptionApproach { get; set; } = BubbleExceptionApproach.Ignore;
 
         private readonly SwapQueue<Action> actions = new SwapQueue<Action>();
@@ -45,6 +48,7 @@ namespace Coroutines
                 CoroutineManager = coroutineManager;
             }
 
+            #region yield return
             public IWaitable<T> StartCoroutine<T>(IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach)
             {
                 var coroutine = new Coroutine<T>(this, co, bubbleExceptionApproach);
@@ -66,12 +70,13 @@ namespace Coroutines
             {
                 return StartCoroutine(co, CoroutineManager.DefaultBubbleExceptionApproach);
             }
+            #endregion
 
+            #region await
             public IWaitable StartCoroutine(Func<IWaitable> co)
             {
                 AwaitShareData.ThreadLocalCoroutineContainer = this;
                 var coroutine = co();
-                AwaitShareData.ThreadLocalCoroutineContainer = null;
                 return Add(coroutine);
             }
 
@@ -79,7 +84,6 @@ namespace Coroutines
             {
                 AwaitShareData.ThreadLocalCoroutineContainer = this;
                 var coroutine = co(arg);
-                AwaitShareData.ThreadLocalCoroutineContainer = null;
                 return Add(coroutine);
             }
 
@@ -87,9 +91,9 @@ namespace Coroutines
             {
                 AwaitShareData.ThreadLocalCoroutineContainer = this;
                 var coroutine = co(arg);
-                AwaitShareData.ThreadLocalCoroutineContainer = null;
                 return Add(coroutine);
             }
+            #endregion
 
             private IWaitable<T> Add<T>(IWaitable<T> waitable)
             {
@@ -123,7 +127,7 @@ namespace Coroutines
     }
 
     /// <summary>
-    /// 当前Coroutine正在等待的IWaitable失败时的处理方法
+    /// 当前Coroutine正在等待的IWaitable失败时的处理方法，仅针对yield return模式的Coroutine有效
     /// </summary>
     public enum BubbleExceptionApproach
     {
