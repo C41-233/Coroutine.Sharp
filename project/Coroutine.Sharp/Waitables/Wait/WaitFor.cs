@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using Coroutines.Timers;
@@ -185,6 +186,18 @@ namespace Coroutines
         public static IWaitable<int> SendTo(Socket socket, byte[] buffer, string ip, int port, SocketFlags flags = SocketFlags.None)
         {
             return new WaitForSendTo(socket, buffer, 0, buffer.Length, flags, new IPEndPoint(IPAddress.Parse(ip), port));
+        }
+        #endregion
+
+        #region IO
+        public static IWaitable<int> Read(Stream stream, byte[] buffer, int offset, int count)
+        {
+            return new WaitForRead(stream, buffer, offset, count);
+        }
+
+        public static IWaitable<int> Read(Stream stream, byte[] buffer)
+        {
+            return new WaitForRead(stream, buffer, 0, buffer.Length);
         }
         #endregion
 

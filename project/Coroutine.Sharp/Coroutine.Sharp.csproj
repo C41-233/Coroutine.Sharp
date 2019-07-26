@@ -51,6 +51,7 @@
     <Compile Include="Waitables\IWaitable.cs" />
     <Compile Include="Waitables\WaitableExtends.cs" />
     <Compile Include="Waitables\WaitableValue.cs" />
+    <Compile Include="Waitables\Wait\IO\WaitForRead.cs" />
     <Compile Include="Waitables\Wait\Logic\WaitForFrame.cs" />
     <Compile Include="Waitables\Wait\Logic\WaitForPromise.cs" />
     <Compile Include="Timers\TimerHandle.cs" />
