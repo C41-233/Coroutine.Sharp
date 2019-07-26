@@ -28,6 +28,8 @@ namespace UnitTest
 
             Assert.AreEqual(0, i);
             CoroutineManager.OneLoop();
+            Assert.AreEqual(0, i);
+            CoroutineManager.OneLoop();
             Assert.AreEqual(2, i);
 
             Container.Clear();

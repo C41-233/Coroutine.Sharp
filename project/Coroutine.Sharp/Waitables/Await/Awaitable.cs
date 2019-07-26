@@ -4,11 +4,11 @@ namespace Coroutines.Await
 {
     internal class Awaitable : WaitableTask
     {
-        public CoroutineManager.Container CoroutineManager { get; }
+        public CoroutineManager.Container CoroutineContainer { get; }
 
-        public Awaitable(CoroutineManager.Container coroutineManager)
+        public Awaitable(CoroutineManager.Container container)
         {
-            CoroutineManager = coroutineManager;
+            CoroutineContainer = container;
         }
 
         public new void Success()
@@ -25,11 +25,11 @@ namespace Coroutines.Await
 
     internal class Awaitable<T> : WaitableTask<T>
     {
-        public CoroutineManager.Container CoroutineManager { get; }
+        public CoroutineManager.Container CoroutineContainer { get; }
 
-        public Awaitable(CoroutineManager.Container coroutineManager)
+        public Awaitable(CoroutineManager.Container container)
         {
-            CoroutineManager = coroutineManager;
+            CoroutineContainer = container;
         }
 
         public new void Success(T value)

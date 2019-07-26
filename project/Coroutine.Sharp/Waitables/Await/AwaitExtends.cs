@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Coroutines.Await
+﻿namespace Coroutines.Await
 {
 
     public static class AwaitExtends
@@ -24,6 +22,7 @@ namespace System.Runtime.CompilerServices
 {
     internal sealed class AsyncMethodBuilderAttribute : Attribute
     {
+        // ReSharper disable once UnusedParameter.Local
         public AsyncMethodBuilderAttribute(Type type)
         { }
     }

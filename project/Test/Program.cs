@@ -50,7 +50,7 @@ namespace Test
             for(int i=0; i<10; i++)
             {
                 Console.WriteLine($"{frame}");
-                yield return new WaitForFrame(1);
+                yield return new WaitForFrame(2);
             }
         }
 

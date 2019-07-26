@@ -10,7 +10,7 @@ namespace Coroutines
     {
 
         private readonly CoroutineManager.Container container;
-        private CoroutineManager coroutineManager => container.CoroutineManager;
+        private CoroutineManager manager => container.CoroutineManager;
         private IEnumerator enumerator;
         private readonly BubbleExceptionApproach approach;
 
@@ -39,7 +39,7 @@ namespace Coroutines
             this.approach = approach;
             id = IdGenerator.Next();
             enumerator = co.GetEnumerator();
-            NextStep();
+            manager.Enqueue(NextStep);
         }
 
         private void NextStep()
@@ -67,7 +67,7 @@ namespace Coroutines
             switch (current)
             {
                 case null:
-                    coroutineManager.Enqueue(NextStep);
+                    manager.Enqueue(NextStep);
                     break;
                 case T t:
                     Success(t);
@@ -95,7 +95,7 @@ namespace Coroutines
             //等待的事件成功，继续下一步
             waitable.Then(() =>
             {
-                coroutineManager.Enqueue(NextStep);
+                manager.Enqueue(NextStep);
                 this.waitable = null;
             });
 
@@ -104,14 +104,14 @@ namespace Coroutines
                 switch (approach)
                 {
                     case BubbleExceptionApproach.Abort:
-                        coroutineManager.Enqueue(() => Abort(false));
+                        manager.Enqueue(() => Abort(false));
                         break;
                     case BubbleExceptionApproach.Throw:
-                        coroutineManager.Enqueue(() => Fail(e));
+                        manager.Enqueue(() => Fail(e));
                         break;
                     default:
                         //等待的事件失败，继续下一步，由调用者处理异常，coroutine本身未失败
-                        coroutineManager.Enqueue(NextStep);
+                        manager.Enqueue(NextStep);
                         break;
                 }
 

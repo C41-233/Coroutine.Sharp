@@ -38,7 +38,7 @@ namespace UnitTest
         {
             var i = 0;
             CoroutineContainer.StartCoroutine(Run());
-            Assert.AreEqual(1, i);
+            Assert.AreEqual(0, i);
             Tick();
             Assert.AreEqual(1, i);
 
@@ -54,18 +54,19 @@ namespace UnitTest
         public void Test2()
         {
             var i = 0;
-            CoroutineContainer.StartCoroutine(Run());
+            var co = CoroutineContainer.StartCoroutine(Run());
             Assert.AreEqual(0, i);
             Tick();
+            co.Throw();
             Assert.AreEqual(1, i);
 
             IEnumerable Run()
             {
                 Assert.AreEqual(0, i);
-                Assert.AreEqual(0, Frame);
+                Assert.AreEqual(1, Frame);
                 yield return null;
                 Assert.AreEqual(0, i);
-                Assert.AreEqual(1, Frame);
+                Assert.AreEqual(2, Frame);
                 i++;
             }
         }
@@ -224,7 +225,7 @@ namespace UnitTest
             var i = 0;
 
             CoroutineContainer.StartCoroutine(RunFather()).With(out var co);
-            Assert.AreEqual(1, i);
+            Assert.AreEqual(0, i);
 
             for (var tick=0; tick<1000; tick++)
             {
@@ -255,17 +256,19 @@ namespace UnitTest
 
             var co1 = CoroutineContainer.StartCoroutine(RunFather());
 
+            Assert.AreEqual(0, i);
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(1, i);
+            CoroutineManager.OneLoop();
             Assert.AreEqual(2, i);
             CoroutineManager.OneLoop();
             Assert.AreEqual(3, i);
-            CoroutineManager.OneLoop();
-            Assert.AreEqual(4, i);
             co1.Abort();
             CoroutineManager.OneLoop();
-            Assert.AreEqual(4, i);
+            Assert.AreEqual(3, i);
 
             Tick();
-            Assert.AreEqual(4, i);
+            Assert.AreEqual(3, i);
             Assert.AreEqual(WaitableStatus.Abort, co1.Status);
             Assert.AreEqual(WaitableStatus.Abort, co2.Status);
             Assert.IsTrue(co1.IsAborted());
@@ -296,26 +299,34 @@ namespace UnitTest
             var j = 0;
 
             var co2 = CoroutineContainer.StartCoroutine(RunChild());
-            Assert.AreEqual(1, i);
+            Assert.AreEqual(0, i);
 
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(1, i);
             CoroutineManager.OneLoop();
             Assert.AreEqual(2, i);
 
             var co1 = CoroutineContainer.StartCoroutine(RunFather(), BubbleExceptionApproach.Ignore);
-            Assert.AreEqual(3, i);
+            Assert.AreEqual(2, i);
 
             CoroutineManager.OneLoop();
+            //father++ child++
             Assert.AreEqual(4, i);
+            CoroutineManager.OneLoop();
+            //father wait child++
+            Assert.AreEqual(5, i);
 
             co2.Abort();
-            Assert.AreEqual(4, i);
+            Assert.AreEqual(5, i);
             Assert.AreEqual(1, j);
 
             CoroutineManager.OneLoop();
-            Assert.AreEqual(5, i);
+            //father++ child abort
+            Assert.IsTrue(co2.IsAborted());
+            Assert.AreEqual(6, i);
 
             Tick();
-            Assert.AreEqual(5, i);
+            Assert.AreEqual(6, i);
             Assert.AreEqual(1, j);
 
             Assert.AreEqual(WaitableStatus.Abort, co2.Status);
@@ -344,13 +355,15 @@ namespace UnitTest
             var i = 0;
 
             var co2 = CoroutineContainer.StartCoroutine(RunChild());
-            Assert.AreEqual(1, i);
+            Assert.AreEqual(0, i);
 
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(1, i);
             CoroutineManager.OneLoop();
             Assert.AreEqual(2, i);
 
             var co1 = CoroutineContainer.StartCoroutine(RunFather(), BubbleExceptionApproach.Ignore);
-            Assert.AreEqual(3, i);
+            Assert.AreEqual(2, i);
 
             CoroutineManager.OneLoop();
             Assert.AreEqual(4, i);

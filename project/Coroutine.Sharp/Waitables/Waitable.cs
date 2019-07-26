@@ -14,8 +14,11 @@ namespace Coroutines
 
         private volatile WaitableStatus status;
 
+        private readonly int id;
+
         protected Waitable()
         {
+            id = IdGenerator.Next();
             status = WaitableStatus.Running;
         }
 
@@ -155,6 +158,11 @@ namespace Coroutines
             catchCallbacks = null;
         }
 
+
+        public sealed override int GetHashCode()
+        {
+            return id;
+        }
     }
 
     public abstract class WaitableTask : Waitable

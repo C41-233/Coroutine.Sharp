@@ -71,6 +71,16 @@ namespace Coroutines
             return self;
         }
 
+        public static Exception Throw(this IWaitable self)
+        {
+            if (self.Exception != null)
+            {
+                throw self.Exception is WaitableFlowException ? self.Exception : new WaitableFlowException(self.Exception);
+            }
+
+            return null;
+        }
+
     }
 
     internal class WaitableEnumerable<T> : WaitableTask<T>, IBindCoroutineWaitable
