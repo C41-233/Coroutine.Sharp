@@ -38,6 +38,8 @@
     <Compile Include="Base\IdGenerator.cs" />
     <Compile Include="Base\SpinLock.cs" />
     <Compile Include="Base\SwapQueue.cs" />
+    <Compile Include="Signals\ISignal.cs" />
+    <Compile Include="Signals\SignalManager.cs" />
     <Compile Include="Waitables\Await\Awaitable.cs" />
     <Compile Include="Waitables\Await\Awaiter.cs" />
     <Compile Include="Waitables\Await\AwaitExtends.cs" />
@@ -77,8 +79,6 @@
   <ItemGroup>
     <Reference Include="System" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Signals\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

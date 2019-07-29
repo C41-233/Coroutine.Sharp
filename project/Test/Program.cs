@@ -32,29 +32,23 @@ namespace Test
             }
         }
 
-        private static async IWaitable Wait1()
+        private static IEnumerable Wait2()
         {
-            Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}");
-            await Task.Delay(1);
-            Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}");
+            Console.WriteLine($"{frame}");
+            yield return WaitFor.Yield(2);
+            Console.WriteLine($"{frame}");
+            yield return WaitFor.Yield(2);
+            Console.WriteLine($"{frame}");
         }
 
-        private static async IWaitable Wait2()
+        private static async IWaitable<int> Wait3()
         {
-            for(var i=0; i<10; i++)
-            {
-                Console.WriteLine($"{frame}");
-                await WaitFor.Yield();
-            }
-        }
-
-        private static async IWaitable Wait3()
-        {
-            Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}");
-            await Task.Delay(2);
-            Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}");
-            await Task.Delay(2);
-            Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}");
+            Console.WriteLine($"{frame}");
+            await WaitFor.Yield();
+            Console.WriteLine($"{frame}");
+            await WaitFor.Yield();
+            Console.WriteLine($"{frame}");
+            return 5;
         }
 
     }

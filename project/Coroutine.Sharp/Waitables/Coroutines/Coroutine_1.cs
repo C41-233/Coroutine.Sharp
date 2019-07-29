@@ -39,7 +39,9 @@ namespace Coroutines
             this.approach = approach;
             id = IdGenerator.Next();
             enumerator = co.GetEnumerator();
-            manager.Enqueue(NextStep);
+
+            //下一帧执行
+            Enqueue(NextStep);
         }
 
         private void NextStep()
@@ -67,7 +69,7 @@ namespace Coroutines
             switch (current)
             {
                 case null:
-                    manager.Enqueue(NextStep);
+                    Enqueue(NextStep);
                     break;
                 case T t:
                     Success(t);
@@ -95,28 +97,43 @@ namespace Coroutines
             //等待的事件成功，继续下一步
             waitable.Then(() =>
             {
-                manager.Enqueue(NextStep);
+                var fast = waitable is IBindCoroutineWaitable;
                 this.waitable = null;
+
+                Enqueue(NextStep, fast);
             });
 
             waitable.Catch(e =>
             {
+                var fast = waitable is IBindCoroutineWaitable;
+                this.waitable = null;
+
                 switch (approach)
                 {
                     case BubbleExceptionApproach.Abort:
-                        manager.Enqueue(() => Abort(false));
+                        Enqueue(() => Abort(false), fast);
                         break;
                     case BubbleExceptionApproach.Throw:
-                        manager.Enqueue(() => Fail(e));
+                        Enqueue(() => Fail(e), fast);
                         break;
                     default:
                         //等待的事件失败，继续下一步，由调用者处理异常，coroutine本身未失败
-                        manager.Enqueue(NextStep);
+                        Enqueue(NextStep, fast);
                         break;
                 }
-
-                this.waitable = null;
             });
+        }
+
+        private void Enqueue(Action action, bool fast = false)
+        {
+            if (fast)
+            {
+                action();
+            }
+            else
+            {
+                manager.Enqueue(action);
+            }
         }
 
         private void Dispose()
