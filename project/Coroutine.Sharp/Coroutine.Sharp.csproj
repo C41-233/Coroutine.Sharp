@@ -38,7 +38,6 @@
     <Compile Include="Base\IdGenerator.cs" />
     <Compile Include="Base\SpinLock.cs" />
     <Compile Include="Base\SwapQueue.cs" />
-    <Compile Include="Signals\ISignal.cs" />
     <Compile Include="Signals\SignalManager.cs" />
     <Compile Include="Waitables\Await\Awaitable.cs" />
     <Compile Include="Waitables\Await\Awaiter.cs" />

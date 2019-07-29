@@ -32,7 +32,7 @@ namespace UnitTest
             CoroutineManager.OneLoop();
             Assert.AreEqual(2, i);
 
-            Container.Clear();
+            Container.ClearAllCoroutines();
 
             CoroutineManager.OneLoop();
             Assert.AreEqual(2, i);

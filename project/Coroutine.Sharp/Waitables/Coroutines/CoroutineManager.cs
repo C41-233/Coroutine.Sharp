@@ -109,7 +109,7 @@ namespace Coroutines
                 return waitable;
             }
 
-            public void Clear()
+            public void ClearAllCoroutines()
             {
                 var list = new IWaitable[waitables.Count];
                 waitables.CopyTo(list);
