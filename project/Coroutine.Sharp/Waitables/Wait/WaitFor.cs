@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using Coroutines.Timers;
 
 namespace Coroutines
@@ -46,6 +47,16 @@ namespace Coroutines
         public static IWaitable Yield(int frame = 1)
         {
             return new WaitForFrame(frame);
+        }
+
+        public static IWaitable Task(Task task)
+        {
+            return new WaitForTask(task);
+        }
+
+        public static IWaitable<T> Task<T>(Task<T> task)
+        {
+            return new WaitForTask<T>(task);
         }
         #endregion
 

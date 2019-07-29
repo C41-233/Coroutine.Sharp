@@ -67,6 +67,7 @@
     <Compile Include="Waitables\Wait\Logic\WaitForAllSuccess.cs" />
     <Compile Include="Waitables\Wait\Logic\WaitForAll.cs" />
     <Compile Include="Waitables\Wait\Logic\WaitForAnySuccess.cs" />
+    <Compile Include="Waitables\Wait\Logic\WaitForTask.cs" />
     <Compile Include="Waitables\Wait\Timer\WaitForPhysicalTimeSpan.cs" />
     <Compile Include="Waitables\Wait\WaitFor.cs" />
     <Compile Include="Waitables\Wait\IO\WaitForConnect.cs" />
