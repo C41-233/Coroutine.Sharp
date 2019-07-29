@@ -21,7 +21,6 @@ namespace Test
 
         static void Main(string[] args)
         {
-            //todo as unit test
             Container.StartCoroutine(Wait3);
             Console.WriteLine("MainLoop");
             while (true)
@@ -52,7 +51,9 @@ namespace Test
         private static async IWaitable Wait3()
         {
             Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}");
-            await WaitFor.PhysicalTime(TimeSpan.FromSeconds(2));
+            await Task.Delay(2);
+            Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}");
+            await Task.Delay(2);
             Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}");
         }
 
