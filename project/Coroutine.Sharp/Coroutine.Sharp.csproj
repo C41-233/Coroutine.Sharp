@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Coroutines</RootNamespace>
     <AssemblyName>Coroutine.Sharp</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -38,17 +38,18 @@
     <Compile Include="Base\IdGenerator.cs" />
     <Compile Include="Base\SpinLock.cs" />
     <Compile Include="Base\SwapQueue.cs" />
+    <Compile Include="Signals\SignalHandler.cs" />
     <Compile Include="Signals\SignalManager.cs" />
     <Compile Include="Waitables\Await\Awaitable.cs" />
     <Compile Include="Waitables\Await\Awaiter.cs" />
     <Compile Include="Waitables\Await\AwaitExtends.cs" />
     <Compile Include="Waitables\Await\AwaitMethodBuilder.cs" />
-    <Compile Include="Waitables\Coroutines\Coroutine.cs" />
-    <Compile Include="Waitables\Coroutines\CoroutineManager.cs" />
+    <Compile Include="Coroutines\Coroutine.cs" />
+    <Compile Include="Coroutines\CoroutineManager.cs" />
     <Compile Include="Base\PriorityQueue.cs" />
-    <Compile Include="Waitables\Coroutines\Coroutine_1.cs" />
+    <Compile Include="Coroutines\Coroutine_1.cs" />
     <Compile Include="Waitables\CompleteWaitable.cs" />
-    <Compile Include="Waitables\Coroutines\IBindCoroutineWaitable.cs" />
+    <Compile Include="Coroutines\IBindCoroutineWaitable.cs" />
     <Compile Include="Waitables\IWaitable.cs" />
     <Compile Include="Waitables\WaitableExtends.cs" />
     <Compile Include="Waitables\WaitableValue.cs" />
