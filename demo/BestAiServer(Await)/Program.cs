@@ -29,14 +29,14 @@ namespace BestAiServer
 
         private static async IWaitable MainLoop()
         {
-            Console.WriteLine("server start...");
+            Console.WriteLine($"[{Thread.CurrentThread.ManagedThreadId}] server start...");
             var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.Bind(new IPEndPoint(IPAddress.Any, 8077));
             socket.Listen(5);
             while (true)
             {
-                var client = await WaitFor.Accept(socket);
-                Console.WriteLine($"connect client {client.RemoteEndPoint}");
+                var client = await socket.AcceptAsync();
+                Console.WriteLine($"[{Thread.CurrentThread.ManagedThreadId}] connect client {client.RemoteEndPoint}");
                 ProcessClient(client);
             }
         }
@@ -58,47 +58,48 @@ namespace BestAiServer
                     int nread;
                     try
                     {
-                        nread = await WaitFor.Receive(socket, bs);
+                        nread = await socket.ReceiveAsync(new ArraySegment<byte>(bs), SocketFlags.None);
                     }
                     catch (Exception ex)
                     {
                         if (ex is SocketException e)
                         {
-                            Console.WriteLine($"Close {remote} : {e.SocketErrorCode}");
+                            Console.WriteLine($"[{Thread.CurrentThread.ManagedThreadId}] Close {remote} : {e.SocketErrorCode}");
                         }
                         else
                         {
-                            Console.WriteLine($"Error receive {remote} : {ex}");
+                            Console.WriteLine($"[{Thread.CurrentThread.ManagedThreadId}] Error receive {remote} : {ex}");
                         }
                         socket.Close();
                         break;
                     }
                     if (nread <= 0)
                     {
-                        Console.WriteLine($"Close {remote}");
+                        Console.WriteLine($"[{Thread.CurrentThread.ManagedThreadId}] Close {remote}");
                         socket.Close();
                         break;
                     }
 
                     var receive = Encoding.UTF8.GetString(bs, 0, nread);
-                    Console.WriteLine($"receive {receive} from {socket.RemoteEndPoint}");
+                    Console.WriteLine($"[{Thread.CurrentThread.ManagedThreadId}] receive {receive} from {socket.RemoteEndPoint}");
 
                     var answer = Answer(receive) + "\n";
                     int nsend;
                     try
                     {
-                        nsend = await WaitFor.Send(socket, Encoding.UTF8.GetBytes(answer));
+                        var sendData = Encoding.UTF8.GetBytes(answer);
+                        nsend = await socket.SendAsync(new ArraySegment<byte>(sendData), SocketFlags.None);
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Error send {remote} : {ex}");
+                        Console.WriteLine($"[{Thread.CurrentThread.ManagedThreadId}] Error send {remote} : {ex}");
                         socket.Close();
                         break;
                     }
 
                     if (nsend <= 0)
                     {
-                        Console.WriteLine($"Close {remote}");
+                        Console.WriteLine($"[{Thread.CurrentThread.ManagedThreadId}] Close {remote}");
                         socket.Close();
                         break;
                     }
