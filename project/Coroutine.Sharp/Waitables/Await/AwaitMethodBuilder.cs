@@ -68,12 +68,15 @@ namespace Coroutines.Await
             where TAwaiter : INotifyCompletion
             where TStateMachine : IAsyncStateMachine
         {
-            if (awaiter is Awaiter waiter && waiter.waitable is IBindCoroutineWaitable bindCoroutineWaitable)
+            var waitable = AwaiterStatic<TAwaiter>.GetWaitable?.Invoke(ref awaiter);
+
+            if (waitable is IBindCoroutineWaitable bindCoroutineWaitable)
             {
                 bindCoroutineWaitable.Bind(container);
                 AwaitShareData.FastOnComplete(ref awaiter, ref stateMachine);
                 return;
             }
+
             AwaitShareData.UnsafeOnComplete(manager, ref awaiter, stateMachine);
         }
 
@@ -139,7 +142,8 @@ namespace Coroutines.Await
             where TAwaiter : INotifyCompletion
             where TStateMachine : IAsyncStateMachine
         {
-            if (awaiter is Awaiter<T> waiter && waiter.waitable is IBindCoroutineWaitable bindCoroutineWaitable)
+            var waitable = AwaiterStatic<TAwaiter>.GetWaitable?.Invoke(ref awaiter);
+            if (waitable is IBindCoroutineWaitable bindCoroutineWaitable)
             {
                 bindCoroutineWaitable.Bind(container);
                 AwaitShareData.FastOnComplete(ref awaiter, ref stateMachine);

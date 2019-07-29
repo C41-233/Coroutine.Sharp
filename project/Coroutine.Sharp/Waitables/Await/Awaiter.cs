@@ -3,8 +3,22 @@ using System.Runtime.CompilerServices;
 
 namespace Coroutines.Await
 {
+
+    internal delegate IWaitable GetWaitableDelegate<TAwaiter>(ref TAwaiter awaiter) where TAwaiter : INotifyCompletion;
+
+    //防止awaiter装箱
+    internal static class AwaiterStatic<TAwaiter> where TAwaiter : INotifyCompletion
+    {
+        public static GetWaitableDelegate<TAwaiter> GetWaitable;
+    }
+
     public struct Awaiter : ICriticalNotifyCompletion
     {
+
+        static Awaiter()
+        {
+            AwaiterStatic<Awaiter>.GetWaitable = (ref Awaiter awaiter) => awaiter.waitable;
+        }
 
         internal readonly IWaitable waitable;
 
@@ -33,6 +47,11 @@ namespace Coroutines.Await
 
     public struct Awaiter<T> : ICriticalNotifyCompletion
     {
+
+        static Awaiter()
+        {
+            AwaiterStatic<Awaiter<T>>.GetWaitable = (ref Awaiter<T> awaiter) => awaiter.waitable;
+        }
 
         internal readonly IWaitable<T> waitable;
 
