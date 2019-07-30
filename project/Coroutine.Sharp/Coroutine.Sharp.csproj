@@ -51,7 +51,7 @@
     <Compile Include="Base\PriorityQueue.cs" />
     <Compile Include="Coroutines\Coroutine_1.cs" />
     <Compile Include="Waitables\CompleteWaitable.cs" />
-    <Compile Include="Coroutines\IBindCoroutineWaitable.cs" />
+    <Compile Include="Waitables\WaitableInterfaces.cs" />
     <Compile Include="Waitables\IWaitable.cs" />
     <Compile Include="Waitables\WaitableExtends.cs" />
     <Compile Include="Waitables\WaitableValue.cs" />

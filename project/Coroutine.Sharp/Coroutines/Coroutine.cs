@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Coroutines.Base;
 
 namespace Coroutines
@@ -70,6 +71,9 @@ namespace Coroutines
                 case IEnumerable enumerable:
                     Dispatch(container.StartCoroutine(enumerable));
                     break;
+                case Task task:
+                    Dispatch(new WaitForTask(task));
+                    break;
                 default:
                     Dispatch((IWaitable)current);
                     break;
@@ -83,7 +87,7 @@ namespace Coroutines
             //等待的事件成功，继续下一步
             waitable.Then(() =>
             {
-                var fast = waitable is IBindCoroutineWaitable;
+                var fast = waitable is IThreadSafeWaitable;
                 this.waitable = null;
 
                 Enqueue(NextStep, fast);
@@ -91,28 +95,28 @@ namespace Coroutines
 
             waitable.Catch(e =>
             {
-                var fast = waitable is IBindCoroutineWaitable;
+                var safe = waitable is IThreadSafeWaitable;
                 this.waitable = null;
 
                 switch (approach)
                 {
                     case BubbleExceptionApproach.Abort:
-                        Enqueue(() => Abort(false), fast);
+                        Enqueue(() => Abort(false), safe);
                         break;
                     case BubbleExceptionApproach.Throw:
-                        Enqueue(() => Fail(e), fast);
+                        Enqueue(() => Fail(e), safe);
                         break;
                     default:
                         //等待的事件失败，继续下一步，由调用者处理异常，coroutine本身未失败
-                        Enqueue(NextStep, fast);
+                        Enqueue(NextStep, safe);
                         break;
                 }
             });
         }
 
-        private void Enqueue(Action action, bool fast = false)
+        private void Enqueue(Action action, bool safe = false)
         {
-            if (fast)
+            if (safe)
             {
                 action();
             }

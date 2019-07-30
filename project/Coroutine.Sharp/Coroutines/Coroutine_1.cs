@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Coroutines.Base;
 
 namespace Coroutines
@@ -84,6 +85,9 @@ namespace Coroutines
                 case IEnumerable enumerable:
                     Dispatch(container.StartCoroutine(enumerable));
                     break;
+                case Task task:
+                    Dispatch(new WaitForTask(task));
+                    break;
                 default:
                     Dispatch((IWaitable) current);
                     break;
@@ -97,15 +101,15 @@ namespace Coroutines
             //等待的事件成功，继续下一步
             waitable.Then(() =>
             {
-                var fast = waitable is IBindCoroutineWaitable;
+                var safe = waitable is IThreadSafeWaitable;
                 this.waitable = null;
 
-                Enqueue(NextStep, fast);
+                Enqueue(NextStep, safe);
             });
 
             waitable.Catch(e =>
             {
-                var fast = waitable is IBindCoroutineWaitable;
+                var fast = waitable is IThreadSafeWaitable;
                 this.waitable = null;
 
                 switch (approach)
@@ -124,9 +128,9 @@ namespace Coroutines
             });
         }
 
-        private void Enqueue(Action action, bool fast = false)
+        private void Enqueue(Action action, bool safe = false)
         {
-            if (fast)
+            if (safe)
             {
                 action();
             }

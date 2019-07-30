@@ -73,11 +73,16 @@ namespace Coroutines.Await
             if (waitable is IBindCoroutineWaitable bindCoroutineWaitable)
             {
                 bindCoroutineWaitable.Bind(container);
-                AwaitShareData.FastOnComplete(ref awaiter, ref stateMachine);
-                return;
             }
 
-            AwaitShareData.UnsafeOnComplete(manager, ref awaiter, stateMachine);
+            if (waitable is IThreadSafeWaitable)
+            {
+                AwaitShareData.FastOnComplete(ref awaiter, ref stateMachine);
+            }
+            else
+            {
+                AwaitShareData.UnsafeOnComplete(manager, ref awaiter, stateMachine);
+            }
         }
 
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(
@@ -146,10 +151,16 @@ namespace Coroutines.Await
             if (waitable is IBindCoroutineWaitable bindCoroutineWaitable)
             {
                 bindCoroutineWaitable.Bind(container);
-                AwaitShareData.FastOnComplete(ref awaiter, ref stateMachine);
-                return;
             }
-            AwaitShareData.UnsafeOnComplete(manager, ref awaiter, stateMachine);
+
+            if (waitable is IThreadSafeWaitable)
+            {
+                AwaitShareData.FastOnComplete(ref awaiter, ref stateMachine);
+            }
+            else
+            {
+                AwaitShareData.UnsafeOnComplete(manager, ref awaiter, stateMachine);
+            }
         }
 
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(
