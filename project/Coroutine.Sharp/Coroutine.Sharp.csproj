@@ -35,11 +35,13 @@
     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Base\Assert.cs" />
     <Compile Include="Base\IdGenerator.cs" />
     <Compile Include="Base\SpinLock.cs" />
     <Compile Include="Base\SwapQueue.cs" />
     <Compile Include="Signals\SignalHandler.cs" />
     <Compile Include="Signals\SignalManager.cs" />
+    <Compile Include="Waitables\Wait\Logic\WaitForSignal.cs" />
     <Compile Include="Waitables\Await\Awaitable.cs" />
     <Compile Include="Waitables\Await\Awaiter.cs" />
     <Compile Include="Waitables\Await\AwaitExtends.cs" />

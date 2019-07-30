@@ -9,6 +9,8 @@ namespace Coroutines.Signals
 
         public bool IsDisposed { get; private set; }
 
+        public abstract int Remain { get; }
+
         /// <summary>
         /// 释放监听函数，自释放后触发signal不再会被调用
         /// </summary>
@@ -34,10 +36,16 @@ namespace Coroutines.Signals
     {
         public Action<TSignal> Delegate { get; private set; }
 
-        internal SignalHandler(SignalManager.Container container, Action<TSignal> callback)
+        // ReSharper disable once ConvertToAutoPropertyWhenPossible
+        public override int Remain => remain;
+
+        private int remain;
+
+        internal SignalHandler(SignalManager.Container container, Action<TSignal> callback, int times)
             : base(container, typeof(TSignal))
         {
             Delegate = callback;
+            remain = times;
         }
 
         /// <inheritdoc />
@@ -45,9 +53,19 @@ namespace Coroutines.Signals
         {
             base.Dispose(prop);
             Delegate = null;
+            remain = 0;
             if (prop)
             {
                 SignalContainer.RemoveHandler(this);
+            }
+        }
+
+        internal void Invoke(ref TSignal signal)
+        {
+            Delegate(signal);
+            if (--remain == 0)
+            {
+                Dispose(false);
             }
         }
 

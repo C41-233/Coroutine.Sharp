@@ -35,7 +35,11 @@ namespace Coroutines.Signals
                 }
 
                 var handler = (SignalHandler<TSignal>) baseHandler;
-                handler.Delegate(signal);
+                handler.Invoke(ref signal);
+                if (handler.IsDisposed)
+                {
+                    handlers.Delete = true;
+                }
             }
             callStack--;
 
@@ -89,10 +93,11 @@ namespace Coroutines.Signals
             /// </summary>
             /// <typeparam name="T">signal类型</typeparam>
             /// <param name="action">监听函数</param>
+            /// <param name="times">触发次数，负数表示无限触发</param>
             /// <returns>handler</returns>
-            public SignalHandler<T> OnSignal<T>(Action<T> action)
+            public SignalHandler<T> OnSignal<T>(Action<T> action, int times = -1)
             {
-                var handler = new SignalHandler<T>(this, action);
+                var handler = new SignalHandler<T>(this, action, times);
                 handlers.Add(handler);
                 manager.AddHandler(handler);
                 return handler;
