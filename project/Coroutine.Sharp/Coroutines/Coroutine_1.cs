@@ -19,6 +19,8 @@ namespace Coroutines
 
         private readonly int id;
 
+        private readonly DebugInfo debugInfo;
+
         public T R
         {
             get
@@ -34,12 +36,13 @@ namespace Coroutines
 
         private T r;
 
-        internal Coroutine(CoroutineManager.Container container, IEnumerable co, BubbleExceptionApproach approach)
+        internal Coroutine(CoroutineManager.Container container, IEnumerable co, BubbleExceptionApproach approach, DebugInfo debugInfo)
         {
             this.container = container;
             this.approach = approach;
             id = IdGenerator.Next();
             enumerator = co.GetEnumerator();
+            this.debugInfo = debugInfo;
 
             //下一帧执行
             Enqueue(NextStep, false);
@@ -296,5 +299,11 @@ namespace Coroutines
         {
             return id;
         }
+
+        public override string ToString()
+        {
+            return $"{debugInfo.Name ?? enumerator.ToString()} | {debugInfo.Method} {debugInfo.File}:{debugInfo.Line}";
+        }
+
     }
 }

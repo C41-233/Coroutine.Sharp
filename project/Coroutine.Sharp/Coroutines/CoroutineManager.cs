@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Coroutines.Await;
 using Coroutines.Base;
 
+// ReSharper disable ExplicitCallerInfoArgument
 // ReSharper disable PossibleMultipleEnumeration
 namespace Coroutines
 {
@@ -50,30 +52,65 @@ namespace Coroutines
             }
 
             #region yield return
-            public IWaitable<T> StartCoroutine<T>(IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach)
+            public IWaitable<T> StartCoroutine<T>(
+                IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach,
+                string name = null,
+                [CallerMemberName] string method = null,
+                [CallerFilePath] string file = null,
+                [CallerLineNumber] int line = 0
+            )
             {
                 Assert.NotNull(co, nameof(co));
 
-                var coroutine = new Coroutine<T>(this, co, bubbleExceptionApproach);
+                var coroutine = new Coroutine<T>(this, co, bubbleExceptionApproach, new DebugInfo
+                {
+                    Name = name,
+                    Method = method,
+                    File = file,
+                    Line = line,
+                });
                 return Add(coroutine);
             }
 
-            public IWaitable<T> StartCoroutine<T>(IEnumerable co)
+            public IWaitable<T> StartCoroutine<T>(
+                IEnumerable co,
+                string name = null,
+                [CallerMemberName] string method = null,
+                [CallerFilePath] string file = null,
+                [CallerLineNumber] int line = 0)
             {
-                return StartCoroutine<T>(co, CoroutineManager.DefaultBubbleExceptionApproach);
+                return StartCoroutine<T>(co, CoroutineManager.DefaultBubbleExceptionApproach, name, method, file, line);
             }
 
-            public IWaitable StartCoroutine(IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach)
+            public IWaitable StartCoroutine(
+                IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach,
+                string name = null,
+                [CallerMemberName] string method = null,
+                [CallerFilePath] string file = null,
+                [CallerLineNumber] int line = 0
+            )
             {
                 Assert.NotNull(co, nameof(co));
 
-                var coroutine = new Coroutine(this, co.GetEnumerator(), bubbleExceptionApproach);
+                var coroutine = new Coroutine(this, co.GetEnumerator(), bubbleExceptionApproach, new DebugInfo
+                {
+                    Name = name,
+                    Method = method,
+                    File = file,
+                    Line = line,
+                });
                 return Add(coroutine);
             }
 
-            public IWaitable StartCoroutine(IEnumerable co)
+            public IWaitable StartCoroutine(
+                IEnumerable co,
+                string name = null,
+                [CallerMemberName] string method = null,
+                [CallerFilePath] string file = null,
+                [CallerLineNumber] int line = 0
+            )
             {
-                return StartCoroutine(co, CoroutineManager.DefaultBubbleExceptionApproach);
+                return StartCoroutine(co, CoroutineManager.DefaultBubbleExceptionApproach, name, method, file, line);
             }
             #endregion
 

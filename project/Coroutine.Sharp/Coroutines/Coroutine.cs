@@ -24,12 +24,16 @@ namespace Coroutines
 
         private readonly int id;
 
-        internal Coroutine(CoroutineManager.Container container, IEnumerator co, BubbleExceptionApproach approach)
+        private readonly DebugInfo debugInfo;
+
+        internal Coroutine(CoroutineManager.Container container, IEnumerator co, BubbleExceptionApproach approach, DebugInfo debugInfo)
         {
             this.container = container;
             this.approach = approach;
             id = IdGenerator.Next();
             enumerator = co;
+            this.debugInfo = debugInfo;
+
             //下一帧执行
             Enqueue(NextStep, false);
         }
@@ -258,6 +262,11 @@ namespace Coroutines
             {
                 callback(Exception);
             }
+        }
+
+        public override string ToString()
+        {
+            return $"{debugInfo.Name ?? enumerator.ToString()} | {debugInfo.Method} {debugInfo.File}:{debugInfo.Line}";
         }
 
         public override int GetHashCode()

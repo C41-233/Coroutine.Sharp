@@ -4,9 +4,9 @@
     {
 
         public string Name;
+        public string Method;
         public string File;
-        public string line;
-
+        public int Line;
     }
 
 }
