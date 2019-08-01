@@ -187,10 +187,7 @@ namespace Coroutines
 
         public IWaitable Then(Action callback)
         {
-            if (callback == null)
-            {
-                return this;
-            }
+            Assert.NotNull(callback, nameof(callback));
 
             switch (Status)
             {
@@ -225,10 +222,8 @@ namespace Coroutines
 
         public IWaitable Catch(Action<Exception> callback)
         {
-            if (callback == null)
-            {
-                return this;
-            }
+            Assert.NotNull(callback, nameof(callback));
+
             switch (Status)
             {
                 case WaitableStatus.Error:

@@ -41,7 +41,7 @@ namespace Coroutines
 
         public static IWaitable<T> Signal<T>(SignalManager.Container container, Predicate<T> predicate) => new WaitForSignal<T>(container, predicate);
 
-        public static IWaitable<T> Signal<T>(SignalManager.Container container) => new WaitForSignal<T>(container);
+        public static IWaitable<T> Signal<T>(SignalManager.Container container) => new WaitForSignal<T>(container, null);
         #endregion
 
         #region Time

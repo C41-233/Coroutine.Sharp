@@ -21,15 +21,8 @@ namespace Test
 
         static void Main(string[] args)
         {
-            Container.StartCoroutine(Wait3);
-            Console.WriteLine("MainLoop");
-            while (true)
-            {
-                TimerManager.Update(DateTime.Now);
-                CoroutineManager.OneLoop();
-                frame++;
-                Thread.Sleep(1);
-            }
+            var co = Container.StartCoroutine(Wait2);
+            Console.WriteLine(co);
         }
 
         private static IEnumerable Wait2()

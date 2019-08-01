@@ -7,26 +7,24 @@ namespace Coroutines
     internal sealed class WaitForSignal<T> : WaitableTask<T>
     {
 
-        public WaitForSignal(SignalManager.Container container)
-        {
-            Assert.NotNull(container, nameof(container));
-
-            container.OnSignal<T>(Success, 1);
-        }
+        private readonly SignalHandler handler;
+        private readonly Predicate<T> predicate;
 
         public WaitForSignal(SignalManager.Container container, Predicate<T> predicate)
         {
             Assert.NotNull(container, nameof(container));
-            Assert.NotNull(predicate, nameof(predicate));
 
-            container.OnSignal<T>(signal =>
-            {
-                if (predicate(signal))
-                {
-                    Success(signal);
-                }
-            }, 1);
+            handler = container.OnSignal<T>(Callback);
+            this.predicate = predicate;
         }
 
+        private void Callback(T signal)
+        {
+            if (predicate == null || predicate(signal))
+            {
+                handler.Dispose();
+                Success(signal);
+            }
+        }
     }
 }

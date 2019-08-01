@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Coroutines.Await;
 using Coroutines.Base;
 
+// ReSharper disable PossibleMultipleEnumeration
 namespace Coroutines
 {
     public class CoroutineManager
@@ -51,6 +52,8 @@ namespace Coroutines
             #region yield return
             public IWaitable<T> StartCoroutine<T>(IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach)
             {
+                Assert.NotNull(co, nameof(co));
+
                 var coroutine = new Coroutine<T>(this, co, bubbleExceptionApproach);
                 return Add(coroutine);
             }
@@ -62,6 +65,8 @@ namespace Coroutines
 
             public IWaitable StartCoroutine(IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach)
             {
+                Assert.NotNull(co, nameof(co));
+
                 var coroutine = new Coroutine(this, co.GetEnumerator(), bubbleExceptionApproach);
                 return Add(coroutine);
             }

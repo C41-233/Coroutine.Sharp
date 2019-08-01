@@ -26,10 +26,7 @@ namespace Coroutines
 
         public IWaitable Then(Action callback)
         {
-            if (callback == null)
-            {
-                return this;
-            }
+            Assert.NotNull(callback, nameof(callback));
 
             var call = false;
             using (spinLock.Hold())
@@ -98,10 +95,7 @@ namespace Coroutines
 
         public IWaitable Catch(Action<Exception> callback)
         {
-            if (callback == null)
-            {
-                return this;
-            }
+            Assert.NotNull(callback, nameof(callback));
 
             var call = false;
             using (spinLock.Hold())
@@ -200,10 +194,8 @@ namespace Coroutines
 
         public IWaitable<T> Then(Action<T> callback)
         {
-            if (callback == null)
-            {
-                return this;
-            }
+            Assert.NotNull(callback, nameof(callback));
+
             Then(() => callback(result));
             return this;
         }
