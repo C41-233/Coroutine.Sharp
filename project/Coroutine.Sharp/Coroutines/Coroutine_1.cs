@@ -42,7 +42,7 @@ namespace Coroutines
             enumerator = co.GetEnumerator();
 
             //下一帧执行
-            Enqueue(NextStep);
+            Enqueue(NextStep, false);
         }
 
         private void NextStep()
@@ -70,7 +70,7 @@ namespace Coroutines
             switch (current)
             {
                 case null:
-                    Enqueue(NextStep);
+                    Enqueue(NextStep, false);
                     break;
                 case T t:
                     Success(t);
@@ -137,16 +137,23 @@ namespace Coroutines
                         Enqueue(() => Fail(e), fastCall);
                         break;
                     default:
-                        //等待的事件失败，继续下一步，由调用者处理异常，coroutine本身未失败
-                        Enqueue(NextStep, fastCall);
+                        if (waitable is ICompleteCoroutineWaitable)
+                        {
+                            Enqueue(() => Fail(e), fastCall);
+                        }
+                        else
+                        {
+                            //等待的事件失败，继续下一步，由调用者处理异常，coroutine本身未失败
+                            Enqueue(NextStep, fastCall);
+                        }
                         break;
                 }
             });
         }
 
-        private void Enqueue(Action action, bool safe = false)
+        private void Enqueue(Action action, bool fastCall)
         {
-            if (safe)
+            if (fastCall)
             {
                 action();
             }
