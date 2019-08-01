@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using Coroutines;
 using Coroutines.Await;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -7,27 +6,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace UnitTest
 {
     [TestClass]
-    public class WaitForFrameTest
+    public class WaitForFrameTest : UnitTestBase
     {
-
-        private CoroutineManager CoroutineManager;
-        private CoroutineManager.Container CoroutineContainer;
-
-        [TestInitialize]
-        public void Before()
-        {
-            CoroutineManager = new CoroutineManager
-            {
-                DefaultBubbleExceptionApproach = BubbleExceptionApproach.Throw,
-            };
-            CoroutineContainer = CoroutineManager.CreateContainer();
-        }
-
-        [TestCleanup]
-        public void After()
-        {
-            CoroutineManager = null;
-        }
 
         [TestMethod]
         public void TestYield()
