@@ -11,4 +11,15 @@ namespace Coroutines
     {
     }
 
+    public interface ICompleteCoroutineWaitable : IWaitable
+    {
+
+    }
+
+    // ReSharper disable once TypeParameterCanBeVariant
+    public interface ICompleteCoroutineWaitable<T> : ICompleteCoroutineWaitable, IWaitable<T>
+    {
+
+    }
+
 }

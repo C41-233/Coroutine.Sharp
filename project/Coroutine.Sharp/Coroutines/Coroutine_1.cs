@@ -75,13 +75,6 @@ namespace Coroutines
                 case T t:
                     Success(t);
                     break;
-                case CompleteWaitable<T> result:
-                    Success(result.R);
-                    break;
-                case IBindCoroutineWaitable bindCoroutineWaitable:
-                    bindCoroutineWaitable.Bind(container);
-                    Dispatch(bindCoroutineWaitable);
-                    break;
                 case IEnumerable enumerable:
                     Dispatch(container.StartCoroutine(enumerable));
                     break;
@@ -98,31 +91,54 @@ namespace Coroutines
         {
             this.waitable = waitable;
 
+            if (waitable is IBindCoroutineWaitable bindCoroutineWaitable)
+            {
+                bindCoroutineWaitable.Bind(container);
+            }
+
+            NextThen();
+            NextCatch();
+        }
+
+        private void NextThen()
+        {
             //等待的事件成功，继续下一步
             waitable.Then(() =>
             {
-                var safe = waitable is IThreadSafeWaitable;
-                this.waitable = null;
+                var fastCall = waitable is IThreadSafeWaitable;
+                var completeCoroutineWaitable = waitable as ICompleteCoroutineWaitable<T>;
+                waitable = null;
 
-                Enqueue(NextStep, safe);
+                if (completeCoroutineWaitable != null)
+                {
+                    Enqueue(() => Success(completeCoroutineWaitable.R), fastCall);
+                }
+                else
+                {
+                    Enqueue(NextStep, fastCall);
+                }
             });
 
+        }
+
+        private void NextCatch()
+        {
             waitable.Catch(e =>
             {
-                var fast = waitable is IThreadSafeWaitable;
-                this.waitable = null;
+                var fastCall = waitable is IThreadSafeWaitable;
+                waitable = null;
 
                 switch (approach)
                 {
                     case BubbleExceptionApproach.Abort:
-                        Enqueue(() => Abort(false), fast);
+                        Enqueue(() => Abort(false), fastCall);
                         break;
                     case BubbleExceptionApproach.Throw:
-                        Enqueue(() => Fail(e), fast);
+                        Enqueue(() => Fail(e), fastCall);
                         break;
                     default:
                         //等待的事件失败，继续下一步，由调用者处理异常，coroutine本身未失败
-                        Enqueue(NextStep, fast);
+                        Enqueue(NextStep, fastCall);
                         break;
                 }
             });
