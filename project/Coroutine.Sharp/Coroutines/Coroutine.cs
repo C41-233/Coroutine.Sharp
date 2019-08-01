@@ -7,7 +7,7 @@ using Coroutines.Base;
 namespace Coroutines
 {
 
-    internal sealed class Coroutine : IWaitable
+    internal sealed class Coroutine : IThreadSafeWaitable
     {
 
         public static IWaitable<T> Complete<T>(T value)

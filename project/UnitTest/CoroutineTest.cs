@@ -4,48 +4,30 @@ using System.Diagnostics.CodeAnalysis;
 using Coroutines;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 // ReSharper disable ImplicitlyCapturedClosure
+// ReSharper disable AccessToModifiedClosure
 
 namespace UnitTest
 {
 
     [TestClass]
-    public class CoroutineTest
+    public class CoroutineTest : UnitTestBase
     {
-
-        private CoroutineManager CoroutineManager;
-        private CoroutineManager.Container CoroutineContainer;
-        private int Frame;
-
-        [TestInitialize]
-        public void Before()
-        {
-            Frame = 0;
-            CoroutineManager = new CoroutineManager
-            {
-                DefaultBubbleExceptionApproach = BubbleExceptionApproach.Throw,
-            };
-            CoroutineContainer = CoroutineManager.CreateContainer();
-        }
-
-        [TestCleanup]
-        public void After()
-        {
-            CoroutineManager = null;
-        }
 
         [TestMethod]
         public void Test1()
         {
             var i = 0;
-            CoroutineContainer.StartCoroutine(Run());
+            var co = CoroutineContainer.StartCoroutine(Run());
             Assert.AreEqual(0, i);
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(1, i);
             Tick();
             Assert.AreEqual(1, i);
+            Assert.IsTrue(co.IsSuccess());
 
             IEnumerable Run()
             {
                 i++;
-                Assert.AreEqual(0, Frame);
                 yield break;
             }
         }
@@ -56,18 +38,22 @@ namespace UnitTest
             var i = 0;
             var co = CoroutineContainer.StartCoroutine(Run());
             Assert.AreEqual(0, i);
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(0, i);
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(1, i);
             Tick();
             co.Throw();
             Assert.AreEqual(1, i);
+            Assert.IsTrue(co.IsSuccess());
 
             IEnumerable Run()
             {
                 Assert.AreEqual(0, i);
-                Assert.AreEqual(1, Frame);
                 yield return null;
                 Assert.AreEqual(0, i);
-                Assert.AreEqual(2, Frame);
                 i++;
+                Assert.AreEqual(1, i);
             }
         }
 
@@ -75,29 +61,31 @@ namespace UnitTest
         public void TestCascade()
         {
             var i = 0;
-            CoroutineContainer.StartCoroutine(RunFather());
+            var co = CoroutineContainer.StartCoroutine(RunFather());
+            Assert.IsTrue(co.IsRunning());
+            Assert.AreEqual(0, i);
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(1, i);
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(2, i);
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(4, i);
+            Assert.IsTrue(co.IsSuccess());
             Tick();
+            Assert.IsTrue(co.IsSuccess());
 
             IEnumerable RunFather()
             {
-                Assert.AreEqual(0, i);
-                Assert.AreEqual(0, Frame);
                 i++;
-
                 yield return CoroutineContainer.StartCoroutine(RunChild());
-
-                Assert.AreEqual(2, i);
-                Assert.AreEqual(2, Frame);
+                i++;
             }
 
             IEnumerable RunChild()
             {
-                Assert.AreEqual(1, i);
-                Assert.AreEqual(0, Frame);
+                i++;
                 yield return null;
                 i++;
-                Assert.AreEqual(2, i);
-                Assert.AreEqual(1, Frame);
             }
         }
 
@@ -131,24 +119,28 @@ namespace UnitTest
             var co = CoroutineContainer.StartCoroutine(RunFather());
 
             Assert.AreEqual(0, i);
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(1, i);
+            Assert.IsTrue(co.IsRunning());
             Tick();
             Assert.AreEqual(1, i);
             Assert.IsTrue(co.IsError());
 
             IEnumerable RunFather()
             {
-                Assert.AreEqual(0, i);
-                Assert.AreEqual(1, Frame);
                 i++;
-
-                yield return CoroutineContainer.StartCoroutine(RunChild());
+                yield return CoroutineContainer.StartCoroutine(RunChild(true));
 
                 Assert.Fail();
             }
 
-            IEnumerable RunChild()
+            IEnumerable RunChild(bool b)
             {
-                throw new ArgumentException();
+                if (b)
+                {
+                    throw new ArgumentException();
+                }
+                yield break;
             }
         }
 
@@ -156,9 +148,16 @@ namespace UnitTest
         public void TestCascadeThrow2()
         {
             var i = 0;
-            CoroutineContainer.StartCoroutine(RunFather());
+            var co = CoroutineContainer.StartCoroutine(RunFather());
 
             Assert.AreEqual(0, i);
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(1, i);
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(2, i);
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(3, i);
+            Assert.IsTrue(co.IsError());
             Tick();
 
             //handle
@@ -166,10 +165,7 @@ namespace UnitTest
 
             IEnumerable RunFather()
             {
-                Assert.AreEqual(0, i);
-                Assert.AreEqual(1, Frame);
                 i++;
-
                 yield return CoroutineContainer.StartCoroutine(RunChild());
 
                 Assert.Fail();
@@ -191,6 +187,8 @@ namespace UnitTest
             CoroutineContainer.StartCoroutine(RunFather(), BubbleExceptionApproach.Abort);
 
             Assert.AreEqual(0, i);
+            CoroutineManager.OneLoop();
+            Assert.AreEqual(1, i);
             Tick();
 
             //handle
@@ -198,8 +196,6 @@ namespace UnitTest
 
             IEnumerable RunFather()
             {
-                Assert.AreEqual(0, i);
-                Assert.AreEqual(1, Frame);
                 i++;
 
                 yield return CoroutineContainer.StartCoroutine(RunChild()).Catch(e =>
@@ -317,7 +313,7 @@ namespace UnitTest
             Assert.AreEqual(5, i);
 
             co2.Abort();
-            Assert.AreEqual(5, i);
+            Assert.AreEqual(6, i);
             Assert.AreEqual(1, j);
 
             CoroutineManager.OneLoop();
@@ -391,15 +387,6 @@ namespace UnitTest
                     i++;
                     yield return null;
                 }
-            }
-        }
-
-        private void Tick()
-        {
-            for (var i=0; i<1000; i++)
-            {
-                Frame++;
-                CoroutineManager.OneLoop();
             }
         }
 

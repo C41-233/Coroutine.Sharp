@@ -7,7 +7,7 @@ using Coroutines.Base;
 namespace Coroutines
 {
 
-    internal sealed class Coroutine<T> : IWaitable<T>
+    internal sealed class Coroutine<T> : IWaitable<T>, IThreadSafeWaitable
     {
 
         private readonly CoroutineManager.Container container;

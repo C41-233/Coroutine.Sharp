@@ -3,35 +3,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Coroutines;
 using Coroutines.Await;
-using Coroutines.Timers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTest
 {
 
     [TestClass]
-    public class AwaitTest
+    public class AwaitTest : UnitTestBase
     {
-        private TimerManager TimerManager;
-        private CoroutineManager CoroutineManager;
-        private CoroutineManager.Container CoroutineContainer;
-
-        [TestInitialize]
-        public void Before()
-        {
-            TimerManager = new TimerManager(DateTime.Now);
-            CoroutineManager = new CoroutineManager
-            {
-                DefaultBubbleExceptionApproach = BubbleExceptionApproach.Throw,
-            };
-            CoroutineContainer = CoroutineManager.CreateContainer();
-        }
-
-        [TestCleanup]
-        public void After()
-        {
-            CoroutineManager = null;
-        }
 
         [TestMethod]
         public void Test1()
@@ -83,15 +62,6 @@ namespace UnitTest
                 i++;
                 Assert.AreEqual(thread, Thread.CurrentThread.ManagedThreadId);
                 run = false;
-            }
-        }
-
-        private void Tick()
-        {
-            for (var i=0; i<5000; i++)
-            {
-                TimerManager.Update(TimerManager.Now + TimeSpan.FromMilliseconds(100));
-                CoroutineManager.OneLoop();
             }
         }
 

@@ -55,6 +55,7 @@
     <Compile Include="CoroutineTest.cs" />
     <Compile Include="TimerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnitTestBase.cs" />
     <Compile Include="WaitForFrameTest.cs" />
   </ItemGroup>
   <ItemGroup>
