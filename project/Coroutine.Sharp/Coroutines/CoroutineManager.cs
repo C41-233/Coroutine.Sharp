@@ -462,13 +462,318 @@ namespace Coroutines
                 return Add(coroutine);
             }
 
-            public IWaitable<R> StartCoroutine<T, R>(Func<T, IWaitable<R>> co, T arg)
+            public IWaitable<R> StartCoroutine<T, R>(
+                Func<T, IWaitable<R>> co, 
+                T arg,
+                string name = null,
+                [CallerMemberName] string method = null,
+                [CallerFilePath] string file = null,
+                [CallerLineNumber] int line = 0
+            )
             {
-                AwaitShareDataStatic.Share = new AwaitShareData
-                {
-                    Container = this,
-                };
+                PushShareData(name, method, file, line);
                 var coroutine = co(arg);
+                return Add(coroutine);
+            }
+
+            public IWaitable<R> StartCoroutine<T1, T2, R>(
+                Func<T1, T2, IWaitable<R>> co,
+                T1 arg1,
+                T2 arg2,
+                string name = null,
+                [CallerMemberName] string method = null,
+                [CallerFilePath] string file = null,
+                [CallerLineNumber] int line = 0
+            )
+            {
+                PushShareData(name, method, file, line);
+                var coroutine = co(arg1, arg2);
+                return Add(coroutine);
+            }
+
+            public IWaitable<R> StartCoroutine<T1, T2, T3, R>(
+                Func<T1, T2, T3, IWaitable<R>> co,
+                T1 arg1,
+                T2 arg2,
+                T3 arg3,
+                string name = null,
+                [CallerMemberName] string method = null,
+                [CallerFilePath] string file = null,
+                [CallerLineNumber] int line = 0
+            )
+            {
+                PushShareData(name, method, file, line);
+                var coroutine = co(arg1, arg2, arg3);
+                return Add(coroutine);
+            }
+
+            public IWaitable<R> StartCoroutine<T1, T2, T3, T4, R>(
+                Func<T1, T2, T3, T4, IWaitable<R>> co,
+                T1 arg1,
+                T2 arg2,
+                T3 arg3,
+                T4 arg4,
+                string name = null,
+                [CallerMemberName] string method = null,
+                [CallerFilePath] string file = null,
+                [CallerLineNumber] int line = 0
+            )
+            {
+                PushShareData(name, method, file, line);
+                var coroutine = co(arg1, arg2, arg3, arg4);
+                return Add(coroutine);
+            }
+
+            public IWaitable<R> StartCoroutine<T1, T2, T3, T4, T5, R>(
+                Func<T1, T2, T3, T4, T5, IWaitable<R>> co,
+                T1 arg1,
+                T2 arg2,
+                T3 arg3,
+                T4 arg4,
+                T5 arg5,
+                string name = null,
+                [CallerMemberName] string method = null,
+                [CallerFilePath] string file = null,
+                [CallerLineNumber] int line = 0
+            )
+            {
+                PushShareData(name, method, file, line);
+                var coroutine = co(arg1, arg2, arg3, arg4, arg5);
+                return Add(coroutine);
+            }
+
+            public IWaitable<R> StartCoroutine<T1, T2, T3, T4, T5, T6, R>(
+                Func<T1, T2, T3, T4, T5, T6, IWaitable<R>> co,
+                T1 arg1,
+                T2 arg2,
+                T3 arg3,
+                T4 arg4,
+                T5 arg5,
+                T6 arg6,
+                string name = null,
+                [CallerMemberName] string method = null,
+                [CallerFilePath] string file = null,
+                [CallerLineNumber] int line = 0
+            )
+            {
+                PushShareData(name, method, file, line);
+                var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6);
+                return Add(coroutine);
+            }
+
+            public IWaitable<R> StartCoroutine<T1, T2, T3, T4, T5, T6, T7, R>(
+                Func<T1, T2, T3, T4, T5, T6, T7, IWaitable<R>> co,
+                T1 arg1,
+                T2 arg2,
+                T3 arg3,
+                T4 arg4,
+                T5 arg5,
+                T6 arg6,
+                T7 arg7,
+                string name = null,
+                [CallerMemberName] string method = null,
+                [CallerFilePath] string file = null,
+                [CallerLineNumber] int line = 0
+            )
+            {
+                PushShareData(name, method, file, line);
+                var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+                return Add(coroutine);
+            }
+
+            public IWaitable<R> StartCoroutine<T1, T2, T3, T4, T5, T6, T7, T8, R>(
+                Func<T1, T2, T3, T4, T5, T6, T7, T8, IWaitable<R>> co,
+                T1 arg1,
+                T2 arg2,
+                T3 arg3,
+                T4 arg4,
+                T5 arg5,
+                T6 arg6,
+                T7 arg7,
+                T8 arg8,
+                string name = null,
+                [CallerMemberName] string method = null,
+                [CallerFilePath] string file = null,
+                [CallerLineNumber] int line = 0
+            )
+            {
+                PushShareData(name, method, file, line);
+                var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+                return Add(coroutine);
+            }
+
+            public IWaitable<R> StartCoroutine<T1, T2, T3, T4, T5, T6, T7, T8, T9, R>(
+                Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, IWaitable<R>> co,
+                T1 arg1,
+                T2 arg2,
+                T3 arg3,
+                T4 arg4,
+                T5 arg5,
+                T6 arg6,
+                T7 arg7,
+                T8 arg8,
+                T9 arg9,
+                string name = null,
+                [CallerMemberName] string method = null,
+                [CallerFilePath] string file = null,
+                [CallerLineNumber] int line = 0
+            )
+            {
+                PushShareData(name, method, file, line);
+                var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
+                return Add(coroutine);
+            }
+
+            public IWaitable<R> StartCoroutine<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R>(
+                Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, IWaitable<R>> co,
+                T1 arg1,
+                T2 arg2,
+                T3 arg3,
+                T4 arg4,
+                T5 arg5,
+                T6 arg6,
+                T7 arg7,
+                T8 arg8,
+                T9 arg9,
+                T10 arg10,
+                string name = null,
+                [CallerMemberName] string method = null,
+                [CallerFilePath] string file = null,
+                [CallerLineNumber] int line = 0
+            )
+            {
+                PushShareData(name, method, file, line);
+                var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+                return Add(coroutine);
+            }
+
+            public IWaitable<R> StartCoroutine<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R>(
+                Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, IWaitable<R>> co,
+                T1 arg1,
+                T2 arg2,
+                T3 arg3,
+                T4 arg4,
+                T5 arg5,
+                T6 arg6,
+                T7 arg7,
+                T8 arg8,
+                T9 arg9,
+                T10 arg10,
+                T11 arg11,
+                string name = null,
+                [CallerMemberName] string method = null,
+                [CallerFilePath] string file = null,
+                [CallerLineNumber] int line = 0
+            )
+            {
+                PushShareData(name, method, file, line);
+                var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
+                return Add(coroutine);
+            }
+
+            public IWaitable<R> StartCoroutine<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R>(
+                Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, IWaitable<R>> co,
+                T1 arg1,
+                T2 arg2,
+                T3 arg3,
+                T4 arg4,
+                T5 arg5,
+                T6 arg6,
+                T7 arg7,
+                T8 arg8,
+                T9 arg9,
+                T10 arg10,
+                T11 arg11,
+                T12 arg12,
+                string name = null,
+                [CallerMemberName] string method = null,
+                [CallerFilePath] string file = null,
+                [CallerLineNumber] int line = 0
+            )
+            {
+                PushShareData(name, method, file, line);
+                var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
+                return Add(coroutine);
+            }
+
+            public IWaitable<R> StartCoroutine<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R>(
+                Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, IWaitable<R>> co,
+                T1 arg1,
+                T2 arg2,
+                T3 arg3,
+                T4 arg4,
+                T5 arg5,
+                T6 arg6,
+                T7 arg7,
+                T8 arg8,
+                T9 arg9,
+                T10 arg10,
+                T11 arg11,
+                T12 arg12,
+                T13 arg13,
+                string name = null,
+                [CallerMemberName] string method = null,
+                [CallerFilePath] string file = null,
+                [CallerLineNumber] int line = 0
+            )
+            {
+                PushShareData(name, method, file, line);
+                var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13);
+                return Add(coroutine);
+            }
+
+            public IWaitable<R> StartCoroutine<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R>(
+                Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, IWaitable<R>> co,
+                T1 arg1,
+                T2 arg2,
+                T3 arg3,
+                T4 arg4,
+                T5 arg5,
+                T6 arg6,
+                T7 arg7,
+                T8 arg8,
+                T9 arg9,
+                T10 arg10,
+                T11 arg11,
+                T12 arg12,
+                T13 arg13,
+                T14 arg14,
+                string name = null,
+                [CallerMemberName] string method = null,
+                [CallerFilePath] string file = null,
+                [CallerLineNumber] int line = 0
+            )
+            {
+                PushShareData(name, method, file, line);
+                var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+                return Add(coroutine);
+            }
+
+            public IWaitable<R> StartCoroutine<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R>(
+                Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, IWaitable<R>> co,
+                T1 arg1,
+                T2 arg2,
+                T3 arg3,
+                T4 arg4,
+                T5 arg5,
+                T6 arg6,
+                T7 arg7,
+                T8 arg8,
+                T9 arg9,
+                T10 arg10,
+                T11 arg11,
+                T12 arg12,
+                T13 arg13,
+                T14 arg14,
+                T15 arg15,
+                string name = null,
+                [CallerMemberName] string method = null,
+                [CallerFilePath] string file = null,
+                [CallerLineNumber] int line = 0
+            )
+            {
+                PushShareData(name, method, file, line);
+                var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);
                 return Add(coroutine);
             }
             #endregion
