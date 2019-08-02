@@ -21,7 +21,7 @@ namespace Test
 
         static void Main(string[] args)
         {
-            var co = Container.StartCoroutine(Wait2());
+            var co = Container.StartCoroutine<int>(Wait3);
             Console.WriteLine(co);
         }
 

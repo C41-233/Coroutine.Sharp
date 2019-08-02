@@ -1,14 +1,21 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using Coroutines.Base;
 
 namespace Coroutines.Await
 {
 
-    internal static class AwaitShareData
+    internal struct AwaitShareData
+    {
+        public CoroutineManager.Container Container;
+        public DebugInfo DebugInfo;
+    }
+
+    internal static class AwaitShareDataStatic
     {
 
         [ThreadStatic]
-        internal static CoroutineManager.Container ThreadLocalCoroutineContainer;
+        internal static AwaitShareData Share;
 
         internal static void FastOnComplete<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
             where TAwaiter : INotifyCompletion
@@ -31,14 +38,14 @@ namespace Coroutines.Await
 
         public static AwaitMethodBuilder Create()
         {
-            var container = AwaitShareData.ThreadLocalCoroutineContainer;
-            if (container == null)
+            var share = AwaitShareDataStatic.Share;
+            if (share.Container == null)
             {
                 throw new WaitableFlowException("Do not call async coroutine function directly. Use CoroutineManager.Container.StartCoroutine instead.");
             }
 
-            var builder = new AwaitMethodBuilder(new Awaitable(container));
-            AwaitShareData.ThreadLocalCoroutineContainer = null;
+            var builder = new AwaitMethodBuilder(new Awaitable(share.Container, share.DebugInfo));
+            AwaitShareDataStatic.Share = default;
             return builder;
         }
 
@@ -77,11 +84,11 @@ namespace Coroutines.Await
 
             if (waitable is IThreadSafeWaitable)
             {
-                AwaitShareData.FastOnComplete(ref awaiter, ref stateMachine);
+                AwaitShareDataStatic.FastOnComplete(ref awaiter, ref stateMachine);
             }
             else
             {
-                AwaitShareData.UnsafeOnComplete(manager, ref awaiter, stateMachine);
+                AwaitShareDataStatic.UnsafeOnComplete(manager, ref awaiter, stateMachine);
             }
         }
 
@@ -110,14 +117,14 @@ namespace Coroutines.Await
 
         public static AwaitMethodBuilder<T> Create()
         {
-            var container = AwaitShareData.ThreadLocalCoroutineContainer;
-            if (container == null)
+            var share = AwaitShareDataStatic.Share;
+            if (share.Container == null)
             {
                 throw new WaitableFlowException("Do not call async coroutine function directly. Use CoroutineManager.Container.StartCoroutine<T> instead.");
             }
 
-            var builder = new AwaitMethodBuilder<T>(new Awaitable<T>(container));
-            AwaitShareData.ThreadLocalCoroutineContainer = null;
+            var builder = new AwaitMethodBuilder<T>(new Awaitable<T>(share.Container, share.DebugInfo));
+            AwaitShareDataStatic.Share = default;
             return builder;
         }
 
@@ -155,11 +162,11 @@ namespace Coroutines.Await
 
             if (waitable is IThreadSafeWaitable)
             {
-                AwaitShareData.FastOnComplete(ref awaiter, ref stateMachine);
+                AwaitShareDataStatic.FastOnComplete(ref awaiter, ref stateMachine);
             }
             else
             {
-                AwaitShareData.UnsafeOnComplete(manager, ref awaiter, stateMachine);
+                AwaitShareDataStatic.UnsafeOnComplete(manager, ref awaiter, stateMachine);
             }
         }
 
