@@ -125,6 +125,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co();
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -139,6 +140,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -154,6 +156,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -170,6 +173,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -187,6 +191,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -205,6 +210,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4, arg5);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -224,6 +230,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -244,6 +251,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -265,6 +273,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -287,6 +296,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -311,6 +321,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -336,6 +347,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -362,6 +374,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -389,6 +402,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -417,6 +431,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -446,6 +461,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -459,6 +475,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co();
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -473,6 +490,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -488,6 +506,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -504,6 +523,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -521,6 +541,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -539,6 +560,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4, arg5);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -558,6 +580,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -578,6 +601,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -599,6 +623,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -621,6 +646,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -644,6 +670,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -668,6 +695,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -693,6 +721,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -719,6 +748,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -746,6 +776,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+                PopShareData();
                 return Add(coroutine);
             }
 
@@ -774,6 +805,7 @@ namespace Coroutines
             {
                 PushShareData(name, method, file, line);
                 var coroutine = co(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);
+                PopShareData();
                 return Add(coroutine);
             }
             #endregion
@@ -816,6 +848,15 @@ namespace Coroutines
                         Method = method,
                     }
                 };
+            }
+
+            private void PopShareData()
+            {
+                if (AwaitShareDataStatic.Share.Container != null)
+                {
+                    AwaitShareDataStatic.Share = default;
+                    throw new WaitableFlowException("StartCoroutine only accept async method");
+                }
             }
 
         }
