@@ -8,12 +8,14 @@ namespace Coroutines
 
         private readonly IWaitable[] waitables;
         private readonly List<Exception> exceptions;
+        private readonly bool abortOthers;
         private bool isFinish;
         private int failCount;
 
-        public WaitForAnySuccess(IWaitable[] waitables)
+        public WaitForAnySuccess(IWaitable[] waitables, bool abortOthers)
         {
             exceptions = new List<Exception>(waitables.Length);
+            this.abortOthers = abortOthers;
 
             this.waitables = (IWaitable[]) waitables.Clone();
 
@@ -35,11 +37,14 @@ namespace Coroutines
                 isFinish = true;
             }
 
-            foreach (var waitable in waitables)
+            if (abortOthers)
             {
-                if (waitable.Status == WaitableStatus.Running)
+                foreach (var waitable in waitables)
                 {
-                    waitable.Abort();
+                    if (waitable.Status == WaitableStatus.Running)
+                    {
+                        waitable.Abort();
+                    }
                 }
             }
 
@@ -65,5 +70,18 @@ namespace Coroutines
             Fail(new AggregateException(exceptions));
         }
 
+        protected override void OnAbort(bool recursive)
+        {
+            if (recursive)
+            {
+                foreach (var waitable in waitables)
+                {
+                    if (waitable.Status == WaitableStatus.Running)
+                    {
+                        waitable.Abort();
+                    }
+                }
+            }
+        }
     }
 }

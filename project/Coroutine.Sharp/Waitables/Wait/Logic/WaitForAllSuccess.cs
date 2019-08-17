@@ -6,11 +6,14 @@ namespace Coroutines
     {
 
         private readonly IWaitable[] waitables;
+        private readonly bool abortOthers;
         private int countDown;
 
-        public WaitForAllSuccess(IWaitable[] waitables)
+        public WaitForAllSuccess(IWaitable[] waitables, bool abortOthers)
         {
             this.waitables = (IWaitable[]) waitables.Clone();
+            this.abortOthers = abortOthers;
+
             countDown = waitables.Length;
             foreach (var waitable in waitables)
             {
@@ -46,15 +49,32 @@ namespace Coroutines
                 }
                 countDown = 0;
             }
-            foreach (var waitable in waitables)
+
+            if (abortOthers)
             {
-                if (waitable.Status == WaitableStatus.Running)
+                foreach (var waitable in waitables)
                 {
-                    waitable.Abort();
+                    if (waitable.Status == WaitableStatus.Running)
+                    {
+                        waitable.Abort();
+                    }
                 }
             }
             Fail(e);
         }
 
+        protected override void OnAbort(bool recursive)
+        {
+            if (recursive)
+            {
+                foreach (var waitable in waitables)
+                {
+                    if (waitable.Status == WaitableStatus.Running)
+                    {
+                        waitable.Abort();
+                    }
+                }
+            }
+        }
     }
 }

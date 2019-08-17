@@ -18,13 +18,25 @@ namespace Coroutines
         /// 同时等待多个过程，任意一个过程的成功时，当前过程就进入成功状态，并中断其他过程。
         /// </summary>
         /// <returns>第一个成功的Waitable</returns>
-        public static IWaitable<IWaitable> AnySuccess(params IWaitable[] waitables) => new WaitForAnySuccess(waitables);
+        public static IWaitable<IWaitable> AnySuccess(params IWaitable[] waitables) => AnySuccess(true, waitables);
+
+        /// <summary>
+        /// 同时等待多个过程，任意一个过程的成功时，当前过程就进入成功状态。
+        /// </summary>
+        /// <returns>第一个成功的Waitable</returns>
+        public static IWaitable<IWaitable> AnySuccess(bool abortOthers, params IWaitable[] waitables) => new WaitForAnySuccess(waitables, abortOthers);
 
         /// <summary>
         /// 等待多个过程，所有过程都成功时，当前过程进入成功状态。
         /// 任意一个过程失败时，当前过程失败，并中断其他过程。
         /// </summary>
-        public static IWaitable AllSuccess(params IWaitable[] waitables) => new WaitForAllSuccess(waitables);
+        public static IWaitable AllSuccess(params IWaitable[] waitables) => AllSuccess(true, waitables);
+
+        /// <summary>
+        /// 等待多个过程，所有过程都成功时，当前过程进入成功状态。
+        /// 任意一个过程失败时，当前过程失败，并中断其他过程。
+        /// </summary>
+        public static IWaitable AllSuccess(bool abortOthers, params IWaitable[] waitables) => new WaitForAllSuccess(waitables, abortOthers);
 
         /// <summary>
         /// 等待多个过程完成。当所有过程成功时，当前过程进入成功状态；否则进入失败状态。

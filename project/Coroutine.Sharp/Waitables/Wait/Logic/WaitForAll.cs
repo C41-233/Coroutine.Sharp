@@ -5,12 +5,13 @@ namespace Coroutines
 {
     internal class WaitForAll : WaitableTask
     {
-
+        private readonly IWaitable[] waitables;
         private readonly List<Exception> exceptions;
         private int countDown;
 
         public WaitForAll(IWaitable[] waitables)
         {
+            this.waitables = (IWaitable[]) waitables.Clone();
             exceptions = new List<Exception>(waitables.Length);
             countDown = waitables.Length;
             foreach (var waitable in waitables)
@@ -59,5 +60,18 @@ namespace Coroutines
             }
         }
 
+        protected override void OnAbort(bool recursive)
+        {
+            if (recursive)
+            {
+                foreach (var waitable in waitables)
+                {
+                    if (waitable.Status == WaitableStatus.Running)
+                    {
+                        waitable.Abort();
+                    }
+                }
+            }
+        }
     }
 }
