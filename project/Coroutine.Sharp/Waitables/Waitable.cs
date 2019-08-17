@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.ExceptionServices;
 using Coroutines.Base;
 
 namespace Coroutines
@@ -178,7 +179,7 @@ namespace Coroutines
             {
                 if (Exception != null)
                 {
-                    throw new WaitableFlowException(Exception);
+                    ExceptionDispatchInfo.Capture(Exception).Throw();
                 }
                 return result;
             }

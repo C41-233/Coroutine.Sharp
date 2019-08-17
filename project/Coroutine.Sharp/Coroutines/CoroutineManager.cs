@@ -825,6 +825,7 @@ namespace Coroutines
                 };
             }
 
+            // ReSharper disable once MemberCanBeMadeStatic.Local
             private void PopShareData()
             {
                 if (AwaitShareDataStatic.Share.Container != null)

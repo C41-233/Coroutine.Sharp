@@ -6,10 +6,6 @@ namespace Coroutines
     internal sealed class WaitableFlowException : Exception
     {
 
-        public WaitableFlowException(Exception e) : base(null, e)
-        {
-        }
-
         public WaitableFlowException(string message) : base(message)
         {
         }

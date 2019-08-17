@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Runtime.ExceptionServices;
 
 namespace Coroutines
 {
@@ -75,7 +76,7 @@ namespace Coroutines
         {
             if (self.Exception != null)
             {
-                throw self.Exception is WaitableFlowException ? self.Exception : new WaitableFlowException(self.Exception);
+                ExceptionDispatchInfo.Capture(self.Exception).Throw();  
             }
 
             return null;
