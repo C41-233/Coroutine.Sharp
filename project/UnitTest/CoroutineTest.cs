@@ -184,7 +184,7 @@ namespace UnitTest
         public void TestCascadeThrow3()
         {
             var i = 0;
-            CoroutineContainer.StartCoroutine(RunFather(), BubbleExceptionApproach.Abort);
+            CoroutineContainer.StartCoroutine(RunFather());
 
             Assert.AreEqual(0, i);
             CoroutineManager.OneLoop();
@@ -260,6 +260,7 @@ namespace UnitTest
             CoroutineManager.OneLoop();
             Assert.AreEqual(3, i);
             co1.Abort();
+            Assert.AreEqual(3, i);
             CoroutineManager.OneLoop();
             Assert.AreEqual(3, i);
 
@@ -302,7 +303,7 @@ namespace UnitTest
             CoroutineManager.OneLoop();
             Assert.AreEqual(2, i);
 
-            var co1 = CoroutineContainer.StartCoroutine(RunFather(), BubbleExceptionApproach.Ignore);
+            var co1 = CoroutineContainer.StartCoroutine(RunFather());
             Assert.AreEqual(2, i);
 
             CoroutineManager.OneLoop();
@@ -358,7 +359,7 @@ namespace UnitTest
             CoroutineManager.OneLoop();
             Assert.AreEqual(2, i);
 
-            var co1 = CoroutineContainer.StartCoroutine(RunFather(), BubbleExceptionApproach.Ignore);
+            var co1 = CoroutineContainer.StartCoroutine(RunFather());
             Assert.AreEqual(2, i);
 
             CoroutineManager.OneLoop();

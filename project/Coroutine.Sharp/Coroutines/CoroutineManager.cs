@@ -12,11 +12,6 @@ namespace Coroutines
     public class CoroutineManager
     {
 
-        /// <summary>
-        /// 调用不带参数版本的StartCoroutine时，针对冒泡异常的处理。仅针对yield return版本的Coroutine有效。
-        /// </summary>
-        public BubbleExceptionApproach DefaultBubbleExceptionApproach { get; set; } = BubbleExceptionApproach.Ignore;
-
         private readonly SwapQueue<Action> actions = new SwapQueue<Action>();
 
         public void OneLoop()
@@ -53,46 +48,16 @@ namespace Coroutines
 
             #region yield return
             public IWaitable<T> StartCoroutine<T>(
-                IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach,
-                string name = null,
-                [CallerMemberName] string method = null,
-                [CallerFilePath] string file = null,
-                [CallerLineNumber] int line = 0
-            )
-            {
-                Assert.NotNull(co, nameof(co));
-
-                var coroutine = new Coroutine<T>(this, co, bubbleExceptionApproach, new DebugInfo
-                {
-                    Name = name,
-                    Method = method,
-                    File = file,
-                    Line = line,
-                });
-                return Add(coroutine);
-            }
-
-            public IWaitable<T> StartCoroutine<T>(
                 IEnumerable co,
                 string name = null,
                 [CallerMemberName] string method = null,
                 [CallerFilePath] string file = null,
-                [CallerLineNumber] int line = 0)
-            {
-                return StartCoroutine<T>(co, CoroutineManager.DefaultBubbleExceptionApproach, name, method, file, line);
-            }
-
-            public IWaitable StartCoroutine(
-                IEnumerable co, BubbleExceptionApproach bubbleExceptionApproach,
-                string name = null,
-                [CallerMemberName] string method = null,
-                [CallerFilePath] string file = null,
                 [CallerLineNumber] int line = 0
             )
             {
                 Assert.NotNull(co, nameof(co));
 
-                var coroutine = new Coroutine(this, co.GetEnumerator(), bubbleExceptionApproach, new DebugInfo
+                var coroutine = new Coroutine<T>(this, co, new DebugInfo
                 {
                     Name = name,
                     Method = method,
@@ -110,8 +75,18 @@ namespace Coroutines
                 [CallerLineNumber] int line = 0
             )
             {
-                return StartCoroutine(co, CoroutineManager.DefaultBubbleExceptionApproach, name, method, file, line);
+                Assert.NotNull(co, nameof(co));
+
+                var coroutine = new Coroutine(this, co.GetEnumerator(), new DebugInfo
+                {
+                    Name = name,
+                    Method = method,
+                    File = file,
+                    Line = line,
+                });
+                return Add(coroutine);
             }
+
             #endregion
 
             #region await
@@ -863,27 +838,6 @@ namespace Coroutines
 
         public Container CreateContainer() => new Container(this);
 
-    }
-
-    /// <summary>
-    /// 当前Coroutine正在等待的IWaitable失败时的处理方法，仅针对yield return模式的Coroutine有效
-    /// </summary>
-    public enum BubbleExceptionApproach
-    {
-        /// <summary>
-        /// 不处理，由调用者主动处理
-        /// </summary>
-        Ignore,
-
-        /// <summary>
-        /// 中断当前的Coroutine
-        /// </summary>
-        Abort,
-
-        /// <summary>
-        /// 级联抛出异常交由异常处理
-        /// </summary>
-        Throw,
     }
 
 }

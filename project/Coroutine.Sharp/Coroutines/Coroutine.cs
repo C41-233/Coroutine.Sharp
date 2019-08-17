@@ -18,7 +18,6 @@ namespace Coroutines
         private readonly CoroutineManager.Container container;
         private CoroutineManager manager => container.CoroutineManager;
         private IEnumerator enumerator;
-        private readonly BubbleExceptionApproach approach;
 
         private IWaitable waitable;
 
@@ -26,10 +25,9 @@ namespace Coroutines
 
         private readonly DebugInfo debugInfo;
 
-        internal Coroutine(CoroutineManager.Container container, IEnumerator co, BubbleExceptionApproach approach, DebugInfo debugInfo)
+        internal Coroutine(CoroutineManager.Container container, IEnumerator co, DebugInfo debugInfo)
         {
             this.container = container;
-            this.approach = approach;
             id = IdGenerator.Next();
             enumerator = co;
             this.debugInfo = debugInfo;
@@ -94,6 +92,11 @@ namespace Coroutines
             //等待的事件成功，继续下一步
             waitable.Then(() =>
             {
+                if (Status != WaitableStatus.Running)
+                {
+                    return;
+                }
+
                 var fastCall = waitable is IThreadSafeWaitable;
                 var complete = waitable is ICompleteCoroutineWaitable;
                 waitable = null;
@@ -114,28 +117,22 @@ namespace Coroutines
         {
             waitable.Catch(e =>
             {
+                if (Status != WaitableStatus.Running)
+                {
+                    return;
+                }
+
                 var fastCall = waitable is IThreadSafeWaitable;
                 waitable = null;
 
-                switch (approach)
+                if (waitable is ICompleteCoroutineWaitable)
                 {
-                    case BubbleExceptionApproach.Abort:
-                        Enqueue(() => Abort(false), fastCall);
-                        break;
-                    case BubbleExceptionApproach.Throw:
-                        Enqueue(() => Fail(e), fastCall);
-                        break;
-                    default:
-                        if (waitable is ICompleteCoroutineWaitable)
-                        {
-                            Enqueue(() => Fail(e), fastCall);
-                        }
-                        else
-                        {
-                            //等待的事件失败，继续下一步，由调用者处理异常，coroutine本身未失败
-                            Enqueue(NextStep, fastCall);
-                        }
-                        break;
+                    Enqueue(() => Fail(e), fastCall);
+                }
+                else
+                {
+                    //等待的事件失败，继续下一步，由调用者处理异常，coroutine本身未失败
+                    Enqueue(NextStep, fastCall);
                 }
             });
         }

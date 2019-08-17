@@ -17,10 +17,7 @@ namespace UnitTest
         public void Before()
         {
             TimerManager = new TimerManager(DateTime.Now);
-            CoroutineManager = new CoroutineManager
-            {
-                DefaultBubbleExceptionApproach = BubbleExceptionApproach.Throw,
-            };
+            CoroutineManager = new CoroutineManager();
             CoroutineContainer = CoroutineManager.CreateContainer();
         }
 
