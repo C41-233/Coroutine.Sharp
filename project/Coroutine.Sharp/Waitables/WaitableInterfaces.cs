@@ -7,10 +7,6 @@ namespace Coroutines
         void Bind(CoroutineManager.Container container);
     }
 
-    public interface IThreadSafeWaitable : IWaitable
-    {
-    }
-
     public interface ICompleteCoroutineWaitable : IWaitable
     {
 

@@ -1,7 +1,7 @@
 ﻿namespace Coroutines
 {
 
-    internal sealed class WaitForFrame : WaitableTask, IBindCoroutineWaitable, IThreadSafeWaitable
+    internal sealed class WaitForFrame : WaitableTask, IBindCoroutineWaitable
     {
 
         private CoroutineManager coroutineManager;

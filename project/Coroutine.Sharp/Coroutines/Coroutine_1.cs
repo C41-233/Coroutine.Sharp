@@ -2,13 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Coroutines.Base;
 
 namespace Coroutines
 {
 
-    internal sealed class Coroutine<T> : IWaitable<T>, IThreadSafeWaitable
+    internal sealed class Coroutine<T> : IWaitable<T>
     {
 
         private readonly CoroutineManager.Container container;
@@ -104,6 +105,7 @@ namespace Coroutines
 
         private void NextThen()
         {
+            var tid = Thread.CurrentThread.ManagedThreadId;
             //等待的事件成功，继续下一步
             waitable.Then(() =>
             {
@@ -112,7 +114,7 @@ namespace Coroutines
                     return;
                 }
 
-                var fastCall = waitable is IThreadSafeWaitable;
+                var fastCall = tid == Thread.CurrentThread.ManagedThreadId;
                 var completeCoroutineWaitable = waitable as ICompleteCoroutineWaitable<T>;
                 waitable = null;
 
@@ -130,6 +132,7 @@ namespace Coroutines
 
         private void NextCatch()
         {
+            var tid = Thread.CurrentThread.ManagedThreadId;
             waitable.Catch(e =>
             {
                 if (Status != WaitableStatus.Running)
@@ -137,7 +140,7 @@ namespace Coroutines
                     return;
                 }
 
-                var fastCall = waitable is IThreadSafeWaitable;
+                var fastCall = tid == Thread.CurrentThread.ManagedThreadId;
                 waitable = null;
 
                 if (waitable is ICompleteCoroutineWaitable)

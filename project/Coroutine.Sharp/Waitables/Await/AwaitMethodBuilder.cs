@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using Coroutines.Base;
 
 namespace Coroutines.Await
@@ -17,18 +18,22 @@ namespace Coroutines.Await
         [ThreadStatic]
         internal static AwaitShareData Share;
 
-        internal static void FastOnComplete<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
+        internal static void Dispatch<TAwaiter, TStateMachine>(CoroutineManager manager, ref TAwaiter awaiter, TStateMachine stateMachine)
             where TAwaiter : INotifyCompletion
             where TStateMachine : IAsyncStateMachine
         {
-            awaiter.OnCompleted(stateMachine.MoveNext);
-        }
-
-        internal static void UnsafeOnComplete<TAwaiter, TStateMachine>(CoroutineManager manager, ref TAwaiter awaiter, TStateMachine stateMachine)
-            where TAwaiter : INotifyCompletion
-            where TStateMachine : IAsyncStateMachine
-        {
-            awaiter.OnCompleted(() => manager.Enqueue(stateMachine.MoveNext));
+            var tid = Thread.CurrentThread.ManagedThreadId;
+            awaiter.OnCompleted(() =>
+            {
+                if (tid == Thread.CurrentThread.ManagedThreadId)
+                {
+                    stateMachine.MoveNext();
+                }
+                else
+                {
+                    manager.Enqueue(stateMachine.MoveNext);
+                }
+            });
         }
 
     }
@@ -82,14 +87,7 @@ namespace Coroutines.Await
                 bindCoroutineWaitable.Bind(container);
             }
 
-            if (waitable is IThreadSafeWaitable)
-            {
-                AwaitShareDataStatic.FastOnComplete(ref awaiter, ref stateMachine);
-            }
-            else
-            {
-                AwaitShareDataStatic.UnsafeOnComplete(manager, ref awaiter, stateMachine);
-            }
+            AwaitShareDataStatic.Dispatch(manager, ref awaiter, stateMachine);
         }
 
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(
@@ -160,14 +158,7 @@ namespace Coroutines.Await
                 bindCoroutineWaitable.Bind(container);
             }
 
-            if (waitable is IThreadSafeWaitable)
-            {
-                AwaitShareDataStatic.FastOnComplete(ref awaiter, ref stateMachine);
-            }
-            else
-            {
-                AwaitShareDataStatic.UnsafeOnComplete(manager, ref awaiter, stateMachine);
-            }
+            AwaitShareDataStatic.Dispatch(manager, ref awaiter, stateMachine);
         }
 
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(

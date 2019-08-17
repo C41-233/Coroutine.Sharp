@@ -84,7 +84,7 @@ namespace Coroutines
 
     }
 
-    internal class WaitableEnumerable<T> : WaitableTask<T>, IBindCoroutineWaitable, IThreadSafeWaitable
+    internal class WaitableEnumerable<T> : WaitableTask<T>, IBindCoroutineWaitable
     {
 
         private readonly IEnumerable enumerable;

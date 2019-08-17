@@ -34,7 +34,7 @@ namespace Coroutines
             actions.Enqueue(callback);
         }
 
-        public class Container
+        public sealed class Container
         {
 
             public CoroutineManager CoroutineManager { get; }
