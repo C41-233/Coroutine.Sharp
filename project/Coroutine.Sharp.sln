@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coroutine.Sharp", "Coroutine.Sharp\Coroutine.Sharp.csproj", "{67AFC102-6717-4D82-96BC-21F0E6CFEE5E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{22402F13-2D0D-41E3-976D-7D71027957A8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{67AFC102-6717-4D82-96BC-21F0E6CFEE5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67AFC102-6717-4D82-96BC-21F0E6CFEE5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67AFC102-6717-4D82-96BC-21F0E6CFEE5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22402F13-2D0D-41E3-976D-7D71027957A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22402F13-2D0D-41E3-976D-7D71027957A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22402F13-2D0D-41E3-976D-7D71027957A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22402F13-2D0D-41E3-976D-7D71027957A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
