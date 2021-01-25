@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C5E4999C-2DC6-4F61-9AF4-CB0F5E846B1B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Coroutines</RootNamespace>
+    <AssemblyName>Coroutine.Sharp</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
+    <Prefer32Bit>false</Prefer32Bit>
+    <NoWarn>IDE0019</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Base\Assert.cs" />
+    <Compile Include="Base\DebugInfo.cs" />
+    <Compile Include="Base\IdGenerator.cs" />
+    <Compile Include="Base\SpinLock.cs" />
+    <Compile Include="Base\SwapQueue.cs" />
+    <Compile Include="Signals\SignalHandler.cs" />
+    <Compile Include="Signals\SignalManager.cs" />
+    <Compile Include="Waitables\Wait\Logic\WaitForSignal.cs" />
+    <Compile Include="Waitables\Await\Awaitable.cs" />
+    <Compile Include="Waitables\Await\Awaiter.cs" />
+    <Compile Include="Waitables\Await\AwaitExtends.cs" />
+    <Compile Include="Waitables\Await\AwaitMethodBuilder.cs" />
+    <Compile Include="Coroutines\Coroutine.cs" />
+    <Compile Include="Coroutines\CoroutineManager.cs" />
+    <Compile Include="Base\PriorityQueue.cs" />
+    <Compile Include="Coroutines\Coroutine_1.cs" />
+    <Compile Include="Waitables\CompleteWaitable.cs" />
+    <Compile Include="Waitables\WaitableInterfaces.cs" />
+    <Compile Include="Waitables\IWaitable.cs" />
+    <Compile Include="Waitables\WaitableExtends.cs" />
+    <Compile Include="Waitables\WaitableValue.cs" />
+    <Compile Include="Waitables\Wait\IO\WaitForRead.cs" />
+    <Compile Include="Waitables\Wait\Logic\WaitForFrame.cs" />
+    <Compile Include="Waitables\Wait\Logic\WaitForPromise.cs" />
+    <Compile Include="Timers\TimerHandle.cs" />
+    <Compile Include="Timers\TimerManager.cs" />
+    <Compile Include="Waitables\Waitable.cs" />
+    <Compile Include="Waitables\Exceptions.cs" />
+    <Compile Include="Waitables\WaitableStatus.cs" />
+    <Compile Include="Waitables\Wait\IO\WaitForAccept.cs" />
+    <Compile Include="Waitables\Wait\IO\WaitForReceive.cs" />
+    <Compile Include="Waitables\Wait\IO\WaitForReceiveFrom.cs" />
+    <Compile Include="Waitables\Wait\IO\WaitForSend.cs" />
+    <Compile Include="Waitables\Wait\IO\WaitForSendTo.cs" />
+    <Compile Include="Waitables\Wait\Logic\WaitForAllSuccess.cs" />
+    <Compile Include="Waitables\Wait\Logic\WaitForAll.cs" />
+    <Compile Include="Waitables\Wait\Logic\WaitForAnySuccess.cs" />
+    <Compile Include="Waitables\Wait\Logic\WaitForTask.cs" />
+    <Compile Include="Waitables\Wait\Timer\WaitForPhysicalTimeSpan.cs" />
+    <Compile Include="Waitables\Wait\WaitFor.cs" />
+    <Compile Include="Waitables\Wait\IO\WaitForConnect.cs" />
+    <Compile Include="Waitables\Wait\Timer\WaitForTimeSpan.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
