@@ -1,14 +1,14 @@
 ﻿using System;
 using Coroutines.Base;
-using Coroutines.Waitables;
-using Coroutines.Waitables.Await;
 
 namespace Coroutines
 {
-    public sealed class CoroutineManager
+    public sealed partial class CoroutineManager
     {
 
         private readonly SwapQueue<Action> actions = new SwapQueue<Action>();
+
+        public event Action<Exception> OnException;
 
         public void OneLoop()
         {
@@ -22,69 +22,24 @@ namespace Coroutines
                 }
                 catch (Exception e)
                 {
-                    Console.Error.WriteLine(e);
+                    if (OnException == null)
+                    {
+                        Console.Error.WriteLine(e);
+                    }
+                    else
+                    {
+                        OnException?.Invoke(e);
+                    }
                 }
             }
         }
 
-        public void Enqueue(Action action)
+        internal void Enqueue(Action action)
         {
             actions.Enqueue(action);
         }
 
-        #region Container
         public Container CreateContainer() => new Container(this);
-
-        public sealed class Container
-        {
-
-            public CoroutineManager Manager { get; }
-
-            public Container(CoroutineManager manager)
-            {
-                Manager = manager;
-            }
-
-            private IWaitable Add(IWaitable waitable)
-            {
-                return waitable;
-            }
-
-            private void PushShareData()
-            {
-                AwaitShareDataStatic.Share = new AwaitShareData
-                {
-                    Container = this,
-                };
-            }
-
-            private void PopShareData()
-            {
-                if (AwaitShareDataStatic.Share != null)
-                {
-                    AwaitShareDataStatic.Share = default;
-                    throw new WaitableFlowException("StartCoroutine only accept async method");
-                }
-            }
-
-            public IWaitable StartCoroutine(
-                Func<IWaitable> co    
-            )
-            {
-                PushShareData();
-                try
-                {
-                    var coroutine = co();
-                    return Add(coroutine);
-                }
-                finally
-                {
-                    PopShareData();
-                }
-            }
-
-        }
-        #endregion
 
     }
 }

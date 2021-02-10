@@ -42,14 +42,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Base\Assert.cs" />
+    <Compile Include="Base\SpinLock.cs" />
     <Compile Include="Base\SwapQueue.cs" />
     <Compile Include="Coroutines\CoroutineManager.cs" />
+    <Compile Include="Coroutines\CoroutineManager_Container.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Waitables\Await\Awaiter.cs" />
     <Compile Include="Waitables\Await\AwaitMethodBuilder.cs" />
     <Compile Include="Waitables\IWaitable.cs" />
     <Compile Include="Waitables\Waitable.cs" />
     <Compile Include="Waitables\Await\WaitableFlowException.cs" />
+    <Compile Include="Waitables\Awaitable.cs" />
+    <Compile Include="Waitables\WaitableStatus.cs" />
+    <Compile Include="Waitables\WaitableTask.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

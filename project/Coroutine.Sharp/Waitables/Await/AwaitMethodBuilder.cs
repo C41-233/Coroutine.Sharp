@@ -14,9 +14,14 @@ namespace System.Runtime.CompilerServices
 namespace Coroutines.Waitables.Await
 {
 
-    internal struct AwaitShareData
+    internal readonly struct AwaitShareData
     {
-        internal CoroutineManager.Container Container;
+        public readonly CoroutineManager.Container Container;
+
+        public AwaitShareData(CoroutineManager.Container container)
+        {
+            Container = container;
+        }
     }
 
     internal static class AwaitShareDataStatic
@@ -35,20 +40,18 @@ namespace Coroutines.Waitables.Await
             var share = AwaitShareDataStatic.Share;
             if (share == null)
             {
-                throw new WaitableFlowException("Do not call async coroutine function directly. Use CoroutineManager.Container.StartCoroutine instead.");
+                throw WaitableFlowException.AsyncCallDirectly();
             }
 
             AwaitShareDataStatic.Share = null;
             return new AwaitMethodBuilder(share.Value);
         }
 
-        private readonly Waitable waitable;
-        private readonly CoroutineManager.Container container;
+        private readonly Awaitable waitable;
 
-        private AwaitMethodBuilder(AwaitShareData share)
+        private AwaitMethodBuilder(in AwaitShareData share)
         {
-            waitable = new Waitable(share.Container);
-            container = share.Container;
+            waitable = new Awaitable(share.Container);
         }
 
         public IWaitable Task => waitable;
@@ -76,7 +79,7 @@ namespace Coroutines.Waitables.Await
             where TStateMachine : IAsyncStateMachine
         {
             var state = stateMachine;
-            var manager = container.Manager;
+            var manager = waitable.Container.Manager;
             awaiter.UnsafeOnCompleted(() =>
             {
                 manager.Enqueue(() => state.MoveNext());
@@ -85,11 +88,12 @@ namespace Coroutines.Waitables.Await
 
         public void SetResult()
         {
-            Console.WriteLine("SetResult");
+            waitable.Success();
         }
 
         public void SetException(Exception e)
         {
+            waitable.Fail(e);
         }
 
         public void SetStateMachine(IAsyncStateMachine stateMachine)

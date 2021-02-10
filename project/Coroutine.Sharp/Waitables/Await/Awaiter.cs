@@ -24,16 +24,19 @@ namespace Coroutines.Waitables.Await
 
         public void OnCompleted(Action continuation)
         {
+            waitable.Finally(continuation);
         }
 
         public void UnsafeOnCompleted(Action continuation)
         {
+            waitable.Finally(continuation);
         }
 
-        public bool IsCompleted => true;
+        public bool IsCompleted => waitable.IsCompleted();
 
         public void GetResult()
         {
+            waitable.Throw();
         }
 
     }
