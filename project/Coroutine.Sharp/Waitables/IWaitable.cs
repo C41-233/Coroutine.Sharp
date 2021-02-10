@@ -57,17 +57,23 @@ namespace Coroutines.Waitables
             return self.Status != WaitableStatus.Running;
         }
 
-        public static Exception Throw(this IWaitable self)
+        public static void Throw(this IWaitable self)
         {
             Assert.NotNull(self, nameof(self));
 
             var exception = self.Exception;
+            var status = self.Status;
+
             if (exception != null)
             {
                 ExceptionDispatchInfo.Capture(exception).Throw();
+                return;
             }
 
-            return null;
+            if (status == WaitableStatus.Abort)
+            {
+                throw new WaitableAbortException();
+            }
         }
 
     }

@@ -51,6 +51,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Waitables\Await\Awaiter.cs" />
     <Compile Include="Waitables\Await\AwaitMethodBuilder.cs" />
+    <Compile Include="Waitables\Await\WaitableAbortException.cs" />
     <Compile Include="Waitables\IWaitable.cs" />
     <Compile Include="Waitables\Waitable.cs" />
     <Compile Include="Waitables\Await\WaitableFlowException.cs" />

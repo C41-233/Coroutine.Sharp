@@ -25,11 +25,7 @@ namespace Coroutines.Waitables
         {
             get
             {
-                if (Exception != null)
-                {
-                    ExceptionDispatchInfo.Capture(Exception).Throw();
-                }
-
+                this.Throw();
                 return result;
             }
         }

@@ -3,7 +3,14 @@ using System.Runtime.CompilerServices;
 
 namespace Coroutines.Waitables.Await
 {
-    internal sealed class Awaitable : WaitableTask
+    internal interface IAwaitable : IWaitable
+    {
+
+        CoroutineManager.Container Container { get; }
+
+    }
+
+    internal sealed class Awaitable : WaitableTask, IAwaitable
     {
         public CoroutineManager.Container Container { get; }
 
@@ -22,25 +29,9 @@ namespace Coroutines.Waitables.Await
             base.Fail(e);
         }
 
-        public void ContinueWith(IAsyncStateMachine state)
-        {
-            if (Status == WaitableStatus.Running)
-            {
-                state.MoveNext();
-            }
-        }
-
-        public void UnsafeContinueWith(IAsyncStateMachine state)
-        {
-            Container.Manager.Enqueue(() =>
-            {
-                ContinueWith(state);
-            });
-        }
-
     }
 
-    internal sealed class Awaitable<T> : WaitableTask<T>
+    internal sealed class Awaitable<T> : WaitableTask<T>, IAwaitable
     {
 
         public CoroutineManager.Container Container { get; }
@@ -60,20 +51,34 @@ namespace Coroutines.Waitables.Await
             base.Fail(e);
         }
 
-        public void ContinueWith(IAsyncStateMachine state)
+    }
+
+    internal static class ContinueWithExtends
+    {
+
+        public static void ContinueWith(this IAwaitable self, IAsyncStateMachine state)
         {
-            if (Status == WaitableStatus.Running)
+            switch (self.Status)
             {
-                state.MoveNext();
+                case WaitableStatus.Running:
+                    state.MoveNext();
+                    break;
+                case WaitableStatus.Success:
+                    break;
+                case WaitableStatus.Abort:
+                case WaitableStatus.Error:
+                    self.Throw();
+                    break;
             }
         }
 
-        public void UnsafeContinueWith(IAsyncStateMachine state)
+        public static void UnsafeContinueWith(this IAwaitable self, IAsyncStateMachine state)
         {
-            Container.Manager.Enqueue(() =>
+            self.Container.Manager.Enqueue(() =>
             {
-                ContinueWith(state);
+                ContinueWith(self, state);
             });
         }
     }
+
 }

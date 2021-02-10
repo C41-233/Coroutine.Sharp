@@ -11,8 +11,8 @@ namespace Coroutines.Waitables
 
         public Exception Exception { get; private set; }
 
-        private List<Action> successCallbacks = new List<Action>(2);
-        private List<Action<Exception>> failCallbacks = new List<Action<Exception>>(2);
+        private List<Action> successCallbacks = new List<Action>(4);
+        private List<Action<Exception>> failCallbacks = new List<Action<Exception>>(4);
 
         private readonly SpinLock spin = new SpinLock();
         private volatile WaitableStatus status = WaitableStatus.Running;
