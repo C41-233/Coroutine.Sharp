@@ -7,15 +7,22 @@ namespace Coroutines.Waitables
 
     public abstract class Waitable : IWaitable
     {
-        WaitableStatus IWaitable.Status => status;
+        public WaitableStatus Status => status;
 
         public Exception Exception { get; private set; }
 
-        private List<Action> successCallbacks = new List<Action>(1);
-        private List<Action<Exception>> failCallbacks = new List<Action<Exception>>(1);
+        private List<Action> successCallbacks = new List<Action>(2);
+        private List<Action<Exception>> failCallbacks = new List<Action<Exception>>(2);
 
         private readonly SpinLock spin = new SpinLock();
         private volatile WaitableStatus status = WaitableStatus.Running;
+
+        private readonly int id;
+
+        protected Waitable()
+        {
+            id = IdGenerator.Next();
+        }
 
         public IWaitable Then(Action callback)
         {
@@ -70,7 +77,7 @@ namespace Coroutines.Waitables
             return this;
         }
 
-        internal void Success()
+        private protected void Success()
         {
             using (spin.Hold())
             {
@@ -91,7 +98,7 @@ namespace Coroutines.Waitables
             }
         }
 
-        internal void Fail(Exception e)
+        private protected void Fail(Exception e)
         {
             using (spin.Hold())
             {
@@ -113,6 +120,33 @@ namespace Coroutines.Waitables
             }
         }
 
+        public void Abort(bool recursive = true)
+        {
+            using (spin.Hold())
+            {
+                if (status != WaitableStatus.Running)
+                {
+                    return;
+                }
+
+                Exception = null;
+                status = WaitableStatus.Abort;
+            }
+
+            OnAbort(recursive);
+
+            var actions = failCallbacks;
+            Dispose();
+            foreach (var callback in actions)
+            {
+                callback(null);
+            }
+        }
+
+        protected virtual void OnAbort(bool recursive)
+        {
+        }
+
         private void Dispose()
         {
             using (spin.Hold())
@@ -122,6 +156,10 @@ namespace Coroutines.Waitables
             }
         }
 
+        public override int GetHashCode()
+        {
+            return id;
+        }
     }
 
 }

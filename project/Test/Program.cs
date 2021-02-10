@@ -31,17 +31,18 @@ namespace Test
             Console.WriteLine($"start {Thread.CurrentThread.ManagedThreadId} {frame}");
             await Task.Delay(2000);
             Console.WriteLine($"before {Thread.CurrentThread.ManagedThreadId} {frame}");
-            await container.StartCoroutine(Run2);
-            Console.WriteLine($"after {Thread.CurrentThread.ManagedThreadId} {frame}");
+            var result = await container.StartCoroutine(Run2);
+            Console.WriteLine($"result = {result} {Thread.CurrentThread.ManagedThreadId}");
         }
 
-        private static async IWaitable Run2()
+        private static async IWaitable<int> Run2()
         {
-            while (true)
+            for(int i=0; i<4;i++)
             {
                 Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId} {frame}");
                 await Task.Delay(2000);
             }
+            return 5;
         }
 
     }

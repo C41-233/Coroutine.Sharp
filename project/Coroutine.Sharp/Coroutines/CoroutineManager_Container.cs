@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Coroutines.Base;
 using Coroutines.Waitables;
 using Coroutines.Waitables.Await;
 
@@ -13,13 +15,28 @@ namespace Coroutines
 
             public CoroutineManager Manager { get; }
 
+            private readonly HashSet<IWaitable> waitables = new HashSet<IWaitable>();
+
+            private readonly SpinLock spin = new SpinLock();
+
             internal Container(CoroutineManager manager)
             {
                 Manager = manager;
             }
 
-            private IWaitable Add(IWaitable waitable)
+            private T Add<T>(T waitable) where T : IWaitable
             {
+                using (spin.Hold())
+                {
+                    waitables.Add(waitable);
+                }
+                waitable.Finally(() =>
+                {
+                    using (spin.Hold())
+                    {
+                        waitables.Remove(waitable);
+                    }
+                });
                 return waitable;
             }
 
@@ -28,6 +45,7 @@ namespace Coroutines
                 AwaitShareDataStatic.Share = new AwaitShareData(this);
             }
 
+            // ReSharper disable once MemberCanBeMadeStatic.Local
             private void PopShareData()
             {
                 if (AwaitShareDataStatic.Share != null)
@@ -37,9 +55,48 @@ namespace Coroutines
                 }
             }
 
+            public void Clear()
+            {
+                IWaitable[] list;
+                using (spin.Hold())
+                {
+                    list = new IWaitable[waitables.Count];
+                    waitables.CopyTo(list);
+                    waitables.Clear();
+                }
+
+                foreach (var waitable in list)
+                {
+                    try
+                    {
+                        waitable.Abort();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.Error.WriteLine(e);
+                    }
+                }
+            }
+
             #region StartCoroutine
             public IWaitable StartCoroutine(
                 Func<IWaitable> co
+            )
+            {
+                PushShareData();
+                try
+                {
+                    var coroutine = co();
+                    return Add(coroutine);
+                }
+                finally
+                {
+                    PopShareData();
+                }
+            }
+
+            public IWaitable<R> StartCoroutine<R>(
+                Func<IWaitable<R>> co
             )
             {
                 PushShareData();

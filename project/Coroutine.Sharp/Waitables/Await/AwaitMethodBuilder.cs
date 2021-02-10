@@ -101,4 +101,74 @@ namespace Coroutines.Waitables.Await
         }
 
     }
+
+    public struct AwaitMethodBuilder<T>
+    {
+
+        public static AwaitMethodBuilder<T> Create()
+        {
+            var share = AwaitShareDataStatic.Share;
+            if (share == null)
+            {
+                throw WaitableFlowException.AsyncCallDirectly();
+            }
+
+            AwaitShareDataStatic.Share = null;
+            return new AwaitMethodBuilder<T>(share.Value);
+        }
+
+        private readonly Awaitable<T> waitable;
+
+        private AwaitMethodBuilder(in AwaitShareData share)
+        {
+            waitable = new Awaitable<T>(share.Container);
+        }
+
+        public IWaitable<T> Task => waitable;
+
+        public void Start<TStateMachine>(ref TStateMachine stateMachine)
+            where TStateMachine : IAsyncStateMachine
+        {
+            stateMachine.MoveNext();
+        }
+
+        public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
+            where TAwaiter : INotifyCompletion
+            where TStateMachine : IAsyncStateMachine
+        {
+            var state = stateMachine;
+            awaiter.OnCompleted(() =>
+            {
+                state.MoveNext();
+            });
+        }
+
+        public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(
+            ref TAwaiter awaiter, ref TStateMachine stateMachine)
+            where TAwaiter : ICriticalNotifyCompletion
+            where TStateMachine : IAsyncStateMachine
+        {
+            var state = stateMachine;
+            var manager = waitable.Container.Manager;
+            awaiter.UnsafeOnCompleted(() =>
+            {
+                manager.Enqueue(() => state.MoveNext());
+            });
+        }
+
+        public void SetResult(T result)
+        {
+            waitable.Success(result);
+        }
+
+        public void SetException(Exception e)
+        {
+            waitable.Fail(e);
+        }
+
+        public void SetStateMachine(IAsyncStateMachine stateMachine)
+        {
+        }
+
+    }
 }

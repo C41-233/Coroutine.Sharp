@@ -53,7 +53,7 @@
     <Compile Include="Waitables\IWaitable.cs" />
     <Compile Include="Waitables\Waitable.cs" />
     <Compile Include="Waitables\Await\WaitableFlowException.cs" />
-    <Compile Include="Waitables\Awaitable.cs" />
+    <Compile Include="Waitables\Await\Awaitable.cs" />
     <Compile Include="Waitables\WaitableStatus.cs" />
     <Compile Include="Waitables\WaitableTask.cs" />
   </ItemGroup>
