@@ -8,8 +8,6 @@ namespace Coroutines
 
         private readonly SwapQueue<Action> actions = new SwapQueue<Action>();
 
-        public event Action<Exception> OnException;
-
         public void OneLoop()
         {
             actions.Swap();
@@ -22,14 +20,7 @@ namespace Coroutines
                 }
                 catch (Exception e)
                 {
-                    if (OnException == null)
-                    {
-                        Console.Error.WriteLine(e);
-                    }
-                    else
-                    {
-                        OnException?.Invoke(e);
-                    }
+                    Console.Error.WriteLine(e);
                 }
             }
         }

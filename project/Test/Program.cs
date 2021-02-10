@@ -17,9 +17,7 @@ namespace Test
 
         public static void Main(string[] args)
         {
-            var co = container.StartCoroutine(Run1);
-            container.StartCoroutine(Run2, co);
-            container.StartCoroutine(Run3, co);
+            container.StartCoroutine(OneLoop);
             while (true)
             {
                 frame++;
@@ -28,29 +26,9 @@ namespace Test
             }
         }
 
-        private static async IWaitable Run1()
+        private static async IWaitable OneLoop()
         {
-            while (true)
-            {
-                Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId} {DateTime.Now}");
-                await Task.Delay(1000);
-                throw new Exception("!");
-            }
-        }
-
-        private static async IWaitable Run2(IWaitable other)
-        {
-            await Task.Delay(5000);
-            //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId} stop!! {container.Count}");
-            //other.Abort();
-            //Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId} abort!! {container.Count}");
-        }
-
-        private static async IWaitable Run3(IWaitable other)
-        {
-            Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId} before await {container.Count}");
-            await other;
-            Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId} after await {container.Count}");
+            throw new Exception();
         }
 
     }

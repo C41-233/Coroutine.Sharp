@@ -58,17 +58,9 @@ namespace Coroutines.Waitables.Await
 
         public static void ContinueWith(this IAwaitable self, IAsyncStateMachine state)
         {
-            switch (self.Status)
+            if (self.Status == WaitableStatus.Running)
             {
-                case WaitableStatus.Running:
-                    state.MoveNext();
-                    break;
-                case WaitableStatus.Success:
-                    break;
-                case WaitableStatus.Abort:
-                case WaitableStatus.Error:
-                    self.Throw();
-                    break;
+                state.MoveNext();
             }
         }
 
@@ -76,7 +68,10 @@ namespace Coroutines.Waitables.Await
         {
             self.Container.Manager.Enqueue(() =>
             {
-                ContinueWith(self, state);
+                if (self.Status == WaitableStatus.Running)
+                {
+                    state.MoveNext();
+                }
             });
         }
     }
