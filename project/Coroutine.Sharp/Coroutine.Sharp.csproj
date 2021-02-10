@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base\Assert.cs" />
+    <Compile Include="Base\IdGenerator.cs" />
     <Compile Include="Base\SpinLock.cs" />
     <Compile Include="Base\SwapQueue.cs" />
     <Compile Include="Coroutines\CoroutineManager.cs" />

@@ -67,9 +67,10 @@ namespace Coroutines.Waitables.Await
             where TStateMachine : IAsyncStateMachine
         {
             var state = stateMachine;
+            var waitable = this.waitable;
             awaiter.OnCompleted(() =>
             {
-                state.MoveNext();
+                waitable.ContinueWith(state);
             });
         }
 
@@ -79,10 +80,10 @@ namespace Coroutines.Waitables.Await
             where TStateMachine : IAsyncStateMachine
         {
             var state = stateMachine;
-            var manager = waitable.Container.Manager;
-            awaiter.UnsafeOnCompleted(() =>
+            var waitable = this.waitable;
+            awaiter.OnCompleted(() =>
             {
-                manager.Enqueue(() => state.MoveNext());
+                waitable.UnsafeContinueWith(state);
             });
         }
 
@@ -137,9 +138,10 @@ namespace Coroutines.Waitables.Await
             where TStateMachine : IAsyncStateMachine
         {
             var state = stateMachine;
+            var waitable = this.waitable;
             awaiter.OnCompleted(() =>
             {
-                state.MoveNext();
+                waitable.ContinueWith(state);
             });
         }
 
@@ -149,10 +151,10 @@ namespace Coroutines.Waitables.Await
             where TStateMachine : IAsyncStateMachine
         {
             var state = stateMachine;
-            var manager = waitable.Container.Manager;
+            var waitable = this.waitable;
             awaiter.UnsafeOnCompleted(() =>
             {
-                manager.Enqueue(() => state.MoveNext());
+                waitable.UnsafeContinueWith(state);
             });
         }
 

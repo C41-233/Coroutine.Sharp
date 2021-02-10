@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace Coroutines.Waitables.Await
 {
@@ -19,6 +20,22 @@ namespace Coroutines.Waitables.Await
         public new void Fail(Exception e)
         {
             base.Fail(e);
+        }
+
+        public void ContinueWith(IAsyncStateMachine state)
+        {
+            if (Status == WaitableStatus.Running)
+            {
+                state.MoveNext();
+            }
+        }
+
+        public void UnsafeContinueWith(IAsyncStateMachine state)
+        {
+            Container.Manager.Enqueue(() =>
+            {
+                ContinueWith(state);
+            });
         }
 
     }
@@ -43,5 +60,20 @@ namespace Coroutines.Waitables.Await
             base.Fail(e);
         }
 
+        public void ContinueWith(IAsyncStateMachine state)
+        {
+            if (Status == WaitableStatus.Running)
+            {
+                state.MoveNext();
+            }
+        }
+
+        public void UnsafeContinueWith(IAsyncStateMachine state)
+        {
+            Container.Manager.Enqueue(() =>
+            {
+                ContinueWith(state);
+            });
+        }
     }
 }

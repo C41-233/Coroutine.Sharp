@@ -120,7 +120,7 @@ namespace Coroutines.Waitables
             }
         }
 
-        public void Abort(bool recursive = true)
+        public void Abort()
         {
             using (spin.Hold())
             {
@@ -133,7 +133,7 @@ namespace Coroutines.Waitables
                 status = WaitableStatus.Abort;
             }
 
-            OnAbort(recursive);
+            OnAbort();
 
             var actions = failCallbacks;
             Dispose();
@@ -143,7 +143,7 @@ namespace Coroutines.Waitables
             }
         }
 
-        protected virtual void OnAbort(bool recursive)
+        protected virtual void OnAbort()
         {
         }
 

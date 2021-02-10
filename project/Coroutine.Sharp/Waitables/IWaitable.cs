@@ -19,7 +19,7 @@ namespace Coroutines.Waitables
 
         IWaitable Catch(Action<Exception> callback);
 
-        void Abort(bool recursive = true);
+        void Abort();
     }
 
     [AsyncMethodBuilder(typeof(AwaitMethodBuilder<>))]

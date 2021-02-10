@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Coroutines;
 using Coroutines.Waitables;
-using Coroutines.Waitables.Await;
 
 namespace Test
 {
@@ -17,7 +16,8 @@ namespace Test
 
         public static void Main(string[] args)
         {
-            container.StartCoroutine(Run1);
+            var co = container.StartCoroutine(Run1);
+            container.StartCoroutine(Run2, co);
             while (true)
             {
                 frame++;
@@ -28,21 +28,18 @@ namespace Test
 
         private static async IWaitable Run1()
         {
-            Console.WriteLine($"start {Thread.CurrentThread.ManagedThreadId} {frame}");
-            await Task.Delay(2000);
-            Console.WriteLine($"before {Thread.CurrentThread.ManagedThreadId} {frame}");
-            var result = await container.StartCoroutine(Run2);
-            Console.WriteLine($"result = {result} {Thread.CurrentThread.ManagedThreadId}");
+            while (true)
+            {
+                Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}");
+                await Task.Delay(1000);
+            }
         }
 
-        private static async IWaitable<int> Run2()
+        private static async IWaitable Run2(IWaitable other)
         {
-            for(int i=0; i<4;i++)
-            {
-                Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId} {frame}");
-                await Task.Delay(2000);
-            }
-            return 5;
+            await Task.Delay(5000);
+            Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId} stop!!");
+            other.Abort();
         }
 
     }

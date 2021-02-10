@@ -19,6 +19,8 @@ namespace Coroutines
 
             private readonly SpinLock spin = new SpinLock();
 
+            public int Count => waitables.Count;
+
             internal Container(CoroutineManager manager)
             {
                 Manager = manager;
@@ -87,6 +89,23 @@ namespace Coroutines
                 try
                 {
                     var coroutine = co();
+                    return Add(coroutine);
+                }
+                finally
+                {
+                    PopShareData();
+                }
+            }
+
+            public IWaitable StartCoroutine<T>(
+                Func<T, IWaitable> co,
+                T t
+            )
+            {
+                PushShareData();
+                try
+                {
+                    var coroutine = co(t);
                     return Add(coroutine);
                 }
                 finally
